@@ -1,0 +1,24 @@
+# IDEs
+.idea/
+.vscode/
+.vscode-test
+
+# MacOS
+.DS_Store
+
+# Configuration
+src/configuration/values/local.yml
+.env
+config/*local*
+
+# NodeJS
+node_modules/
+dist
+
+# Test files
+/coverage/
+# Database from root
+/database/
+
+# New Relic
+newrelic_agent*
