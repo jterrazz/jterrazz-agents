@@ -21,7 +21,10 @@ export function createFetchSpaceEventsTool() {
                         filter = parsed.filter;
                     }
                 }
-            } catch {}
+            } catch (err) {
+                console.error('Error parsing filter', err);
+                // Ignore JSON parse errors and proceed with no filter
+            }
             if (filter.eventType) {
                 events = events.filter((e) => filter.eventType?.includes(e.eventType));
             }
@@ -32,6 +35,13 @@ export function createFetchSpaceEventsTool() {
                     ),
                 );
             }
+            // Filter to only include events within the next 5 days
+            const now = new Date();
+            const fiveDaysFromNow = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
+            events = events.filter((e) => {
+                const eventDate = new Date(e.date);
+                return eventDate >= now && eventDate <= fiveDaysFromNow;
+            });
             return JSON.stringify(events);
         },
         {
