@@ -16,7 +16,7 @@ export type NewsAgentOptions = {
 export function createChatAgent({ logger, modelConfig, promptTemplate, tools }: NewsAgentOptions) {
     const model = new ChatGoogleGenerativeAI(
         modelConfig ?? {
-            maxOutputTokens: 16_384,
+            maxOutputTokens: 32_000,
             model: 'gemini-2.5-flash-preview-05-20',
         },
     );
