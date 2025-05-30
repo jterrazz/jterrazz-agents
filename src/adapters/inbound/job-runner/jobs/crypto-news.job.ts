@@ -3,7 +3,7 @@ import type { LoggerPort } from '@jterrazz/logger';
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
-import { createCryptoAgent } from '../../../../agents/crypto-agent.js';
+import { createCryptoNewsAgent } from '../../../../agents/crypto-news.agent.js';
 
 export type CryptoNewsJobDependencies = {
     channelName: string;
@@ -17,7 +17,7 @@ export const createCryptoNewsJob = ({
     logger,
 }: CryptoNewsJobDependencies): Job => ({
     execute: async () => {
-        const agent = createCryptoAgent({ channelName, chatBot, logger });
+        const agent = createCryptoNewsAgent({ channelName, chatBot, logger });
         await agent.run(
             'Summarize the latest important crypto news and tweets for the crypto channel. Only include Bitcoin, Ethereum, or generic crypto/tech news. Format the output as a news digest, concise, and under 2000 characters. Ensure the message is concise and easy to read in Discord.',
             chatBot,

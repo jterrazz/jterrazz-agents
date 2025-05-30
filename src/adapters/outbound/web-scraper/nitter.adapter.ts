@@ -4,9 +4,9 @@ import puppeteer from 'puppeteer';
 import {
     type SocialFeedMessage,
     type SocialFeedPort,
-} from '../../../ports/outbound/twitter-feed.port.js';
+} from '../../../ports/outbound/social-feed.port.js';
 
-export function createNitterTwitterAdapter(): SocialFeedPort {
+export function createNitterAdapter(): SocialFeedPort {
     return {
         async fetchLatestMessages(username: string, limit = 10): Promise<SocialFeedMessage[]> {
             const browser = await puppeteer.launch({ headless: true });
@@ -23,8 +23,9 @@ export function createNitterTwitterAdapter(): SocialFeedPort {
                 // Not found, will log below
             }
             const messagesRaw = await page.evaluate((limit: number | undefined) => {
-                let items = Array.from(document.querySelectorAll('.timeline-item'))
-                    .filter(item => !item.querySelector('.pinned'));
+                let items = Array.from(document.querySelectorAll('.timeline-item')).filter(
+                    (item) => !item.querySelector('.pinned'),
+                );
                 if (typeof limit === 'number' && limit > 0) {
                     items = items.slice(0, limit);
                 }
@@ -33,17 +34,22 @@ export function createNitterTwitterAdapter(): SocialFeedPort {
                     const idMatch = link.match(/status\/(\d+)/);
                     const id = idMatch ? idMatch[1] : '';
                     const text = item.querySelector('.tweet-content')?.textContent?.trim() || '';
-                    const createdAtText = item.querySelector('.tweet-date > a')?.getAttribute('title') || '';
+                    const createdAtText =
+                        item.querySelector('.tweet-date > a')?.getAttribute('title') || '';
                     const createdAt = createdAtText ? createdAtText : '';
                     const url = link ? 'https://nitter.net' + link : '';
-                    const author = item.querySelector('.tweet-header .username')?.textContent?.replace('@', '').trim() || '';
+                    const author =
+                        item
+                            .querySelector('.tweet-header .username')
+                            ?.textContent?.replace('@', '')
+                            .trim() || '';
                     return { author, createdAt, id, text, url };
                 });
             }, limit);
             if (!tweetsFound || messagesRaw.length === 0) {
                 const html = await page.content();
                 fs.writeFileSync('nitter-debug.html', html, 'utf-8');
-                 
+
                 console.error('No tweets found. Page HTML saved to nitter-debug.html');
             }
             await browser.close();

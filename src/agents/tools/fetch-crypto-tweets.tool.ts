@@ -1,11 +1,11 @@
 import { tool } from '@langchain/core/tools';
 
-import { type SocialFeedMessage } from '../../ports/outbound/twitter-feed.port.js';
+import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
-import { createNitterTwitterAdapter } from '../../adapters/outbound/web-scraper/nitter-twitter.adapter.js';
+import { createNitterAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
 
 export function createFetchCryptoTweetsTool() {
-    const nitter = createNitterTwitterAdapter();
+    const nitter = createNitterAdapter();
     const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
     return tool(
         async (input: string) => {
@@ -15,7 +15,8 @@ export function createFetchCryptoTweetsTool() {
                 if (input) {
                     const parsed = JSON.parse(input);
                     if (parsed.username) usernames = [parsed.username];
-                    if (parsed.usernames && Array.isArray(parsed.usernames)) usernames = parsed.usernames;
+                    if (parsed.usernames && Array.isArray(parsed.usernames))
+                        usernames = parsed.usernames;
                     if (parsed.limit) limit = parsed.limit;
                 }
             } catch {
@@ -34,4 +35,4 @@ export function createFetchCryptoTweetsTool() {
             name: 'fetchCryptoTweets',
         },
     );
-} 
+}
