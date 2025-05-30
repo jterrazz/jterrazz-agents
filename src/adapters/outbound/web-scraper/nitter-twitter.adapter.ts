@@ -1,36 +1,14 @@
-import puppeteer from 'puppeteer';
 import fs from 'fs';
+import puppeteer from 'puppeteer';
 
 import {
-    type TwitterFeedMessage,
-    type TwitterFeedPort,
+    type SocialFeedMessage,
+    type SocialFeedPort,
 } from '../../../ports/outbound/twitter-feed.port.js';
 
-function parseNitterDate(dateStr: string): Date {
-    // Example: 'Jan 11, 2025 · 5:00 PM UTC' or 'May 30, 2025 · 12:38 PM UTC'
-    // Remove the dot and everything after for basic parsing
-    const match = dateStr.match(/([A-Za-z]{3,9} \d{1,2}, \d{4})(?: · (.*))?/);
-    if (match) {
-        // If time is present, combine and parse
-        if (match[2]) {
-            // e.g., 'Jan 11, 2025 5:00 PM UTC'
-            const combined = `${match[1]} ${match[2]}`;
-            const parsed = Date.parse(combined);
-            if (!isNaN(parsed)) return new Date(parsed);
-        } else {
-            // Just the date
-            const parsed = Date.parse(match[1]);
-            if (!isNaN(parsed)) return new Date(parsed);
-        }
-    }
-    // Fallback
-    const fallback = Date.parse(dateStr);
-    return !isNaN(fallback) ? new Date(fallback) : new Date();
-}
-
-export function createNitterTwitterAdapter(): TwitterFeedPort {
+export function createNitterTwitterAdapter(): SocialFeedPort {
     return {
-        async fetchLatestMessages(username: string, limit = 10): Promise<TwitterFeedMessage[]> {
+        async fetchLatestMessages(username: string, limit = 10): Promise<SocialFeedMessage[]> {
             const browser = await puppeteer.launch({ headless: true });
             const page = await browser.newPage();
             await page.setUserAgent(
@@ -65,16 +43,38 @@ export function createNitterTwitterAdapter(): TwitterFeedPort {
             if (!tweetsFound || messagesRaw.length === 0) {
                 const html = await page.content();
                 fs.writeFileSync('nitter-debug.html', html, 'utf-8');
-                // eslint-disable-next-line no-console
+                 
                 console.error('No tweets found. Page HTML saved to nitter-debug.html');
             }
             await browser.close();
             // Convert createdAt to Date object using robust parsing
-            const messages: TwitterFeedMessage[] = messagesRaw.map((msg: any) => ({
+            const messages: SocialFeedMessage[] = messagesRaw.map((msg: any) => ({
                 ...msg,
                 createdAt: msg.createdAt ? parseNitterDate(msg.createdAt) : new Date(),
             }));
             return messages;
         },
     };
+}
+
+function parseNitterDate(dateStr: string): Date {
+    // Example: 'Jan 11, 2025 · 5:00 PM UTC' or 'May 30, 2025 · 12:38 PM UTC'
+    // Remove the dot and everything after for basic parsing
+    const match = dateStr.match(/([A-Za-z]{3,9} \d{1,2}, \d{4})(?: · (.*))?/);
+    if (match) {
+        // If time is present, combine and parse
+        if (match[2]) {
+            // e.g., 'Jan 11, 2025 5:00 PM UTC'
+            const combined = `${match[1]} ${match[2]}`;
+            const parsed = Date.parse(combined);
+            if (!isNaN(parsed)) return new Date(parsed);
+        } else {
+            // Just the date
+            const parsed = Date.parse(match[1]);
+            if (!isNaN(parsed)) return new Date(parsed);
+        }
+    }
+    // Fallback
+    const fallback = Date.parse(dateStr);
+    return !isNaN(fallback) ? new Date(fallback) : new Date();
 }

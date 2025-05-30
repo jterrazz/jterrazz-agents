@@ -5,17 +5,17 @@ import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 import { createInvestAgent } from '../../../../agents/invest-agent.js';
 
-export type InvestTwitterJobDependencies = {
+export type InvestNewsJobDependencies = {
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 };
 
-export const createInvestTwitterJob = ({
+export const createInvestNewsJob = ({
     channelName,
     chatBot,
     logger,
-}: InvestTwitterJobDependencies): Job => ({
+}: InvestNewsJobDependencies): Job => ({
     execute: async () => {
         const agent = createInvestAgent({ channelName, chatBot, logger });
         await agent.run(
@@ -25,6 +25,6 @@ export const createInvestTwitterJob = ({
         );
     },
     executeOnStartup: true,
-    name: 'invest-twitter-agent',
+    name: 'invest-news-agent',
     schedule: '0 8 * * *', // Every day at 8:00 AM
 });

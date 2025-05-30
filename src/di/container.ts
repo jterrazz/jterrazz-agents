@@ -6,8 +6,8 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
-import { createCryptoTwitterJob } from '../adapters/inbound/job-runner/jobs/crypto-twitter.job.js';
-import { createInvestTwitterJob } from '../adapters/inbound/job-runner/jobs/invest-twitter.job.js';
+import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
+import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
 import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
@@ -65,12 +65,12 @@ const jobRunner = Injectable(
                 chatBot,
                 logger,
             }),
-            createInvestTwitterJob({
+            createInvestNewsJob({
                 channelName: 'invest',
                 chatBot,
                 logger,
             }),
-            createCryptoTwitterJob({
+            createCryptoNewsJob({
                 channelName: 'crypto',
                 chatBot,
                 logger,

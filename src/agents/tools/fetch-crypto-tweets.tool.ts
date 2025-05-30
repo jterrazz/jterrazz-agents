@@ -1,6 +1,6 @@
 import { tool } from '@langchain/core/tools';
 
-import { type TwitterFeedMessage } from '../../ports/outbound/twitter-feed.port.js';
+import { type SocialFeedMessage } from '../../ports/outbound/twitter-feed.port.js';
 
 import { createNitterTwitterAdapter } from '../../adapters/outbound/web-scraper/nitter-twitter.adapter.js';
 
@@ -21,7 +21,7 @@ export function createFetchCryptoTweetsTool() {
             } catch {
                 /* ignore JSON parse errors, use defaults */
             }
-            let allTweets: TwitterFeedMessage[] = [];
+            let allTweets: SocialFeedMessage[] = [];
             for (const username of usernames) {
                 const tweets = await nitter.fetchLatestMessages(username, limit);
                 allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));

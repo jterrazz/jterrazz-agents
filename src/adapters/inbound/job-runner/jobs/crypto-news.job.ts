@@ -5,17 +5,17 @@ import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 import { createCryptoAgent } from '../../../../agents/crypto-agent.js';
 
-export type CryptoTwitterJobDependencies = {
+export type CryptoNewsJobDependencies = {
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 };
 
-export const createCryptoTwitterJob = ({
+export const createCryptoNewsJob = ({
     channelName,
     chatBot,
     logger,
-}: CryptoTwitterJobDependencies): Job => ({
+}: CryptoNewsJobDependencies): Job => ({
     execute: async () => {
         const agent = createCryptoAgent({ channelName, chatBot, logger });
         await agent.run(
@@ -25,6 +25,6 @@ export const createCryptoTwitterJob = ({
         );
     },
     executeOnStartup: true,
-    name: 'crypto-twitter-agent',
+    name: 'crypto-news-agent',
     schedule: '0 8 * * *', // Every day at 8:00 AM
 });
