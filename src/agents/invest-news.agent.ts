@@ -6,6 +6,7 @@ import { createChatAgent } from './base/chat-agent-factory.js';
 import { buildSystemPrompt } from './base/prompt-rules.js';
 import { createFetchFinancialTweetsTool } from './tools/fetch-financial-tweets.tool.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
+import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createInvestNewsAgent({
     channelName,
@@ -46,6 +47,7 @@ _Short, human-like summary or context sentence about why this news matters._
         tools: [
             createFetchRecentBotMessagesTool({ channelName, chatBot }),
             createFetchFinancialTweetsTool(),
+            createGetCurrentDateTool(),
         ],
     });
     return agent;

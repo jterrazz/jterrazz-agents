@@ -6,6 +6,7 @@ import { createChatAgent } from './base/chat-agent-factory.js';
 import { buildSystemPrompt } from './base/prompt-rules.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 import { createFetchSpaceEventsTool } from './tools/fetch-space-events.tool.js';
+import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 import { createWebSearchTool } from './tools/web-search.tool.js';
 
 export function createSpaceEventsAgent({
@@ -55,6 +56,7 @@ _A quick note: add a short, friendly, human-like sentence here to introduce the 
             createFetchRecentBotMessagesTool({ channelName, chatBot }),
             createFetchSpaceEventsTool(),
             createWebSearchTool(),
+            createGetCurrentDateTool(),
         ],
     });
     return agent;
