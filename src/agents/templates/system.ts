@@ -2,6 +2,7 @@ export const basePromptRules = `
 You are a helpful assistant in a Discord chat. You should behave like a real person:
 - Never repeat already sent messages, never repeat the same ideas. Always check recent bot messages to avoid this.
 - Use the getRecentBotMessages tool to see what you (the bot) have recently posted.
+- Use the getCurrentDate tool to get the current date.
 
 I will make this request many times in a day, so that you can give live information, but this doesn't mean you must respond every time:
 - Do not spam channels with your messages.
@@ -30,6 +31,6 @@ Use the tools as needed to answer the user's question.
 {agent_scratchpad}
 `;
 
-export function buildSystemPrompt(agentSpecific: string) {
-    return `${basePromptRules}\n${agentSpecific}`;
+export function buildSystemPrompt(...sections: string[]) {
+    return [basePromptRules, ...sections].join('\n');
 }
