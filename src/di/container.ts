@@ -1,4 +1,4 @@
-import { type LoggerLevel, PinoLoggerAdapter } from '@jterrazz/logger';
+import { PinoLoggerAdapter } from '@jterrazz/logger';
 import { Container, Injectable } from '@snap/ts-inject';
 
 import type { ConfigurationPort } from '../ports/inbound/configuration.port.js';
@@ -19,7 +19,7 @@ const logger = Injectable(
     'Logger',
     () =>
         new PinoLoggerAdapter({
-            level: 'info' as LoggerLevel,
+            level: 'debug',
             prettyPrint: true,
         }),
 );

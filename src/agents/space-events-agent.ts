@@ -40,17 +40,20 @@ export function createSpaceEventsAgent({
 - For tool calls, use: \u0060\u0060\u0060json\n{{ "action": <tool_name>, "action_input": <tool_input> }}\n\u0060\u0060\u0060.
 - **Always output ONLY a valid JSON object, inside a markdown code block (begin with three backticks and 'json', and end with three backticks). Do not include any explanation, code block, or formatting—just the JSON in the code block.**
 
-When listing upcoming space events, format your output for Discord using Markdown. For each event:
-- Use a bullet point (•) at the start.
-- Bold the event title.
-- On the next lines, show:
-  📅 Date: <date>
-  📍 Location: <location>
-  📝 Description: <description>
-- If an image URL is available, add a new line with: [Image](<imageUrl>)
+When listing upcoming space events, use this beautiful and modern Discord Markdown template for each event:
+
+**<title>**
+> 🗓️ **Date:** <date>
+> 📍 **Location:** <location>
+> 📝 **Description:** <description>
+> <#if imageUrl>![image](<imageUrl>)<#/if>
+
 - Add a blank line between events.
 - Do not repeat the event title anywhere except as the bolded title.
 - Do not include a global title or heading; only output the event list.
+- Use blockquotes for event details for clarity and visual separation.
+- Use emoji for each field for visual appeal.
+- If an image URL is available, show it as an embedded image below the event details.
 - Keep the output concise and visually clear for the #space channel.
 
 You have access to the following tools:
@@ -76,7 +79,6 @@ Use the tools as needed to answer the user's question.
                     return AgentExecutor.fromAgentAndTools({
                         agent,
                         tools: [fetchSpaceEventsTool, webSearchTool, fetchRecentBotMessagesTool],
-                        verbose: true,
                     });
                 })();
             }
