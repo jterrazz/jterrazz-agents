@@ -44,24 +44,21 @@ export function createNitterTwitterAdapter(): TwitterFeedPort {
             } catch (e) {
                 // Not found, will log below
             }
-            const messagesRaw = await page.evaluate((limit: number) => {
-                const items = Array.from(document.querySelectorAll('.timeline-item'))
-                    .filter((item) => !item.querySelector('.pinned')) // skip pinned
-                    .slice(0, limit);
+            const messagesRaw = await page.evaluate((limit: number | undefined) => {
+                let items = Array.from(document.querySelectorAll('.timeline-item'))
+                    .filter(item => !item.querySelector('.pinned'));
+                if (typeof limit === 'number' && limit > 0) {
+                    items = items.slice(0, limit);
+                }
                 return items.map((item) => {
                     const link = item.querySelector('a.tweet-link')?.getAttribute('href') || '';
                     const idMatch = link.match(/status\/(\d+)/);
                     const id = idMatch ? idMatch[1] : '';
                     const text = item.querySelector('.tweet-content')?.textContent?.trim() || '';
-                    const createdAtText =
-                        item.querySelector('.tweet-date > a')?.getAttribute('title') || '';
+                    const createdAtText = item.querySelector('.tweet-date > a')?.getAttribute('title') || '';
                     const createdAt = createdAtText ? createdAtText : '';
                     const url = link ? 'https://nitter.net' + link : '';
-                    const author =
-                        item
-                            .querySelector('.tweet-header .username')
-                            ?.textContent?.replace('@', '')
-                            .trim() || '';
+                    const author = item.querySelector('.tweet-header .username')?.textContent?.replace('@', '').trim() || '';
                     return { author, createdAt, id, text, url };
                 });
             }, limit);

@@ -7,7 +7,7 @@ describe('NitterTwitterAdapter', () => {
         // Given
         const adapter = createNitterTwitterAdapter();
         // When
-        const messages = await adapter.fetchLatestMessages('KobeissiLetter', 3);
+        const messages = await adapter.fetchLatestMessages('KobeissiLetter');
         // Then
         expect(Array.isArray(messages)).toBe(true);
         expect(messages.length).toBeGreaterThan(0);
