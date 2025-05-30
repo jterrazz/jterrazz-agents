@@ -38,7 +38,10 @@ export class DiscordAdapter implements ChatBotPort {
         return this.client;
     }
 
-    async getRecentBotMessages(channelName: string, limit = 10): Promise<string[]> {
+    async getRecentBotMessages(
+        channelName: string,
+        limit = 10,
+    ): Promise<{ content: string; date: string }[]> {
         const guild = this.client.guilds.cache.first();
         if (!guild) return [];
         const channel = guild.channels.cache.find(
@@ -48,7 +51,10 @@ export class DiscordAdapter implements ChatBotPort {
         const messages = await channel.messages.fetch({ limit });
         return messages
             .filter((msg) => msg.author.id === this.client.user?.id)
-            .map((msg) => msg.content);
+            .map((msg) => ({
+                content: msg.content,
+                date: msg.createdAt.toISOString(),
+            }));
     }
 
     async sendMessage(channelName: string, message: string): Promise<void> {
