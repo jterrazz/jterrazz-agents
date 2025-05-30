@@ -19,8 +19,8 @@ export function createCryptoNewsAgent({
     logger: LoggerPort;
 }) {
     const agentSpecific = `
-Only post about important news or technical updates related to Bitcoin, Ethereum, or generic crypto topics (including dev/tech news).
-Use the fetchCryptoTweets tool to get the latest information on the web.
+Only post about important news, discussions or updates related to Bitcoin, Ethereum, or generic crypto topics.
+Use the fetchCryptoTweets tool to get information on what to post about.
 `;
     return createChatAgent({
         logger,

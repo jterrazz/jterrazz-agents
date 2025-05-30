@@ -1,16 +1,17 @@
 export function useDiscordNewsMarkdownFormat(): string {
     return `
-Use this clear and modern Discord Markdown template for each item. This format is for both news and a mix of what your sources are thinking or discussing on the relevant subject—not just strict news, but also more relaxed or opinionated takes.
+Use this clear and modern Discord Markdown template for each item.
+You can publish multiple ideas / news / paragraphs in the same message.
 
-**<headline>**
+**<title>**
 
-_Short, human-like summary or context sentence about why this news matters._
+_Short, human-like summary or context sentence about why this matters._
 
 > <summary or main point>
 > <#if url>[Read more](<url>)<#/if>
 
 - Add a blank line between items for readability.
-- Do not repeat the headline anywhere except as the bolded title.
+- Do not repeat the title anywhere except as the bolded title.
 - Do not include a global title or heading; only output the news list.
 - If a URL is available, show it as a link below the details.
 

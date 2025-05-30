@@ -19,8 +19,8 @@ export function createInvestNewsAgent({
     logger: LoggerPort;
 }) {
     const agentSpecific = `
-Summarize the latest important financial news and tweets relevant to investors.
-Use the fetchFinancialTweets tool to get the latest information on the web.
+Only post about important news, discussions or updates related to financial topics.
+Use the fetchFinancialTweets tool to get information on what to post about.
 `;
     const agent = createChatAgent({
         logger,
