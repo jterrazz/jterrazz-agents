@@ -31,13 +31,14 @@ const webSearchTool = tool(
 
 const model = new ChatGoogleGenerativeAI({
     maxOutputTokens: 2048,
-    model: 'gemini-2.5-flash',
+    model: 'gemini-2.5-flash-preview-05-20',
 });
 
 const modelWithTools = model.bindTools([fetchEventsTool, webSearchTool]);
 
 export async function runEventsAgent(userQuery: string): Promise<string> {
     const res = await modelWithTools.invoke(userQuery);
+    console.log(res);
     if (Array.isArray(res.content)) {
         return res.content
             .map((part) => {
