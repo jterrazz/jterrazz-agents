@@ -1,6 +1,6 @@
 import { type Channel, Client, GatewayIntentBits, type TextChannel } from 'discord.js';
 
-import type { ChatBotPort } from '../ports/chatbot.port.js';
+import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
 
 export class DiscordAdapter implements ChatBotPort {
     private client: Client;

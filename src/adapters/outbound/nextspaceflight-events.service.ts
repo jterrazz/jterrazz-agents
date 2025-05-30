@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import type { Text } from 'domhandler';
 
-import { type Event } from '../ports/events.interface.js';
+import { type Event } from '../../ports/outbound/events.port.js';
 
 const NEXTSPACEFLIGHT_EVENTS_URL = 'https://nextspaceflight.com/events/';
 

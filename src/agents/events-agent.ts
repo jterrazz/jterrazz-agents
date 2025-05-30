@@ -1,19 +1,25 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import type { Tool } from '@langchain/core/tools';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
-import type { ChatBotPort } from '../ports/chatbot.port.js';
+import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
+
+import {
+    createFetchRecentBotMessagesTool,
+    createFetchSpaceEventsTool,
+    createWebSearchTool,
+} from './tools.js';
 
 export function createEventsAgent({
-    fetchRecentBotMessagesTool,
-    fetchSpaceEventsTool,
-    webSearchTool,
+    channelName,
+    chatBot,
 }: {
-    fetchRecentBotMessagesTool: Tool;
-    fetchSpaceEventsTool: Tool;
-    webSearchTool: Tool;
+    channelName: string;
+    chatBot: ChatBotPort;
 }) {
+    const fetchRecentBotMessagesTool = createFetchRecentBotMessagesTool({ channelName, chatBot });
+    const fetchSpaceEventsTool = createFetchSpaceEventsTool();
+    const webSearchTool = createWebSearchTool();
     const model = new ChatGoogleGenerativeAI({
         maxOutputTokens: 10_000,
         model: 'gemini-2.5-flash-preview-05-20',

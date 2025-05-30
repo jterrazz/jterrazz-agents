@@ -1,38 +1,42 @@
 import { tool } from '@langchain/core/tools';
 
-import { getRecentBotMessages } from '../adapters/discord-messages.service.js';
-import { getUpcomingEvents } from '../adapters/nextspaceflight-events.service.js';
-import { searchWeb } from '../adapters/websearch.service.js';
+import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
-import { channelName, client } from '../index.js';
+import { getUpcomingEvents } from '../adapters/outbound/nextspaceflight-events.service.js';
+import { searchWeb } from '../adapters/outbound/websearch.service.js';
 
-export const fetchSpaceEventsTool = tool(
-    async (_input: string) => {
-        return JSON.stringify(await getUpcomingEvents());
-    },
-    {
-        description: 'Fetches upcoming space events.',
-        name: 'getUpcomingEvents',
-    },
-);
+export function createFetchRecentBotMessagesTool({ channelName, chatBot }: { channelName: string; chatBot: ChatBotPort; }) {
+    return tool(
+        async (_input: string) => {
+            return JSON.stringify(await chatBot.getRecentBotMessages(channelName, 10));
+        },
+        {
+            description: 'Fetches the most recent messages sent by the bot in the #space channel.',
+            name: 'getRecentBotMessages',
+        },
+    );
+}
 
-export const webSearchTool = tool(
-    async (input: string) => {
-        return JSON.stringify(await searchWeb(input));
-    },
-    {
-        description: 'Performs a web search for up-to-date information.',
-        name: 'searchWeb',
-    },
-);
+export function createFetchSpaceEventsTool() {
+    return tool(
+        async (_input: string) => {
+            return JSON.stringify(await getUpcomingEvents());
+        },
+        {
+            description: 'Fetches upcoming space events.',
+            name: 'getUpcomingEvents',
+        },
+    );
+}
 
-export const fetchRecentBotMessagesTool = tool(
-    async (_input: string) => {
-        // Fetch the last 10 bot messages from the #space channel
-        return JSON.stringify(await getRecentBotMessages({ channelName, client, limit: 10 }));
-    },
-    {
-        description: 'Fetches the most recent messages sent by the bot in the #space channel.',
-        name: 'getRecentBotMessages',
-    },
-); 
+export function createWebSearchTool() {
+    return tool(
+        async (input: string) => {
+            return JSON.stringify(await searchWeb(input));
+        },
+        {
+            description: 'Performs a web search for up-to-date information.',
+            name: 'searchWeb',
+        },
+    );
+}
