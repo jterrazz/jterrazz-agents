@@ -11,7 +11,7 @@ const fetchEventsTool = tool(
         return JSON.stringify(await getUpcomingEvents());
     },
     {
-        description: 'Fetches upcoming space events from NextSpaceflight.',
+        description: 'Fetches upcoming space events.',
         name: 'getUpcomingEvents',
     },
 );

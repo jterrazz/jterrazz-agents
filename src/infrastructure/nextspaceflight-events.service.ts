@@ -1,5 +1,6 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
+import type { Text } from 'domhandler';
 
 import { type Event } from '../domain/events.interface.js';
 
@@ -10,11 +11,29 @@ export async function getUpcomingEvents(): Promise<Event[]> {
     const $ = cheerio.load(response.data);
     const events: Event[] = [];
 
-    $('.event').each((_, el) => {
-        const title = $(el).find('.title').text().trim();
-        const dateText = $(el).find('.date').text().trim();
-        const location = $(el).find('.location').text().trim();
-        const description = $(el).find('.description').text().trim();
+    $('.demo-card-square.mdl-card').each((_, el) => {
+        const title = $(el).find('h5.header-style').text().trim();
+        const description = $(el).find('.mdl-card__supporting-text').first().text().trim();
+        const dateText = $(el).find('.mdl-card__supporting-text.b span').first().text().trim();
+        // The location is the text node after the <br> in .mdl-card__supporting-text.b
+        const locationBlock = $(el).find('.mdl-card__supporting-text.b').html() || '';
+        let location: string | undefined = undefined;
+        const brIndex = locationBlock.indexOf('<br>');
+        if (brIndex !== -1) {
+            const loaded = cheerio.load('<div>' + locationBlock + '</div>');
+            location = loaded('div')
+                .contents()
+                .filter(function (this: Text) {
+                    return (
+                        this.type === 'text' &&
+                        typeof this.data === 'string' &&
+                        this.data.trim() !== ''
+                    );
+                })
+                .last()
+                .text()
+                .trim();
+        }
         const date = new Date(dateText);
         if (title && !isNaN(date.getTime())) {
             events.push({
