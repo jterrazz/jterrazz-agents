@@ -6,11 +6,7 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
-import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
-import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
 import { createDevNewsJob } from '../adapters/inbound/job-runner/jobs/dev-news.job.js';
-import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
-import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 
@@ -62,26 +58,26 @@ const jobRunner = Injectable(
     ['Logger', 'ChatBot'] as const,
     (logger: LoggerPort, chatBot: ChatBotPort) =>
         new NodeCronAdapter(logger, [
-            createSpaceEventsJob({
-                channelName: 'space',
-                chatBot,
-                logger,
-            }),
-            createInvestNewsJob({
-                channelName: 'invest',
-                chatBot,
-                logger,
-            }),
-            createCryptoNewsJob({
-                channelName: 'crypto',
-                chatBot,
-                logger,
-            }),
-            createAINewsJob({
-                channelName: 'ai',
-                chatBot,
-                logger,
-            }),
+            // createSpaceEventsJob({
+            //     channelName: 'space',
+            //     chatBot,
+            //     logger,
+            // }),
+            // createInvestNewsJob({
+            //     channelName: 'invest',
+            //     chatBot,
+            //     logger,
+            // }),
+            // createCryptoNewsJob({
+            //     channelName: 'crypto',
+            //     chatBot,
+            //     logger,
+            // }),
+            // createAINewsJob({
+            //     channelName: 'ai',
+            //     chatBot,
+            //     logger,
+            // }),
             createDevNewsJob({
                 channelName: 'dev',
                 chatBot,
