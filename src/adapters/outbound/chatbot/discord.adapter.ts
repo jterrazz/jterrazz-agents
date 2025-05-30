@@ -1,6 +1,6 @@
 import { type Channel, Client, GatewayIntentBits, type TextChannel } from 'discord.js';
 
-import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
+import type { ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
 
 export class DiscordAdapter implements ChatBotPort {
     private client: Client;
@@ -19,7 +19,7 @@ export class DiscordAdapter implements ChatBotPort {
 
     async connect(): Promise<void> {
         if (!this.token) {
-            throw new Error('DISCORD_BOT_TOKEN is required');
+            throw new Error('A Discord bot token is required');
         }
         await this.client.login(this.token);
         await new Promise<void>((resolve) => {
@@ -33,6 +33,19 @@ export class DiscordAdapter implements ChatBotPort {
     // Optionally expose the client for advanced use
     getClient(): Client {
         return this.client;
+    }
+
+    async getRecentBotMessages(channelName: string, limit = 10): Promise<string[]> {
+        const guild = this.client.guilds.cache.first();
+        if (!guild) return [];
+        const channel = guild.channels.cache.find(
+            (ch: Channel) => ch.type === 0 && ch.name === channelName,
+        );
+        if (!channel || !channel.isTextBased()) return [];
+        const messages = await channel.messages.fetch({ limit });
+        return messages
+            .filter((msg) => msg.author.id === this.client.user?.id)
+            .map((msg) => msg.content);
     }
 
     async sendMessage(channelName: string, message: string): Promise<void> {

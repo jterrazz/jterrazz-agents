@@ -2,8 +2,8 @@ import { tool } from '@langchain/core/tools';
 
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
-import { getUpcomingEvents } from '../adapters/outbound/nextspaceflight-events.service.js';
-import { searchWeb } from '../adapters/outbound/websearch.service.js';
+import { searchWeb } from '../adapters/outbound/search/tavily.adapter.js';
+import { getUpcomingEvents } from '../adapters/outbound/web/nextspaceflight-web.adapter.js';
 
 export function createFetchRecentBotMessagesTool({ channelName, chatBot }: { channelName: string; chatBot: ChatBotPort; }) {
     return tool(

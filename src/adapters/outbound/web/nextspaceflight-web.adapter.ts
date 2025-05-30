@@ -2,7 +2,7 @@ import axios from 'axios';
 import * as cheerio from 'cheerio';
 import type { Text } from 'domhandler';
 
-import { type Event } from '../../ports/outbound/events.port.js';
+import { type Event } from '../../../ports/outbound/events.port.js';
 
 const NEXTSPACEFLIGHT_EVENTS_URL = 'https://nextspaceflight.com/events/';
 
@@ -12,7 +12,10 @@ export async function getUpcomingEvents(): Promise<Event[]> {
     const events: Event[] = [];
 
     // Extract all <style> blocks and join their contents
-    const styleBlocks = $('style').map((_, el) => $(el).html() || '').get().join('\n');
+    const styleBlocks = $('style')
+        .map((_, el) => $(el).html() || '')
+        .get()
+        .join('\n');
 
     $('.demo-card-square.mdl-card').each((_, el) => {
         const card = $(el);
@@ -23,7 +26,10 @@ export async function getUpcomingEvents(): Promise<Event[]> {
         let imageUrl: string | undefined = undefined;
         if (uniqueClass) {
             // Build regex to find the background-image URL for this card
-            const regex = new RegExp(`\\.demo-card-square\\.${uniqueClass} > \\.mdl-card__title \\{[^}]*background-image: url\\(([^)]+)\\)`, 'm');
+            const regex = new RegExp(
+                `\\.demo-card-square\\.${uniqueClass} > \\.mdl-card__title \\{[^}]*background-image: url\\(([^)]+)\\)`,
+                'm',
+            );
             const found = styleBlocks.match(regex);
             if (found && found[1]) {
                 imageUrl = found[1];
