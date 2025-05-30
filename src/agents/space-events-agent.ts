@@ -2,9 +2,9 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
-import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
+import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
-import { extractJson, isAgentResponse } from '../utils.js';
+import { extractJson, isAgentResponse } from './utils.js';
 
 import {
     createFetchRecentBotMessagesTool,
