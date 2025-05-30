@@ -20,7 +20,7 @@ export function createCryptoNewsAgent({
 }) {
     const agentSpecific = `
 Only post about important news or technical updates related to Bitcoin, Ethereum, or generic crypto topics (including dev/tech news).
-Use the fetchCryptoTweets tool to get the latest tweets from the crypto people.
+Use the fetchCryptoTweets tool to get the latest information on the web.
 `;
     return createChatAgent({
         logger,

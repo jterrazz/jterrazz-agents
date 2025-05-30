@@ -18,5 +18,8 @@ _A quick note: add a short, friendly, human-like sentence here to introduce the 
 - Use blockquotes for event details for clarity and visual separation.
 - Use emoji for each field for visual appeal.
 - If an image URL is available, show it as an embedded image below the event details.
+
+The output must be a maximum of 1500 characters (Discord message limit).
+Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
 `;
 } 

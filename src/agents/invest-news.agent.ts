@@ -20,7 +20,7 @@ export function createInvestNewsAgent({
 }) {
     const agentSpecific = `
 Summarize the latest important financial news and tweets relevant to investors.
-Use the fetchFinancialTweets tool to get the latest tweets from financial people.
+Use the fetchFinancialTweets tool to get the latest information on the web.
 `;
     const agent = createChatAgent({
         logger,

@@ -18,11 +18,7 @@ export const createSpaceEventsJob = ({
 }: SpaceEventsJobDependencies): Job => ({
     execute: async () => {
         const agent = createSpaceEventsAgent({ channelName, chatBot, logger });
-        await agent.run(
-            'List the next upcoming space events with their date, location, and a short description. Format the output as a Markdown list with clear bullet points, bold event titles, and aligned date/location/description. Add spacing and visual cues for clarity. Ensure the message is concise and easy to read in Discord.',
-            chatBot,
-            channelName,
-        );
+        await agent.run('New task received to post space events', chatBot, channelName);
     },
     executeOnStartup: true,
     name: 'space-events-agent',

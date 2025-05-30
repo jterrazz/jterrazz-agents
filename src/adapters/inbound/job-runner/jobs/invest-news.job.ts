@@ -18,11 +18,7 @@ export const createInvestNewsJob = ({
 }: InvestNewsJobDependencies): Job => ({
     execute: async () => {
         const agent = createInvestNewsAgent({ channelName, chatBot, logger });
-        await agent.run(
-            'Summarize the latest important financial news and tweets for the invest channel. Format the output as a Markdown list with clear bullet points, bold event titles, and aligned date/location/description. Add spacing and visual cues for clarity. Ensure the message is concise and easy to read in Discord.',
-            chatBot,
-            channelName,
-        );
+        await agent.run('New task received to post invest news', chatBot, channelName);
     },
     executeOnStartup: true,
     name: 'invest-news-agent',

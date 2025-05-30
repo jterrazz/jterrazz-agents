@@ -20,8 +20,8 @@ export function createSpaceEventsAgent({
 }) {
     const agentSpecific = `
 Only update about upcoming space missions, Starship launches, and Blue Origin launches. Ignore other rocket launches.
+Use the fetchSpaceEvents tool to get the latest information on the web.
 When using the getUpcomingSpaceEvents tool, always pass the following filter as input: filter with eventType 'space-mission' and 'rocket-launch', and titleIncludes 'starship' or 'blue origin'.
-Do not post the same information twice, even if the wording is slightly different.
 `;
     const agent = createChatAgent({
         logger,
