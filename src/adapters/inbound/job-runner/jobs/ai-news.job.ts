@@ -24,3 +24,4 @@ export const createAINewsJob = ({ channelName, chatBot, logger }: AINewsJobDepen
     name: 'ai-news-agent',
     schedule: '0 17 * * *', // Every day at 5:00 PM
 });
+ 

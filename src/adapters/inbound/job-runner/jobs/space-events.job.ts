@@ -24,3 +24,4 @@ export const createSpaceEventsJob = ({
     name: 'space-events-agent',
     schedule: '0 8 * * *', // Every day at 8:00 AM
 });
+ 

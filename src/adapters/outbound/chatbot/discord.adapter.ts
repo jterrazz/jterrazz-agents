@@ -32,12 +32,6 @@ export class DiscordAdapter implements ChatBotPort {
             });
         });
     }
-
-    // Optionally expose the client for advanced use
-    getClient(): Client {
-        return this.client;
-    }
-
     async getRecentBotMessages(
         channelName: string,
         limit = 10,

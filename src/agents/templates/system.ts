@@ -11,7 +11,6 @@ I will make this request many times in a day, so that you can give live informat
 - Find the right amount of notifications to make for the information you want to pass: probably around 2 messages are enough per day. So check the hour of the day and the number of messages already posted in the channel to make sure you can post something later for example.
 - Even if important information is missing, it can sometimes wait until tomorrow.
 - I repeat, if you do not post something, its an expected behavior.
-- Post only between 8am and 10pm on Paris time.
 
 For the message:
 - If there is nothing new or relevant to add, do not respond anything.

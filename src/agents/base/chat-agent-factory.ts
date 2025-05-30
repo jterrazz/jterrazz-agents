@@ -13,6 +13,7 @@ export type NewsAgentOptions = {
     tools: Array<DynamicTool<string>>;
 };
 
+// TODO: Hot fix for retry, it should not know about the Discord API error, it should just retry the message sending
 export function createChatAgent({ logger, modelConfig, promptTemplate, tools }: NewsAgentOptions) {
     const model = new ChatGoogleGenerativeAI(
         modelConfig ?? {
@@ -35,20 +36,58 @@ export function createChatAgent({ logger, modelConfig, promptTemplate, tools }: 
                 })();
             }
             const executor = await executorPromise;
-            const result = await executor.invoke({ input: userQuery });
-            const parsed = extractJson(result.output);
-            if (!isAgentResponse(parsed)) {
-                logger?.error('Agent response is not valid JSON', { output: result.output });
-                return;
+            let lastError: unknown = null;
+            let lastContent: string | undefined = undefined;
+            for (let attempt = 0; attempt < 3; attempt++) {
+                const result = await executor.invoke({ input: userQuery });
+                const parsed = extractJson(result.output);
+                if (!isAgentResponse(parsed)) {
+                    logger?.error('Agent response is not valid JSON', { output: result.output });
+                    return;
+                }
+                if (parsed.action === 'post' && parsed.content) {
+                    lastContent = parsed.content;
+                    if (parsed.content.length > 2000) {
+                        // Ask the LLM to strictly shorten the message
+                        userQuery = `The last message you generated was too long (${parsed.content.length} chars). Strictly shorten your output to fit under 2000 characters, including all formatting, links, and spacing. Output only the shortened message.`;
+                        continue;
+                    }
+                    try {
+                        await chatBot.sendMessage(channelName, parsed.content);
+                        logger?.info(`Message sent to #${channelName}`);
+                        return;
+                    } catch (err: unknown) {
+                        // Discord API error for message too long
+                        const errorObj = err as Record<string, unknown>;
+                        const rawError = errorObj.rawError as Record<string, unknown> | undefined;
+                        const errors = rawError?.errors as Record<string, unknown> | undefined;
+                        const content = errors?.content as Record<string, unknown> | undefined;
+                        const _errors = content?._errors as Array<{ code: string }> | undefined;
+                        if (
+                            rawError?.code === 50035 &&
+                            Array.isArray(_errors) &&
+                            _errors.some((e) => e.code === 'BASE_TYPE_MAX_LENGTH')
+                        ) {
+                            logger?.warn(
+                                'Discord message too long, retrying with stricter length constraint',
+                                { length: parsed.content.length },
+                            );
+                            userQuery = `The last message you generated was too long (${parsed.content.length} chars). Strictly shorten your output to fit under 2000 characters, including all formatting, links, and spacing. Output only the shortened message.`;
+                            lastError = err;
+                            continue;
+                        }
+                        logger?.error('Failed to send message to Discord', { err });
+                        throw err;
+                    }
+                } else if (parsed.action === 'noop') {
+                    logger?.info(parsed.reason ?? 'No reason provided for noop action');
+                    return;
+                } else {
+                    logger?.error('Unknown agent action', { parsed });
+                    return;
+                }
             }
-            if (parsed.action === 'post' && parsed.content) {
-                await chatBot.sendMessage(channelName, parsed.content);
-                logger?.info(`Message sent to #${channelName}`);
-            } else if (parsed.action === 'noop') {
-                logger?.info(parsed.reason ?? 'No reason provided for noop action');
-            } else {
-                logger?.error('Unknown agent action', { parsed });
-            }
+            logger?.error('Failed to send message after retries', { lastContent, lastError });
         },
     };
 }
