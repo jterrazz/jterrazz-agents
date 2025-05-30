@@ -1,10 +1,10 @@
 import config from 'config';
 import { z } from 'zod';
 
-import type {
-    ConfigurationPort,
-    OutboundConfigurationPort,
-} from '../../ports/inbound/configuration.port.js';
+import {
+    type ConfigurationPort,
+    type OutboundConfigurationPort,
+} from '../../../ports/inbound/configuration.port.js';
 
 const configurationSchema = z.object({
     outbound: z.object({
