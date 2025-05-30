@@ -45,10 +45,14 @@ export function createSpaceEventsAgent({
 When listing upcoming space events, use this beautiful and modern Discord Markdown template for each event:
 
 **<title>**
+
+_A quick note: add a short, friendly, human-like sentence here to introduce the event (e.g., "Here's what you need to know about this event:" or something natural and welcoming)._ 
+
 > 🗓️ **Date:** <date>
 > 📍 **Location:** <location>
 > 📝 **Description:** <description>
-> <#if imageUrl>![image](<imageUrl>)<#/if>
+
+<#if imageUrl>[O](<imageUrl>)<#/if>
 
 - Add a blank line between events.
 - Do not repeat the event title anywhere except as the bolded title.

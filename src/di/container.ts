@@ -5,6 +5,8 @@ import type { ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
+import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
+import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { NodeConfigAdapter } from '../adapters/inbound/node-config.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 
@@ -49,6 +51,22 @@ const spaceEventsAgent = Injectable(
 );
 
 /**
+ * JobRunner
+ */
+const jobRunner = Injectable(
+    'JobRunner',
+    ['Logger', 'ChatBot'] as const,
+    (logger: LoggerPort, chatBot: ChatBotPort) =>
+        new NodeCronAdapter(logger, [
+            createSpaceEventsJob({
+                channelName: 'space',
+                chatBot,
+                logger,
+            }),
+        ]),
+);
+
+/**
  * Container
  */
 export const createContainer = () =>
@@ -59,4 +77,6 @@ export const createContainer = () =>
         .provides(logger)
         .provides(chatBot)
         // Agents
-        .provides(spaceEventsAgent);
+        .provides(spaceEventsAgent)
+        // JobRunner
+        .provides(jobRunner);
