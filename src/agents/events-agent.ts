@@ -1,19 +1,28 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
+import type { Tool } from '@langchain/core/tools';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
-import { fetchRecentBotMessagesTool, fetchSpaceEventsTool, webSearchTool } from './tools.js';
+import type { ChatBotPort } from '../ports/chatbot.port.js';
 
-const model = new ChatGoogleGenerativeAI({
-    maxOutputTokens: 10_000,
-    model: 'gemini-2.5-flash-preview-05-20',
-    streaming: false,
-});
-
-const prompt = ChatPromptTemplate.fromMessages([
-    [
-        'system',
-        `You are a helpful assistant in a Discord chat. You should behave like a real person:
+export function createEventsAgent({
+    fetchRecentBotMessagesTool,
+    fetchSpaceEventsTool,
+    webSearchTool,
+}: {
+    fetchRecentBotMessagesTool: Tool;
+    fetchSpaceEventsTool: Tool;
+    webSearchTool: Tool;
+}) {
+    const model = new ChatGoogleGenerativeAI({
+        maxOutputTokens: 10_000,
+        model: 'gemini-2.5-flash-preview-05-20',
+        streaming: false,
+    });
+    const prompt = ChatPromptTemplate.fromMessages([
+        [
+            'system',
+            `You are a helpful assistant in a Discord chat. You should behave like a real person:
 - Do not post the same information twice, even if the wording is slightly different.
 - If there is nothing new or relevant to add, do not post anything.
 - Use the getRecentBotMessages tool to see what you (the bot) have recently posted.
@@ -42,28 +51,68 @@ Use the tools as needed to answer the user's question.
 
 {agent_scratchpad}
 `,
-    ],
-    ['human', '{input}'],
-]);
+        ],
+        ['human', '{input}'],
+    ]);
+    let executorPromise: null | Promise<AgentExecutor> = null;
+    return {
+        async run(userQuery: string, chatBot: ChatBotPort, channelName: string): Promise<void> {
+            if (!executorPromise) {
+                executorPromise = (async () => {
+                    const agent = await createStructuredChatAgent({
+                        llm: model,
+                        prompt,
+                        tools: [fetchSpaceEventsTool, webSearchTool, fetchRecentBotMessagesTool],
+                    });
+                    return AgentExecutor.fromAgentAndTools({
+                        agent,
+                        tools: [fetchSpaceEventsTool, webSearchTool, fetchRecentBotMessagesTool],
+                        verbose: true,
+                    });
+                })();
+            }
+            const executor = await executorPromise;
+            const result = await executor.invoke({ input: userQuery });
+            const parsed = extractJson(result.output);
+            if (!isAgentResponse(parsed)) {
+                console.error('Agent response is not valid JSON:', result.output);
+                return;
+            }
+            if (parsed.action === 'post' && parsed.content) {
+                await chatBot.sendMessage(channelName, parsed.content);
+                console.log(`Résumé des événements envoyé sur #${channelName}`);
+            } else if (parsed.action === 'noop') {
+                console.log(parsed.reason);
+            } else {
+                console.error('Unknown agent action:', parsed);
+            }
+        },
+    };
+}
 
-let executorPromise: null | Promise<AgentExecutor> = null;
-
-export async function runEventsAgent(userQuery: string): Promise<string> {
-    if (!executorPromise) {
-        executorPromise = (async () => {
-            const agent = await createStructuredChatAgent({
-                llm: model,
-                prompt,
-                tools: [fetchSpaceEventsTool, webSearchTool, fetchRecentBotMessagesTool],
-            });
-            return AgentExecutor.fromAgentAndTools({
-                agent,
-                tools: [fetchSpaceEventsTool, webSearchTool, fetchRecentBotMessagesTool],
-                verbose: true,
-            });
-        })();
+function extractJson(text: unknown): unknown {
+    if (typeof text === 'object' && text !== null) return text;
+    if (typeof text === 'string') {
+        const match = text.match(/```json\s*([\s\S]*?)```/i);
+        const jsonString = match ? match[1] : text;
+        try {
+            return JSON.parse(jsonString);
+        } catch (e) {
+            try {
+                return eval('(' + jsonString + ')');
+            } catch {
+                return null;
+            }
+        }
     }
-    const executor = await executorPromise;
-    const result = await executor.invoke({ input: userQuery });
-    return result.output;
+    return null;
+}
+
+function isAgentResponse(
+    obj: unknown,
+): obj is { action: string; content?: string; reason?: string } {
+    if (typeof obj !== 'object' || obj === null) return false;
+    if (!Object.prototype.hasOwnProperty.call(obj, 'action')) return false;
+    const action = (obj as Record<string, unknown>).action;
+    return typeof action === 'string';
 }
