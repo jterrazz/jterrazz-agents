@@ -6,11 +6,9 @@ import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { extractJson, isAgentResponse } from './utils.js';
 
-import {
-    createFetchRecentBotMessagesTool,
-    createFetchSpaceEventsTool,
-    createWebSearchTool,
-} from '../tools.js';
+import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
+import { createFetchSpaceEventsTool } from './tools/fetch-space-events.tool.js';
+import { createWebSearchTool } from './tools/web-search.tool.js';
 
 export function createSpaceEventsAgent({
     channelName,

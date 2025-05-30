@@ -11,7 +11,7 @@ export function createFetchRecentBotMessagesTool({
 }) {
     return tool(
         async (_input: string) => {
-            return JSON.stringify(await chatBot.getRecentBotMessages(channelName, 10));
+            return JSON.stringify(await chatBot.getRecentBotMessages(channelName, 20));
         },
         {
             description: `Fetches the most recent messages sent by the bot in the ${channelName} channel.`,
