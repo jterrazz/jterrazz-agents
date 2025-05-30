@@ -8,6 +8,7 @@ import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
+import { createDevNewsJob } from '../adapters/inbound/job-runner/jobs/dev-news.job.js';
 import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
 import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
@@ -78,6 +79,11 @@ const jobRunner = Injectable(
             }),
             createAINewsJob({
                 channelName: 'ai',
+                chatBot,
+                logger,
+            }),
+            createDevNewsJob({
+                channelName: 'dev',
                 chatBot,
                 logger,
             }),
