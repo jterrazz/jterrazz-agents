@@ -1,6 +1,6 @@
 import { describe, test } from '@jterrazz/test';
 
-import { getUpcomingRocketLaunches } from './nextspaceflight.adapter.js';
+import { getUpcomingRocketLaunches } from '../nextspaceflight.adapter.js';
 
 // Unit test for getUpcomingRocketLaunches
 
