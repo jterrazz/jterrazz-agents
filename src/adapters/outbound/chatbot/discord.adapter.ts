@@ -65,7 +65,6 @@ export class DiscordAdapter implements ChatBotPort {
             );
             if (channel && channel.isTextBased()) {
                 await (channel as TextChannel).send(message);
-                this.logger.info(`Message sent to #${channelName}`);
             }
         }
     }

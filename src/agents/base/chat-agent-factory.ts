@@ -43,7 +43,7 @@ export function createChatAgent({ logger, modelConfig, promptTemplate, tools }: 
             }
             if (parsed.action === 'post' && parsed.content) {
                 await chatBot.sendMessage(channelName, parsed.content);
-                logger?.info(`Résumé envoyé sur #${channelName}`);
+                logger?.info(`Message sent to #${channelName}`);
             } else if (parsed.action === 'noop') {
                 logger?.info(parsed.reason ?? 'No reason provided for noop action');
             } else {
