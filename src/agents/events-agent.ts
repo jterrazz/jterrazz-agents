@@ -1,44 +1,8 @@
 import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { tool } from '@langchain/core/tools';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
-import { getRecentBotMessages } from '../adapters/discord-messages.service.js';
-import { getUpcomingEvents } from '../adapters/nextspaceflight-events.service.js';
-import { searchWeb } from '../adapters/websearch.service.js';
-
-import { channelName, client } from '../index.js';
-
-const fetchEventsTool = tool(
-    async (_input: string) => {
-        return JSON.stringify(await getUpcomingEvents());
-    },
-    {
-        description: 'Fetches upcoming space events.',
-        name: 'getUpcomingEvents',
-    },
-);
-
-const webSearchTool = tool(
-    async (input: string) => {
-        return JSON.stringify(await searchWeb(input));
-    },
-    {
-        description: 'Performs a web search for up-to-date information.',
-        name: 'searchWeb',
-    },
-);
-
-const fetchRecentBotMessagesTool = tool(
-    async (_input: string) => {
-        // Fetch the last 10 bot messages from the #space channel
-        return JSON.stringify(await getRecentBotMessages({ channelName, client, limit: 10 }));
-    },
-    {
-        description: 'Fetches the most recent messages sent by the bot in the #space channel.',
-        name: 'getRecentBotMessages',
-    },
-);
+import { fetchRecentBotMessagesTool, fetchSpaceEventsTool, webSearchTool } from './tools.js';
 
 const model = new ChatGoogleGenerativeAI({
     maxOutputTokens: 10_000,
@@ -90,11 +54,11 @@ export async function runEventsAgent(userQuery: string): Promise<string> {
             const agent = await createStructuredChatAgent({
                 llm: model,
                 prompt,
-                tools: [fetchEventsTool, webSearchTool, fetchRecentBotMessagesTool],
+                tools: [fetchSpaceEventsTool, webSearchTool, fetchRecentBotMessagesTool],
             });
             return AgentExecutor.fromAgentAndTools({
                 agent,
-                tools: [fetchEventsTool, webSearchTool, fetchRecentBotMessagesTool],
+                tools: [fetchSpaceEventsTool, webSearchTool, fetchRecentBotMessagesTool],
                 verbose: true,
             });
         })();
