@@ -4,4 +4,4 @@ outbound:
   discord:
     botToken: DISCORD_BOT_TOKEN
   tavily:
-    apiKey: TAVILY_API_KEY 
+    apiKey: TAVILY_API_KEY

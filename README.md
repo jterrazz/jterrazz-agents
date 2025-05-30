@@ -49,4 +49,3 @@ Contributions are welcome! If you have ideas, improvements, or want to help buil
 https://github.com/jterrazz/jterrazz-agents
 
 Feel free to open issues or submit pull requests.
- 
