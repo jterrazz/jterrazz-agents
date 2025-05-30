@@ -3,24 +3,24 @@ import type { LoggerPort } from '@jterrazz/logger';
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
-import { createSpaceEventsAgent } from '../../../../agents/space-events.agent.js';
+import { createTechEventsAgent } from '../../../../agents/tech-events.agent.js';
 
-export type SpaceEventsJobDependencies = {
+export type TechEventsJobDependencies = {
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 };
 
-export const createSpaceEventsJob = ({
+export const createTechEventsJob = ({
     channelName,
     chatBot,
     logger,
-}: SpaceEventsJobDependencies): Job => ({
+}: TechEventsJobDependencies): Job => ({
     execute: async () => {
-        const agent = createSpaceEventsAgent({ channelName, chatBot, logger });
-        await agent.run('New task received to post space events', chatBot, channelName);
+        const agent = createTechEventsAgent({ channelName, chatBot, logger });
+        await agent.run('New task received to post tech events', chatBot, channelName);
     },
     executeOnStartup: true,
-    name: 'space-events-agent',
+    name: 'tech-events-agent',
     schedule: '0 8 * * *', // Every day at 8:00 AM
 });

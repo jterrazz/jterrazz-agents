@@ -1,4 +1,5 @@
 export enum EventTypeEnum {
+    Conference = 'conference',
     RocketLaunch = 'rocket-launch',
     SpaceMission = 'space-mission',
 }

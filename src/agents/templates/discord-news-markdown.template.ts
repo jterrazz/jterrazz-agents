@@ -3,7 +3,7 @@ export function useDiscordNewsMarkdownFormat(): string {
 Use this clear and modern Discord Markdown template for each item.
 You can publish multiple ideas / news / paragraphs in the same message.
 
-Start the message with a genuinely human, casual intro phrase (e.g. "Hey guys, just spotted some cool stuff you might like:" or "Quick news drop for you all:").
+Start the message with a genuinely human, casual intro phrase (e.g. a greeting or friendly opener) ONLY if you have NOT already greeted or used an intro in the last few messages. If you recently greeted, skip the intro and go straight to the news.
 
 **<title>**
 
@@ -17,8 +17,9 @@ _Short, human-like summary or context sentence about why this matters._
 - Do not include a global title or heading; only output the news list.
 - If a URL or tweet link is available, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
 
-**Example:**
+**Example for the structure:**
 
+(If you haven't greeted recently:)
 Hey people, just spotted some cool stuff you might like:
 
 **🚀 Bun 1.0 Released!**
