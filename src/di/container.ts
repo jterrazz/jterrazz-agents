@@ -1,4 +1,4 @@
-import { PinoLoggerAdapter } from '@jterrazz/logger';
+import { type LoggerPort, PinoLoggerAdapter } from '@jterrazz/logger';
 import { Container, Injectable } from '@snap/ts-inject';
 
 import type { ConfigurationPort } from '../ports/inbound/configuration.port.js';
@@ -30,17 +30,17 @@ const logger = Injectable(
 const chatBot = Injectable(
     'ChatBot',
     ['Configuration', 'Logger'] as const,
-    (config: ConfigurationPort, logger) =>
+    (config: ConfigurationPort, logger: LoggerPort) =>
         new DiscordAdapter(config.getOutboundConfiguration().discordBotToken, logger),
 );
 
 /**
- * Agent factories
+ * Agents
  */
-const spaceEventsAgentFactory = Injectable(
+const spaceEventsAgent = Injectable(
     'SpaceEventsAgent',
     ['ChatBot', 'Logger'] as const,
-    (chatBot: ChatBotPort, logger) =>
+    (chatBot: ChatBotPort, logger: LoggerPort) =>
         createSpaceEventsAgent({
             channelName: 'space',
             chatBot,
@@ -49,13 +49,14 @@ const spaceEventsAgentFactory = Injectable(
 );
 
 /**
- * Container configuration
+ * Container
  */
 export const createContainer = () =>
     Container
-        // Outbound adapters
+        // Inbound adapters
         .provides(configurationAdapter)
+        // Outbound adapters
         .provides(logger)
         .provides(chatBot)
         // Agents
-        .provides(spaceEventsAgentFactory);
+        .provides(spaceEventsAgent);
