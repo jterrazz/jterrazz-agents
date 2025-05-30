@@ -36,7 +36,8 @@ _Rust continues to improve developer experience and performance with its latest 
 > Rust 1.75 brings new language features and faster compile times. etc etc
 > <https://blog.rust-lang.org/2024/01/18/Rust-1.75.0.html>
 
-IMPORTANT: The output MUST be a maximum of 1700 characters. Do not break the url links that are sent. But count everything in the character limit.
+IMPORTANT: The output MUST be a maximum of 1700 letters. 
+Do not break the url links that are sent. But evaluate everything in the character limit, including the url links.
 Respect the spacing and the line breaks.
 Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
 `;
