@@ -3,7 +3,7 @@ import type { LoggerPort } from '@jterrazz/logger';
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
-import { createSpaceEventsAgent } from '../../../../agents/space-events-agent.js';
+import { createSpaceEventsAgent } from '../../../../agents/space-events.agent.js';
 
 export type SpaceEventsJobDependencies = {
     channelName: string;

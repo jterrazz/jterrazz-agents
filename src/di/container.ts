@@ -10,7 +10,7 @@ import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapte
 import { NodeConfigAdapter } from '../adapters/inbound/node-config.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 
-import { createSpaceEventsAgent } from '../agents/space-events-agent.js';
+import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
 
 /**
  * Inbound adapters
