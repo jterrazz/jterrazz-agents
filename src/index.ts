@@ -5,11 +5,11 @@ export const channelName = 'space';
 
 (async () => {
     const container = createContainer();
-    const chatBot = container.get('ChatBotPort');
+    const chatBot = container.get('ChatBot');
     await chatBot.connect();
 
-    const eventsAgent = container.get('EventsAgent');
-    await eventsAgent.run(
+    const spaceEventsAgent = container.get('SpaceEventsAgent');
+    await spaceEventsAgent.run(
         'List the next upcoming space events with their date, location, and a short description. Format the output as a Markdown list with clear bullet points, bold event titles, and aligned date/location/description. Add spacing and visual cues for clarity. Ensure the message is concise and easy to read in Discord.',
         chatBot,
         channelName,

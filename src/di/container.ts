@@ -6,34 +6,32 @@ import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { NodeConfigAdapter } from '../adapters/inbound/node-config.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
-import { searchWeb } from '../adapters/outbound/search/tavily.adapter.js';
-import { getUpcomingEvents } from '../adapters/outbound/web/nextspaceflight-web.adapter.js';
 
-import { createEventsAgent } from '../agents/events-agent.js';
+import { createSpaceEventsAgent } from '../agents/space/space-events-agent.js';
+
+/**
+ * Inbound adapters
+ */
+const configurationAdapter = Injectable('Configuration', () => new NodeConfigAdapter());
 
 /**
  * Outbound adapters
  */
-const configurationAdapter = Injectable('Configuration', () => new NodeConfigAdapter());
-
-const chatBotPort = Injectable(
-    'ChatBotPort',
+const chatBot = Injectable(
+    'ChatBot',
     ['Configuration'] as const,
     (config: ConfigurationPort) =>
         new DiscordAdapter(config.getOutboundConfiguration().discordBotToken),
 );
 
-const spaceEventsAdapter = Injectable('SpaceEventsAdapter', () => getUpcomingEvents);
-const webSearchAdapter = Injectable('WebSearchAdapter', () => searchWeb);
-
 /**
  * Agent factories
  */
-const eventsAgentFactory = Injectable(
-    'EventsAgent',
-    ['ChatBotPort'] as const,
+const spaceEventsAgentFactory = Injectable(
+    'SpaceEventsAgent',
+    ['ChatBot'] as const,
     (chatBot: ChatBotPort) =>
-        createEventsAgent({
+        createSpaceEventsAgent({
             channelName: 'space',
             chatBot,
         }),
@@ -46,8 +44,6 @@ export const createContainer = () =>
     Container
         // Outbound adapters
         .provides(configurationAdapter)
-        .provides(spaceEventsAdapter)
-        .provides(webSearchAdapter)
-        .provides(chatBotPort)
+        .provides(chatBot)
         // Agents
-        .provides(eventsAgentFactory);
+        .provides(spaceEventsAgentFactory);
