@@ -1,6 +1,6 @@
 export function useDiscordNewsMarkdownFormat(): string {
     return `
-Use this clear and modern Discord Markdown template for each item:
+Use this clear and modern Discord Markdown template for each item. This format is for both news and a mix of what your sources are thinking or discussing on the relevant subject—not just strict news, but also more relaxed or opinionated takes.
 
 **<headline>**
 

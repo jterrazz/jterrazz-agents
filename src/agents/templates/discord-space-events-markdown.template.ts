@@ -10,7 +10,7 @@ _A quick note: add a short, friendly, human-like sentence here to introduce the 
 > 📍 **Location:** <location>
 > 📝 **Description:** <description>
 
-<#if imageUrl>[O](<imageUrl>)<#/if>
+<#if imageUrl>[Image](<imageUrl>)<#/if>
 
 - Add a blank line between events.
 - Do not repeat the event title anywhere except as the bolded title.
@@ -22,4 +22,4 @@ _A quick note: add a short, friendly, human-like sentence here to introduce the 
 The output must be a maximum of 1500 characters (Discord message limit).
 Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
 `;
-} 
+}
