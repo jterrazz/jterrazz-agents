@@ -1,16 +1,9 @@
 import type { LoggerPort } from '@jterrazz/logger';
-import { ChatPromptTemplate } from '@langchain/core/prompts';
-import { tool } from '@langchain/core/tools';
-import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
-import { type TwitterFeedMessage } from '../ports/outbound/twitter-feed.port.js';
 
-import { createNitterTwitterAdapter } from '../adapters/outbound/web-scraper/nitter-twitter.adapter.js';
-
-import { extractJson, isAgentResponse } from './utils.js';
-
+import { createChatAgent } from './factories/chat-agent-factory.js';
+import { createFetchCryptoTweetsTool } from './tools/fetch-crypto-tweets.tool.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 
 export function createCryptoAgent({
@@ -22,16 +15,13 @@ export function createCryptoAgent({
     chatBot: ChatBotPort;
     logger: LoggerPort;
 }) {
-    const fetchRecentBotMessagesTool = createFetchRecentBotMessagesTool({ channelName, chatBot });
-    const fetchCryptoTweetsTool = createFetchCryptoTweetsTool();
-    const model = new ChatGoogleGenerativeAI({
-        maxOutputTokens: 10_000,
-        model: 'gemini-2.5-flash-preview-05-20',
-    });
-    const prompt = ChatPromptTemplate.fromMessages([
-        [
-            'system',
-            `You are a helpful assistant in a Discord chat for the #crypto channel. You should behave like a real person:
+    return createChatAgent({
+        logger,
+        modelConfig: undefined,
+        promptTemplate: [
+            [
+                'system',
+                `You are a helpful assistant in a Discord chat for the #crypto channel. You should behave like a real person:
 - Only post about important news or technical updates related to Bitcoin, Ethereum, or generic crypto topics (including dev/tech news).
 - Fetch the latest tweets from @pete_rizzo_, @cz_binance, and @VitalikButerin using the fetchCryptoTweets tool.
 - Never repeat already sent news, even if the wording or formatting changes. Always check recent bot messages to avoid duplicates.
@@ -59,6 +49,7 @@ _Short, human-like summary or context sentence about why this news matters._
 - Use blockquotes for details for clarity and visual separation.
 - If a URL is available, show it as a link below the details.
 - The output must be a maximum of 1500 characters (for Discord safety). If your answer is longer, summarize or trim it to fit.
+- Only include the most essential and impactful news—skip anything that is not highly relevant.
 - Keep the output concise, readable, and visually clear for the #crypto channel.
 
 You have access to the following tools:
@@ -68,74 +59,12 @@ Use the tools as needed to answer the user's question.
 
 {agent_scratchpad}
 `,
+            ],
+            ['human', '{input}'],
         ],
-        ['human', '{input}'],
-    ]);
-    let executorPromise: null | Promise<AgentExecutor> = null;
-    return {
-        async run(userQuery: string, chatBot: ChatBotPort, channelName: string): Promise<void> {
-            if (!executorPromise) {
-                executorPromise = (async () => {
-                    const agent = await createStructuredChatAgent({
-                        llm: model,
-                        prompt,
-                        tools: [fetchRecentBotMessagesTool, fetchCryptoTweetsTool],
-                    });
-                    return AgentExecutor.fromAgentAndTools({
-                        agent,
-                        tools: [fetchRecentBotMessagesTool, fetchCryptoTweetsTool],
-                    });
-                })();
-            }
-            const executor = await executorPromise;
-            const result = await executor.invoke({ input: userQuery });
-            const parsed = extractJson(result.output);
-            if (!isAgentResponse(parsed)) {
-                logger.error('Agent response is not valid JSON', { output: result.output });
-                return;
-            }
-            if (parsed.action === 'post' && parsed.content) {
-                await chatBot.sendMessage(channelName, parsed.content);
-                logger.info(`Résumé des actualités envoyé sur #${channelName}`);
-            } else if (parsed.action === 'noop') {
-                logger.info(parsed.reason ?? 'No reason provided for noop action');
-            } else {
-                logger.error('Unknown agent action', { parsed });
-            }
-        },
-    };
-}
-
-function createFetchCryptoTweetsTool() {
-    const nitter = createNitterTwitterAdapter();
-    const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
-    return tool(
-        async (input: string) => {
-            // input: JSON string { username?: string, limit?: number }
-            let usernames = cryptoUsernames;
-            let limit = 5;
-            try {
-                if (input) {
-                    const parsed = JSON.parse(input);
-                    if (parsed.username) usernames = [parsed.username];
-                    if (parsed.usernames && Array.isArray(parsed.usernames))
-                        usernames = parsed.usernames;
-                    if (parsed.limit) limit = parsed.limit;
-                }
-            } catch {
-                /* ignore JSON parse errors, use defaults */
-            }
-            let allTweets: TwitterFeedMessage[] = [];
-            for (const username of usernames) {
-                const tweets = await nitter.fetchLatestMessages(username, limit);
-                allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
-            }
-            return JSON.stringify(allTweets);
-        },
-        {
-            description:
-                'Fetches latest crypto tweets from a list of Nitter users. Input: { usernames?: string[], limit?: number }',
-            name: 'fetchCryptoTweets',
-        },
-    );
+        tools: [
+            createFetchRecentBotMessagesTool({ channelName, chatBot }),
+            createFetchCryptoTweetsTool(),
+        ],
+    });
 }
