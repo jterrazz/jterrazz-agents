@@ -3,9 +3,9 @@ import { tool } from '@langchain/core/tools';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
-import { getRecentBotMessages } from '../infrastructure/discord-messages.service.js';
-import { getUpcomingEvents } from '../infrastructure/nextspaceflight-events.service.js';
-import { searchWeb } from '../infrastructure/websearch.service.js';
+import { getRecentBotMessages } from '../adapters/discord-messages.service.js';
+import { getUpcomingEvents } from '../adapters/nextspaceflight-events.service.js';
+import { searchWeb } from '../adapters/websearch.service.js';
 
 import { channelName, client } from '../index.js';
 

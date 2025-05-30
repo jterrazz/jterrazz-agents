@@ -35,9 +35,17 @@ This repository manages intelligent agents for automating tasks on your Discord 
 ## Project Structure
 
 - `src/agents/` — Agent definitions and logic
-- `src/domain/` — Domain interfaces and types
-- `src/infrastructure/` — Infrastructure implementations (Discord, web search, events)
+- `src/ports/` — Port interfaces and contracts (application boundaries)
+- `src/adapters/` — Adapter implementations (Discord, web search, events, etc.)
 
 ---
 
 Feel free to extend this project to add more agents and automation for your Discord and daily life!
+
+## Contributing
+
+Contributions are welcome! If you have ideas, improvements, or want to help build the next big thing, check out the repository:
+
+https://github.com/jterrazz/jterrazz-agents
+
+Feel free to open issues or submit pull requests.
