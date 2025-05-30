@@ -26,7 +26,6 @@ export function createSpaceEventsAgent({
     const model = new ChatGoogleGenerativeAI({
         maxOutputTokens: 10_000,
         model: 'gemini-2.5-flash-preview-05-20',
-        streaming: false,
     });
     const prompt = ChatPromptTemplate.fromMessages([
         [
