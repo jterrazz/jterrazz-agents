@@ -1,3 +1,4 @@
+import type { LoggerPort } from '@jterrazz/logger';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
@@ -13,9 +14,11 @@ import { createWebSearchTool } from './tools/web-search.tool.js';
 export function createSpaceEventsAgent({
     channelName,
     chatBot,
+    logger,
 }: {
     channelName: string;
     chatBot: ChatBotPort;
+    logger: LoggerPort;
 }) {
     const fetchRecentBotMessagesTool = createFetchRecentBotMessagesTool({ channelName, chatBot });
     const fetchSpaceEventsTool = createFetchSpaceEventsTool();
@@ -81,16 +84,16 @@ Use the tools as needed to answer the user's question.
             const result = await executor.invoke({ input: userQuery });
             const parsed = extractJson(result.output);
             if (!isAgentResponse(parsed)) {
-                console.error('Agent response is not valid JSON:', result.output);
+                logger.error('Agent response is not valid JSON', { output: result.output });
                 return;
             }
             if (parsed.action === 'post' && parsed.content) {
                 await chatBot.sendMessage(channelName, parsed.content);
-                console.log(`Résumé des événements envoyé sur #${channelName}`);
+                logger.info(`Résumé des événements envoyé sur #${channelName}`);
             } else if (parsed.action === 'noop') {
-                console.log(parsed.reason);
+                logger.info(parsed.reason ?? 'No reason provided for noop action');
             } else {
-                console.error('Unknown agent action:', parsed);
+                logger.error('Unknown agent action', { parsed });
             }
         },
     };

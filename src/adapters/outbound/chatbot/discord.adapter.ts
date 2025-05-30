@@ -1,13 +1,16 @@
+import type { LoggerPort } from '@jterrazz/logger';
 import { type Channel, Client, GatewayIntentBits, type TextChannel } from 'discord.js';
 
 import type { ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
 
 export class DiscordAdapter implements ChatBotPort {
     private client: Client;
+    private logger: LoggerPort;
     private token: string;
 
-    constructor(token: string) {
+    constructor(token: string, logger: LoggerPort) {
         this.token = token;
+        this.logger = logger;
         this.client = new Client({
             intents: [
                 GatewayIntentBits.Guilds,
@@ -24,7 +27,7 @@ export class DiscordAdapter implements ChatBotPort {
         await this.client.login(this.token);
         await new Promise<void>((resolve) => {
             this.client.once('ready', () => {
-                console.log(`Bot connecté en tant que ${this.client.user?.tag}`);
+                this.logger.info(`Bot connecté en tant que ${this.client.user?.tag}`);
                 resolve();
             });
         });
@@ -56,7 +59,7 @@ export class DiscordAdapter implements ChatBotPort {
             );
             if (channel && channel.isTextBased()) {
                 await (channel as TextChannel).send(message);
-                console.log(`Message sent to #${channelName}`);
+                this.logger.info(`Message sent to #${channelName}`);
             }
         }
     }
