@@ -37,12 +37,16 @@ export function createNitterAdapter(): SocialFeedPort {
                     const createdAtText =
                         item.querySelector('.tweet-date > a')?.getAttribute('title') || '';
                     const createdAt = createdAtText ? createdAtText : '';
-                    const url = link ? 'https://nitter.net' + link : '';
+                    let url = link ? 'https://nitter.net' + link : '';
                     const author =
                         item
                             .querySelector('.tweet-header .username')
                             ?.textContent?.replace('@', '')
                             .trim() || '';
+                    // Fallback: if id is present but url is missing, construct it
+                    if (!url && id && author) {
+                        url = `https://nitter.net/${author}/status/${id}`;
+                    }
                     return { author, createdAt, id, text, url };
                 });
             }, limit);
