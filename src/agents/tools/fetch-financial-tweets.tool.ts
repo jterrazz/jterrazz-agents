@@ -26,4 +26,4 @@ export function createFetchFinancialTweetsTool() {
             name: 'fetchFinancialTweets',
         },
     );
-} 
+}

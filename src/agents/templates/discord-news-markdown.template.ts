@@ -13,7 +13,7 @@ _Short, human-like summary or context sentence about why this matters._
 - Add a blank line between items for readability.
 - Do not repeat the title anywhere except as the bolded title.
 - Do not include a global title or heading; only output the news list.
-- If a URL is available, show it as a link below the details.
+- If a URL or tweet link is available, show it as a link below the details as a read more link.
 
 The output must be a maximum of 1500 characters (Discord message limit).
 Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
