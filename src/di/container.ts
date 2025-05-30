@@ -11,6 +11,7 @@ import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-
 import { createDevNewsJob } from '../adapters/inbound/job-runner/jobs/dev-news.job.js';
 import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
 import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
+import { createTechEventsJob } from '../adapters/inbound/job-runner/jobs/tech-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 
@@ -84,6 +85,11 @@ const jobRunner = Injectable(
             }),
             createDevNewsJob({
                 channelName: 'dev',
+                chatBot,
+                logger,
+            }),
+            createTechEventsJob({
+                channelName: 'tech',
                 chatBot,
                 logger,
             }),

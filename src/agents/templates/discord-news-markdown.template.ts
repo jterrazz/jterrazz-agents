@@ -3,7 +3,7 @@ export function useDiscordNewsMarkdownFormat(): string {
 Use this clear and modern Discord Markdown template for each item.
 You can publish multiple ideas / news / paragraphs in the same message.
 
-Start the message with a genuinely human, casual intro phrase (e.g. a greeting or friendly opener) ONLY if you have NOT already greeted or used an intro in the last few messages. If you recently greeted, skip the intro and go straight to the news.
+Start the message with a genuinely human, casual intro phrase (e.g. a greeting or friendly opener) ONLY if you have NOT already greeted or used an intro in the last few messages. If you recently greeted, do an intro but without the greeting.
 
 **<title>**
 
