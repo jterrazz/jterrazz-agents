@@ -22,5 +22,5 @@ export const createCryptoNewsJob = ({
     },
     executeOnStartup: true,
     name: 'crypto-news-agent',
-    schedule: '0 8 * * *', // Every day at 8:00 AM
+    schedule: '0 17 * * *', // Every day at 5:00 PM
 });

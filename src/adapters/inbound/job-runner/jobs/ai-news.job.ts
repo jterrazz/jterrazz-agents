@@ -22,5 +22,5 @@ export const createAINewsJob = ({ channelName, chatBot, logger }: AINewsJobDepen
     },
     executeOnStartup: true,
     name: 'ai-news-agent',
-    schedule: '0 8 * * *', // Every day at 8:00 AM
+    schedule: '0 17 * * *', // Every day at 5:00 PM
 });
