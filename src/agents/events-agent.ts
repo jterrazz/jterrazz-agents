@@ -1,53 +1,71 @@
+import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { tool } from '@langchain/core/tools';
 import { ChatGoogleGenerativeAI } from '@langchain/google-genai';
-import { z } from 'zod';
+import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
 import { getUpcomingEvents } from '../infrastructure/nextspaceflight-events.service.js';
 import { searchWeb } from '../infrastructure/websearch.service.js';
 
 const fetchEventsTool = tool(
-    async () => {
+    async (_input: string) => {
         return JSON.stringify(await getUpcomingEvents());
     },
     {
         description: 'Fetches upcoming space events from NextSpaceflight.',
         name: 'getUpcomingEvents',
-        schema: z.object({}),
     },
 );
 
 const webSearchTool = tool(
-    async ({ query }: { query: string }) => {
-        return JSON.stringify(await searchWeb(query));
+    async (input: string) => {
+        return JSON.stringify(await searchWeb(input));
     },
     {
         description: 'Performs a web search for up-to-date information.',
         name: 'searchWeb',
-        schema: z.object({
-            query: z.string().describe('The search query to use.'),
-        }),
     },
 );
 
 const model = new ChatGoogleGenerativeAI({
     maxOutputTokens: 2048,
     model: 'gemini-2.5-flash-preview-05-20',
+    streaming: false,
 });
 
-const modelWithTools = model.bindTools([fetchEventsTool, webSearchTool]);
+const prompt = ChatPromptTemplate.fromMessages([
+    [
+        'system',
+        `You are a helpful assistant for a Discord chat. When listing upcoming space events, format your output for Discord: use Markdown, clear bullet points, bold event titles, and include date, location, and a short description for each event. Keep the output concise and visually clear for the #space channel.
+
+You have access to the following tools:
+{tools}
+Tool names: {tool_names}
+Use the tools as needed to answer the user's question.
+
+{agent_scratchpad}
+`,
+    ],
+    ['human', '{input}'],
+]);
+
+let executorPromise: null | Promise<AgentExecutor> = null;
 
 export async function runEventsAgent(userQuery: string): Promise<string> {
-    const res = await modelWithTools.invoke(userQuery);
-    console.log(res);
-    if (Array.isArray(res.content)) {
-        return res.content
-            .map((part) => {
-                if (typeof part === 'string') return part;
-                if (typeof part === 'object' && 'text' in part && typeof part.text === 'string')
-                    return part.text;
-                return '';
-            })
-            .join(' ');
+    if (!executorPromise) {
+        executorPromise = (async () => {
+            const agent = await createStructuredChatAgent({
+                llm: model,
+                prompt,
+                tools: [fetchEventsTool, webSearchTool],
+            });
+            return AgentExecutor.fromAgentAndTools({
+                agent,
+                tools: [fetchEventsTool, webSearchTool],
+                verbose: true,
+            });
+        })();
     }
-    return typeof res.content === 'string' ? res.content : '';
+    const executor = await executorPromise;
+    const result = await executor.invoke({ input: userQuery });
+    return result.output;
 }
