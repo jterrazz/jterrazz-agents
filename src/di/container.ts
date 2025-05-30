@@ -6,6 +6,7 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
+import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
 import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
 import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
@@ -72,6 +73,11 @@ const jobRunner = Injectable(
             }),
             createCryptoNewsJob({
                 channelName: 'crypto',
+                chatBot,
+                logger,
+            }),
+            createAINewsJob({
+                channelName: 'ai',
                 chatBot,
                 logger,
             }),

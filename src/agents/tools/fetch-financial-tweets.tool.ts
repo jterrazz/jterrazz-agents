@@ -22,7 +22,7 @@ export function createFetchFinancialTweetsTool() {
         },
         {
             description:
-                'Fetches latest financial tweets from a Nitter user. Input: { username: string, limit?: number }',
+                'Fetches latest financial tweets from a Twitter user. Input: { username: string, limit?: number }',
             name: 'fetchFinancialTweets',
         },
     );

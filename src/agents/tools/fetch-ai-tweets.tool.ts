@@ -4,12 +4,25 @@ import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js
 
 import { createNitterAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
 
-export function createFetchCryptoTweetsTool() {
+export function createFetchAITweetsTool() {
     const nitter = createNitterAdapter();
-    const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
+    const aiUsernames = [
+        'GoogleAI',
+        'nvidia',
+        'AnthropicAI',
+        'metaai',
+        'midjourney',
+        'sama',
+        'demishassabis',
+        'AndrewYNg',
+        'Ronald_vanLoon',
+        'alliekmiller',
+        'DeepLearn007',
+        'cursor_ai',
+    ];
     return tool(
         async (input: string) => {
-            let usernames = cryptoUsernames;
+            let usernames = aiUsernames;
             let limit = 5;
             try {
                 if (input) {
@@ -31,8 +44,8 @@ export function createFetchCryptoTweetsTool() {
         },
         {
             description:
-                'Fetches latest crypto tweets from a list of Twitter users. Input: { usernames?: string[], limit?: number }',
-            name: 'fetchCryptoTweets',
+                'Fetches latest AI-related tweets from a list of Twitter users. Input: { usernames?: string[], limit?: number }',
+            name: 'fetchAITweets',
         },
     );
 }

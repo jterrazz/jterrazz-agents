@@ -1,4 +1,3 @@
-import fs from 'fs';
 import puppeteer from 'puppeteer';
 
 import {
@@ -50,12 +49,6 @@ export function createNitterAdapter(): SocialFeedPort {
                     return { author, createdAt, id, text, url };
                 });
             }, limit);
-            if (!tweetsFound || messagesRaw.length === 0) {
-                const html = await page.content();
-                fs.writeFileSync('nitter-debug.html', html, 'utf-8');
-
-                console.error('No tweets found. Page HTML saved to nitter-debug.html');
-            }
             await browser.close();
             // Convert createdAt to Date object using robust parsing
             const messages: SocialFeedMessage[] = messagesRaw.map((msg: any) => ({
