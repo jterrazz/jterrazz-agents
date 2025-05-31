@@ -18,14 +18,9 @@ export const createDevNewsJob = ({
 }: DevNewsJobDependencies): Job => ({
     execute: async () => {
         const agent = createDevNewsAgent({ channelName, chatBot, logger });
-        await agent.run(
-            'Summarize the latest important dev news, open source updates, and tweets for the dev channel. Only include software development, open source, or general dev/tech news. Format the output as a news digest, concise, and under 2000 characters. Ensure the message is concise and easy to read in Discord.',
-            chatBot,
-            channelName,
-        );
+        await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,
     name: 'dev-news-agent',
     schedule: '0 17 * * *', // Every day at 5:00 PM
 });
- 

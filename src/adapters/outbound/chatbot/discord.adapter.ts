@@ -34,7 +34,7 @@ export class DiscordAdapter implements ChatBotPort {
     }
     async getRecentBotMessages(
         channelName: string,
-        limit = 10,
+        limit = 20,
     ): Promise<{ content: string; date: string }[]> {
         const guild = this.client.guilds.cache.first();
         if (!guild) return [];

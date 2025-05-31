@@ -18,7 +18,7 @@ export const createInvestNewsJob = ({
 }: InvestNewsJobDependencies): Job => ({
     execute: async () => {
         const agent = createInvestNewsAgent({ channelName, chatBot, logger });
-        await agent.run('New task received to post invest news', chatBot, channelName);
+        await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,
     name: 'invest-news-agent',

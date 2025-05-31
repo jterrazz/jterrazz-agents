@@ -18,7 +18,7 @@ export const createSpaceEventsJob = ({
 }: SpaceEventsJobDependencies): Job => ({
     execute: async () => {
         const agent = createSpaceEventsAgent({ channelName, chatBot, logger });
-        await agent.run('New task received to post space events', chatBot, channelName);
+        await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,
     name: 'space-events-agent',

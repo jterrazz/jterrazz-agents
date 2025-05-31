@@ -18,7 +18,7 @@ export const createTechEventsJob = ({
 }: TechEventsJobDependencies): Job => ({
     execute: async () => {
         const agent = createTechEventsAgent({ channelName, chatBot, logger });
-        await agent.run('New task received to post tech events', chatBot, channelName);
+        await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,
     name: 'tech-events-agent',

@@ -18,7 +18,7 @@ export const createCryptoNewsJob = ({
 }: CryptoNewsJobDependencies): Job => ({
     execute: async () => {
         const agent = createCryptoNewsAgent({ channelName, chatBot, logger });
-        await agent.run('New task received to post crypto news', chatBot, channelName);
+        await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,
     name: 'crypto-news-agent',
