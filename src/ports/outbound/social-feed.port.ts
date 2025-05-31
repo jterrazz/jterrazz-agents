@@ -3,6 +3,7 @@ export interface SocialFeedMessage {
     createdAt: Date;
     id: string;
     text: string;
+    timeAgo: string; // Human-readable time difference from now
     url: string;
 }
 
