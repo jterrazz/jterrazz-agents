@@ -22,12 +22,9 @@ export function createTechEventsAgent({
     logger: LoggerPort;
 }) {
     const agentSpecific = `
-The audience is developers based in France. Only update about major, well-known tech conferences (e.g., Apple WWDC, Google I/O, Nvidia GTC, Microsoft Build, AWS re:Invent, CES, and super important European/French events). Some local events like CES outside France can be interesting but only if they are globally significant.
+The audience is developers based in France. Only update about major, well-known tech conferences (Apple, Google, Nvidia, Microsoft, AWS, CES).
 
-Do NOT include niche or vertical-specific conferences like Snowflake Summit, Databricks Data + AI Summit, or similar. Ignore events focused on a single SaaS, cloud, or data vendor unless they are truly global and relevant to all devs.
-Do not hesitate to have no response, or a very few of events if there are no relevant events.
-
-Focus on generic developer events, big tech company conferences, and major crypto/blockchain events.
+You will have nothing to say most of the time, as there are not many really big events happening.
 `;
     const agent = createChatAgent({
         logger,
