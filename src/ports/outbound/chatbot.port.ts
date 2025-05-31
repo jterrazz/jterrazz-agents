@@ -7,4 +7,5 @@ export interface ChatBotPort {
 export type RecentBotMessage = {
     content: string;
     date: string; // ISO 8601 string
+    timeAgo: string; // Human-readable time difference from now
 };
