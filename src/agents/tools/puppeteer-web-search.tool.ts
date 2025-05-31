@@ -30,3 +30,7 @@ export function createPuppeteerWebSearchTool() {
         },
     );
 }
+
+export function withPuppeteerWebSearchTool() {
+    return 'Use the puppeteerWebSearch tool to load a web page and get its content from a URL or search query.';
+}

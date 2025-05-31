@@ -6,7 +6,7 @@ import { createChatAgent } from './base/chat-agent-factory.js';
 import { useDiscordEventsMarkdownFormat } from './templates/discord-space-events-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
-import { createFetchSpaceEventsTool, useFetchSpaceEventsTool } from './tools/fetch-space-events.tool.js';
+import { createFetchSpaceEventsTool,withFetchSpaceEventsTool } from './tools/fetch-space-events.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createSpaceEventsAgent({
@@ -25,7 +25,7 @@ Only update about upcoming space missions, Starship launches, and Blue Origin la
         logger,
         modelConfig: undefined,
         promptTemplate: [
-            ['system', buildSystemPrompt(agentSpecific, useDiscordEventsMarkdownFormat(), useFetchSpaceEventsTool())],
+            ['system', buildSystemPrompt(agentSpecific, useDiscordEventsMarkdownFormat(), withFetchSpaceEventsTool())],
             ['human', '{input}'],
         ],
         tools: [

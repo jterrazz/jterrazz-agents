@@ -3,9 +3,9 @@ import type { LoggerPort } from '@jterrazz/logger';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
-import { useDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
+import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
-import { createFetchAITweetsTool, useFetchAITweetsTool } from './tools/fetch-ai-tweets.tool.js';
+import { createFetchAITweetsTool,withFetchAITweetsTool } from './tools/fetch-ai-tweets.tool.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
@@ -29,8 +29,8 @@ Only post about important news, discussions, or updates related to AI, machine l
                 'system',
                 buildSystemPrompt(
                     agentSpecific,
-                    useDiscordNewsMarkdownFormat(),
-                    useFetchAITweetsTool(),
+                    withDiscordNewsMarkdownFormat(),
+                    withFetchAITweetsTool(),
                 ),
             ],
             ['human', '{input}'],

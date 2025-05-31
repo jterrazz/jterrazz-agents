@@ -1,4 +1,4 @@
-export function useDiscordNewsMarkdownFormat(): string {
+export function withDiscordNewsMarkdownFormat(): string {
     return `
 Use this clear and modern Discord Markdown template for each item.
 You can publish multiple ideas / news / paragraphs in the same message.

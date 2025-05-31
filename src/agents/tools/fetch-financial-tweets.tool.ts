@@ -18,6 +18,6 @@ export function createFetchFinancialTweetsTool() {
     );
 }
 
-export function useFetchFinancialTweetsTool() {
-    return 'Use the fetchFinancialTweets tool to get information on what to post about.';
+export function withFetchFinancialTweetsTool() {
+    return 'Use the fetchFinancialTweets tool to get latest information about finance.';
 }

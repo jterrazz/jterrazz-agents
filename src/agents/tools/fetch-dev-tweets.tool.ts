@@ -25,6 +25,6 @@ export function createFetchDevTweetsTool() {
     );
 }
 
-export function useFetchDevTweetsTool() {
-    return 'Use the fetchDevTweets tool to get information on what to post about.';
+export function withFetchDevTweetsTool() {
+    return 'Use the fetchDevTweets tool to get latest information about software development.';
 }

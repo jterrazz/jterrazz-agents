@@ -19,3 +19,7 @@ export function createFetchRecentBotMessagesTool({
         },
     );
 }
+
+export function withFetchRecentBotMessagesTool() {
+    return 'Use the getRecentBotMessages tool to see what you (the bot) have recently posted.';
+}

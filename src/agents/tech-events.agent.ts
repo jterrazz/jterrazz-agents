@@ -8,7 +8,7 @@ import { buildSystemPrompt } from './templates/system.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 import {
     createFetchTechEventsTool,
-    useFetchTechEventsTool,
+    withFetchTechEventsTool,
 } from './tools/fetch-tech-events.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
@@ -38,7 +38,7 @@ Focus on generic developer events, big tech company conferences, and major crypt
                 buildSystemPrompt(
                     agentSpecific,
                     useDiscordEventsMarkdownFormat(),
-                    useFetchTechEventsTool(),
+                    withFetchTechEventsTool(),
                 ),
             ],
             ['human', '{input}'],

@@ -3,11 +3,11 @@ import type { LoggerPort } from '@jterrazz/logger';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
-import { useDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
+import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
 import {
     createFetchCryptoTweetsTool,
-    useFetchCryptoTweetsTool,
+    withFetchCryptoTweetsTool,
 } from './tools/fetch-crypto-tweets.tool.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
@@ -32,8 +32,8 @@ Only post about important news, discussions or updates related to Bitcoin, Ether
                 'system',
                 buildSystemPrompt(
                     agentSpecific,
-                    useDiscordNewsMarkdownFormat(),
-                    useFetchCryptoTweetsTool(),
+                    withDiscordNewsMarkdownFormat(),
+                    withFetchCryptoTweetsTool(),
                 ),
             ],
             ['human', '{input}'],

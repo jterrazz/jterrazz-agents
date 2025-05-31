@@ -12,3 +12,7 @@ export function createGetCurrentDateTool() {
         },
     );
 }
+
+export function withGetCurrentDateTool() {
+    return 'Use the getCurrentDate tool to get the current date.';
+}
