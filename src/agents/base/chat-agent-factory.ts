@@ -18,7 +18,7 @@ export function createChatAgent({ logger, modelConfig, promptTemplate, tools }: 
     const model = new ChatGoogleGenerativeAI(
         modelConfig ?? {
             maxOutputTokens: 64_000,
-            model: 'gemini-2.5-pro-preview-05-06',
+            model: 'gemini-2.5-flash-preview-05-20',
         },
     );
     const prompt = ChatPromptTemplate.fromMessages(promptTemplate);

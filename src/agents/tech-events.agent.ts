@@ -22,9 +22,9 @@ export function createTechEventsAgent({
     logger: LoggerPort;
 }) {
     const agentSpecific = `
-The audience is developers based in France. Only update about major, well-known tech conferences (Apple, Google, Nvidia, Microsoft, AWS, CES).
+The audience is developers based in France. Only about these tech conferences: Apple, Google, Nvidia, Microsoft, AWS, CES).
 
-You will have nothing to say most of the time, as there are not many really big events happening.
+You will have nothing to say most of the time, as most of the events happening are not related to that.
 `;
     const agent = createChatAgent({
         logger,

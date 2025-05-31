@@ -16,12 +16,13 @@ export function createFetchTechEventsTool() {
             return JSON.stringify(events);
         },
         {
-            description: 'Fetches a generic list of upcoming tech events within the next 14 days.',
+            description:
+                'Fetches the internet for a generic list of upcoming tech events within the next 14 days.',
             name: 'getUpcomingTechEvents',
         },
     );
 }
 
 export function withFetchTechEventsTool() {
-    return 'Use the getUpcomingTechEvents tool to retrieve a generic list of upcoming tech events.';
+    return 'Use the getUpcomingTechEvents tool to check on the internet for a generic list of upcoming tech events.';
 }
