@@ -7,7 +7,7 @@ import {
 
 export function createNitterAdapter(): SocialFeedPort {
     return {
-        async fetchLatestMessages(username: string, limit = 10): Promise<SocialFeedMessage[]> {
+        async fetchLatestMessages(username: string, limit = 20): Promise<SocialFeedMessage[]> {
             const browser = await puppeteer.launch({ headless: true });
             const page = await browser.newPage();
             await page.setUserAgent(

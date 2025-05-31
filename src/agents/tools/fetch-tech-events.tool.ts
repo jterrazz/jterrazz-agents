@@ -1,6 +1,6 @@
 import { tool } from '@langchain/core/tools';
 
-import { getUpcomingTechEvents } from '../../adapters/outbound/web-scraper/techmeme-events.adapter.js';
+import { getUpcomingTechEvents } from '../../adapters/outbound/web-scraper/techmeme.adapter.js';
 
 export function createFetchTechEventsTool() {
     return tool(

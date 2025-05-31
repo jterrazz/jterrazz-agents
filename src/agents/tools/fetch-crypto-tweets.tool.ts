@@ -8,30 +8,17 @@ export function createFetchCryptoTweetsTool() {
     const nitter = createNitterAdapter();
     const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
     return tool(
-        async (input: string) => {
-            let usernames = cryptoUsernames;
-            let limit = 5;
-            try {
-                if (input) {
-                    const parsed = JSON.parse(input);
-                    if (parsed.username) usernames = [parsed.username];
-                    if (parsed.usernames && Array.isArray(parsed.usernames))
-                        usernames = parsed.usernames;
-                    if (parsed.limit) limit = parsed.limit;
-                }
-            } catch {
-                /* ignore JSON parse errors, use defaults */
-            }
+        async () => {
+            const usernames = cryptoUsernames;
             let allTweets: SocialFeedMessage[] = [];
             for (const username of usernames) {
-                const tweets = await nitter.fetchLatestMessages(username, limit);
+                const tweets = await nitter.fetchLatestMessages(username);
                 allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
             }
             return JSON.stringify(allTweets);
         },
         {
-            description:
-                'Fetches latest crypto tweets from a list of Twitter users. Input: { usernames?: string[], limit?: number }',
+            description: 'Fetches latest crypto tweets from a predefined list of Twitter users.',
             name: 'fetchCryptoTweets',
         },
     );

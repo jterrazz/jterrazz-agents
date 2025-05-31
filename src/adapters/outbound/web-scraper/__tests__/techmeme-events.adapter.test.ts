@@ -1,6 +1,6 @@
 import { describe, test } from '@jterrazz/test';
 
-import { getUpcomingTechEvents } from '../techmeme-events.adapter.js';
+import { getUpcomingTechEvents } from '../techmeme.adapter.js';
 
 describe('getUpcomingTechEvents', () => {
     test('it should log the output of upcoming tech events', async () => {
