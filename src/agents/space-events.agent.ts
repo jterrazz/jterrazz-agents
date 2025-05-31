@@ -6,7 +6,7 @@ import { createChatAgent } from './base/chat-agent-factory.js';
 import { useDiscordEventsMarkdownFormat } from './templates/discord-space-events-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
-import { createFetchSpaceEventsTool } from './tools/fetch-space-events.tool.js';
+import { createFetchSpaceEventsTool, useFetchSpaceEventsTool } from './tools/fetch-space-events.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createSpaceEventsAgent({
@@ -20,14 +20,12 @@ export function createSpaceEventsAgent({
 }) {
     const agentSpecific = `
 Only update about upcoming space missions, Starship launches, and Blue Origin launches. Ignore other rocket launches.
-Use the fetchSpaceEvents tool to get the latest information on the web.
-When using the getUpcomingSpaceEvents tool, always pass the following filter as input: filter with eventType 'space-mission' and 'rocket-launch', and titleIncludes 'starship' or 'blue origin'.
 `;
     const agent = createChatAgent({
         logger,
         modelConfig: undefined,
         promptTemplate: [
-            ['system', buildSystemPrompt(agentSpecific, useDiscordEventsMarkdownFormat())],
+            ['system', buildSystemPrompt(agentSpecific, useDiscordEventsMarkdownFormat(), useFetchSpaceEventsTool())],
             ['human', '{input}'],
         ],
         tools: [

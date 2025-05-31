@@ -29,3 +29,7 @@ export function createFetchSpaceEventsTool() {
         },
     );
 }
+
+export function useFetchSpaceEventsTool() {
+    return 'Use the getUpcomingSpaceEvents tool to get the latest information on the web. Always pass the following filter as input: filter with eventType \'space-mission\' and \'rocket-launch\', and titleIncludes \'starship\' or \'blue origin\'.';
+}

@@ -21,3 +21,7 @@ export function createFetchTechEventsTool() {
         },
     );
 }
+
+export function useFetchTechEventsTool() {
+    return 'Use the getUpcomingTechEvents tool to get the latest information on the web.';
+}

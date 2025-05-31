@@ -37,3 +37,7 @@ export function createFetchAITweetsTool() {
         },
     );
 }
+
+export function useFetchAITweetsTool() {
+    return 'Use the fetchAITweets tool to get information on what to post about.';
+}

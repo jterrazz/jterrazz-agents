@@ -23,3 +23,7 @@ export function createFetchCryptoTweetsTool() {
         },
     );
 }
+
+export function useFetchCryptoTweetsTool() {
+    return 'Use the fetchCryptoTweets tool to get information on what to post about.';
+}

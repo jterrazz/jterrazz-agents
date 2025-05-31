@@ -6,7 +6,10 @@ import { createChatAgent } from './base/chat-agent-factory.js';
 import { useDiscordEventsMarkdownFormat } from './templates/discord-space-events-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
-import { createFetchTechEventsTool } from './tools/fetch-tech-events.tool.js';
+import {
+    createFetchTechEventsTool,
+    useFetchTechEventsTool,
+} from './tools/fetch-tech-events.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createTechEventsAgent({
@@ -25,14 +28,19 @@ Do NOT include niche or vertical-specific conferences like Snowflake Summit, Dat
 Do not hesitate to have no response, or a very few of events if there are no relevant events.
 
 Focus on generic developer events, big tech company conferences, and major crypto/blockchain events.
-
-Use the getUpcomingTechEvents tool to get the latest information on the web.
 `;
     const agent = createChatAgent({
         logger,
         modelConfig: undefined,
         promptTemplate: [
-            ['system', buildSystemPrompt(agentSpecific, useDiscordEventsMarkdownFormat())],
+            [
+                'system',
+                buildSystemPrompt(
+                    agentSpecific,
+                    useDiscordEventsMarkdownFormat(),
+                    useFetchTechEventsTool(),
+                ),
+            ],
             ['human', '{input}'],
         ],
         tools: [
