@@ -6,6 +6,8 @@ import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
 import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
 
+import { withGoogleAIRateLimit } from '../../adapters/outbound/ai/google-ai-rate-limiter.js';
+
 export type NewsAgentOptions = {
     logger?: LoggerPort;
     modelConfig?: GoogleGenerativeAIChatInput;
@@ -39,7 +41,15 @@ export function createChatAgent({ logger, modelConfig, promptTemplate, tools }: 
             let lastError: unknown = null;
             let lastContent: string | undefined = undefined;
             for (let attempt = 0; attempt < 3; attempt++) {
-                const result = await executor.invoke({ input: userQuery });
+                let result;
+                try {
+                    result = await withGoogleAIRateLimit(() =>
+                        executor.invoke({ input: userQuery }),
+                    );
+                } catch (rateLimitError) {
+                    logger?.warn('Google AI rate limit hit', { rateLimitError });
+                    throw rateLimitError;
+                }
                 const parsed = extractJson(result.output);
                 if (!isAgentResponse(parsed)) {
                     logger?.error('Agent response is not valid JSON', { output: result.output });
