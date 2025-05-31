@@ -1,9 +1,16 @@
 export function withDiscordNewsMarkdownFormat(): string {
     return `
 Use this clear and modern Discord Markdown template for each item.
-You can publish multiple ideas / news / paragraphs in the same message.
 
-Start the message with a genuinely human, casual intro phrase (e.g. a greeting or friendly opener) ONLY if you have NOT already greeted or used an intro in the last few messages. If you recently greeted, do an intro but without the greeting.
+- You can publish multiple ideas / news / paragraphs in the same message.
+- IMPORTANT: The output MUST be a maximum of 1700 letters. Do not break the url links that are sent. But evaluate everything in the character limit, including the url links.
+- Add a blank line between items for readability.
+- Do not repeat the title anywhere except as the bolded title.
+- If a URL or tweet link is available, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
+- Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
+
+###START OF THE TEMPLATE###
+A genuinely human, casual phrase, based on the last messages you already sent.
 
 **<title>**
 
@@ -12,15 +19,13 @@ _Short, human-like summary or context sentence about why this matters._
 > <summary or main point>
 > <#if url><https://example.com><#/if>
 
-- Add a blank line between items for readability.
-- Do not repeat the title anywhere except as the bolded title.
-- Do not include a global title or heading; only output the news list.
-- If a URL or tweet link is available, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
+###CONTINUE WITH AS MANY ITEMS AS YOU NEED###
 
-**Example for the structure:**
+###END OF THE TEMPLATE###
 
-(If you haven't greeted recently:)
-Hey people, just spotted some cool stuff you might like:
+###START OF THE EXAMPLE###
+
+Just spotted some cool stuff you might like:
 
 **🚀 Bun 1.0 Released!**
 
@@ -37,9 +42,6 @@ _Rust continues to improve developer experience and performance with its latest 
 > Rust 1.75 brings new language features and faster compile times. etc etc
 > <https://blog.rust-lang.org/2024/01/18/Rust-1.75.0.html>
 
-IMPORTANT: The output MUST be a maximum of 1700 letters. 
-Do not break the url links that are sent. But evaluate everything in the character limit, including the url links.
-Respect the spacing and the line breaks.
-Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
+###END OF THE EXAMPLE###
 `;
 }
