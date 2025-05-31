@@ -16,12 +16,12 @@ export function createFetchTechEventsTool() {
             return JSON.stringify(events);
         },
         {
-            description: 'Fetches upcoming tech conferences within the next 14 days.',
+            description: 'Fetches a generic list of upcoming tech events within the next 14 days.',
             name: 'getUpcomingTechEvents',
         },
     );
 }
 
 export function withFetchTechEventsTool() {
-    return 'Use the getUpcomingTechEvents tool to get latest information about tech conferences.';
+    return 'Use the getUpcomingTechEvents tool to retrieve a generic list of upcoming tech events.';
 }
