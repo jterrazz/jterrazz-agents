@@ -14,6 +14,7 @@ export type AINewsJobDependencies = {
 export const createAINewsJob = ({ channelName, chatBot, logger }: AINewsJobDependencies): Job => ({
     execute: async () => {
         const agent = createAINewsAgent({ channelName, chatBot, logger });
+        console.log('Running AI news agent');
         await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,
