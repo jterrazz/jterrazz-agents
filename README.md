@@ -4,42 +4,71 @@ This repository manages intelligent agents for automating tasks on your Discord 
 
 ## Overview
 
-- **Goal:** Provide a framework for running AI-powered agents that interact with Discord and automate personal workflows.
+- **Goal:** Provide a modular framework for running AI-powered agents that interact with Discord and automate personal workflows.
 - **Features:**
-  - Discord bot integration
-  - Event summarization and posting
-  - Web search and event fetching tools
+  - Discord bot integration (via `discord.js`)
+  - Automated news and event summarization (AI, dev, crypto, finance, tech, and space)
+  - Web scraping and search tools (using Puppeteer and Cheerio)
   - Extensible agent and tool system
+  - Job scheduling for regular updates
 
 ## Setup
 
 1. **Install dependencies:**
+
    ```bash
    npm install
    ```
-2. **Configure environment variables:**
-   - Create a `.env` file or set the following variables:
-     - `GOOGLE_API_KEY` (your Google Cloud API key)
-     - `DISCORD_BOT_TOKEN` (your Discord bot token)
+
+2. **Configure your credentials:**
+
+   - Edit `config/local.yml` to provide your configuration values. Example:
+     ```yaml
+     outbound:
+       google:
+         apiKey: <your-google-api-key>
+       discord:
+         botToken: <your-discord-bot-token>
+     ```
+
 3. **Run the bot in development:**
+
    ```bash
    npm run dev
    ```
 
+   - For production, use:
+     ```bash
+     npm run build
+     npm start
+     ```
+
 ## Usage
 
-- The bot will connect to your Discord server and post updates (e.g., upcoming space events) in the configured channel.
-- Agents can be extended to automate more aspects of your Discord or personal workflows.
+- The bot connects to your Discord server and posts updates (e.g., news, events) in the configured channel.
+- Agents are modular and can be extended to automate more aspects of your Discord or personal workflows.
+- Job runners automatically schedule and execute agent tasks (e.g., daily news, event reminders).
 
 ## Project Structure
 
-- `src/agents/` — Agent definitions and logic
-- `src/ports/` — Port interfaces and contracts (application boundaries)
-- `src/adapters/` — Adapter implementations (Discord, web search, events, etc.)
+- `src/agents/` — Agent definitions (AI, dev, crypto, finance, tech, space) and their tools
+- `src/ports/` — Domain interfaces (ports) for application boundaries
+- `src/adapters/` — Infrastructure implementations (Discord, web scraping, AI, configuration, job runner)
+- `src/di/` — Dependency injection setup
+- `config/` — Configuration files (use `local.yml` for local secrets/keys)
 
----
+## Agents & Tools
 
-Feel free to extend this project to add more agents and automation for your Discord and daily life!
+- **Agents:** Each agent (e.g., AI news, dev news, crypto news, financial news, tech events, space events) is responsible for fetching, filtering, and posting relevant content.
+- **Tools:** Modular tools fetch tweets, events, and perform web searches. Each tool is reusable and can be composed into agents.
+- **Job Runner:** Schedules and triggers agents at defined intervals (e.g., every morning).
+
+## Configuration
+
+- All configuration is managed via YAML files in the `config/` directory.
+- The main keys you need to set are:
+  - `outbound.google.apiKey`
+  - `outbound.discord.botToken`
 
 ## Contributing
 
