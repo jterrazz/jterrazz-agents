@@ -40,6 +40,9 @@ export function createFetchAITweetsTool() {
                 });
                 allTweets = allTweets.concat(todaysTweets.map((t) => ({ ...t, username })));
             }
+
+            console.log(`Found ${allTweets.length} tweets related to AI`);
+
             return JSON.stringify(allTweets);
         },
         {

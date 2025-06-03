@@ -3,5 +3,3 @@ outbound:
     apiKey: GOOGLE_API_KEY
   discord:
     botToken: DISCORD_BOT_TOKEN
-  tavily:
-    apiKey: TAVILY_API_KEY

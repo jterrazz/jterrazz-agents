@@ -21,7 +21,6 @@ This repository manages intelligent agents for automating tasks on your Discord 
    - Create a `.env` file or set the following variables:
      - `GOOGLE_API_KEY` (your Google Cloud API key)
      - `DISCORD_BOT_TOKEN` (your Discord bot token)
-     - `TAVILY_API_KEY` (for web search, if used)
 3. **Run the bot in development:**
    ```bash
    npm run dev

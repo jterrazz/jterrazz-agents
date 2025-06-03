@@ -14,9 +14,6 @@ const configurationSchema = z.object({
         google: z.object({
             apiKey: z.string().min(1, 'A Google API key is required'),
         }),
-        tavily: z.object({
-            apiKey: z.string().optional(),
-        }),
     }),
 });
 
@@ -34,11 +31,6 @@ export class NodeConfigAdapter implements ConfigurationPort {
                 google: {
                     apiKey: config.get('outbound.google.apiKey'),
                 },
-                tavily: {
-                    apiKey: config.has('outbound.tavily.apiKey')
-                        ? config.get('outbound.tavily.apiKey')
-                        : undefined,
-                },
             },
         });
     }
@@ -47,7 +39,6 @@ export class NodeConfigAdapter implements ConfigurationPort {
         return {
             discordBotToken: this.configuration.outbound.discord.botToken,
             googleApiKey: this.configuration.outbound.google.apiKey,
-            tavilyApiKey: this.configuration.outbound.tavily.apiKey,
         };
     }
 }

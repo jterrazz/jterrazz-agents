@@ -5,5 +5,4 @@ export interface ConfigurationPort {
 export interface OutboundConfigurationPort {
     discordBotToken: string;
     googleApiKey: string;
-    tavilyApiKey?: string;
 }
