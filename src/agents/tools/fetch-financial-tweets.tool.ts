@@ -7,12 +7,23 @@ export function createFetchFinancialTweetsTool() {
     return tool(
         async () => {
             const username = 'KobeissiLetter';
+            const today = new Date();
+            const todayUTC = new Date(
+                Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+            );
             const tweets = await nitter.fetchLatestMessages(username);
-            return JSON.stringify(tweets);
+            const todaysTweets = tweets.filter((t) => {
+                const tweetDate = new Date(t.createdAt);
+                return (
+                    tweetDate.getUTCFullYear() === todayUTC.getUTCFullYear() &&
+                    tweetDate.getUTCMonth() === todayUTC.getUTCMonth() &&
+                    tweetDate.getUTCDate() === todayUTC.getUTCDate()
+                );
+            });
+            return JSON.stringify(todaysTweets);
         },
         {
-            description:
-                'Fetches latest financial tweets from a predefined Twitter user.',
+            description: 'Fetches latest financial tweets from a predefined Twitter user.',
             name: 'fetchFinancialTweets',
         },
     );

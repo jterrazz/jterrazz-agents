@@ -24,9 +24,21 @@ export function createFetchAITweetsTool() {
         async () => {
             const usernames = aiUsernames;
             let allTweets: SocialFeedMessage[] = [];
+            const today = new Date();
+            const todayUTC = new Date(
+                Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
+            );
             for (const username of usernames) {
                 const tweets = await nitter.fetchLatestMessages(username);
-                allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
+                const todaysTweets = tweets.filter((t) => {
+                    const tweetDate = new Date(t.createdAt);
+                    return (
+                        tweetDate.getUTCFullYear() === todayUTC.getUTCFullYear() &&
+                        tweetDate.getUTCMonth() === todayUTC.getUTCMonth() &&
+                        tweetDate.getUTCDate() === todayUTC.getUTCDate()
+                    );
+                });
+                allTweets = allTweets.concat(todaysTweets.map((t) => ({ ...t, username })));
             }
             return JSON.stringify(allTweets);
         },
