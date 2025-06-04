@@ -1,9 +1,0 @@
-{
-	"id": "GX83pfmOPf2y6IY",
-	"json": "{\"id\":\"GX83pfmOPf2y6IY\",\"url\":\"https://nitter.net/cursor_ai\",\"loadedUrl\":\"https://nitter.net/cursor_ai\",\"uniqueKey\":\"https://nitter.net/cursor_ai\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2025-06-04T22:09:09.119Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://nitter.net/cursor_ai",
-	"url": "https://nitter.net/cursor_ai"
-}

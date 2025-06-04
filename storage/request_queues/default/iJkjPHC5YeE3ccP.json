@@ -1,9 +1,0 @@
-{
-	"id": "iJkjPHC5YeE3ccP",
-	"json": "{\"id\":\"iJkjPHC5YeE3ccP\",\"url\":\"https://nitter.net/sama\",\"loadedUrl\":\"https://nitter.net/sama\",\"uniqueKey\":\"https://nitter.net/sama\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2025-06-04T22:08:10.731Z\"}",
-	"method": "GET",
-	"orderNo": null,
-	"retryCount": 0,
-	"uniqueKey": "https://nitter.net/sama",
-	"url": "https://nitter.net/sama"
-}

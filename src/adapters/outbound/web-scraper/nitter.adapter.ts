@@ -1,13 +1,10 @@
-import { PuppeteerCrawler } from 'crawlee';
-import puppeteer from 'puppeteer-extra';
-import StealthPlugin from 'puppeteer-extra-plugin-stealth';
+import { PlaywrightCrawler } from 'crawlee';
+import { chromium } from 'playwright';
 
 import {
     type SocialFeedMessage,
     type SocialFeedPort,
 } from '../../../ports/outbound/social-feed.port.js';
-
-puppeteer.use(StealthPlugin());
 
 const CHROME_USER_AGENT =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
@@ -20,9 +17,9 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
             const url = `${NITTER_BASE_URL}/${username}`;
             console.log(`[NitterAdapter] Fetching URL: ${url} (concurrency: ${concurrency})`);
 
-            const crawler = new PuppeteerCrawler({
+            const crawler = new PlaywrightCrawler({
                 launchContext: {
-                    launcher: puppeteer,
+                    launcher: chromium,
                     launchOptions: {
                         args: ['--no-sandbox', '--disable-setuid-sandbox'],
                         headless: true,
@@ -34,18 +31,17 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
                     let attempt = 0;
 
                     while (attempt < maxRetries) {
-                        await page.setUserAgent(CHROME_USER_AGENT);
-                        await page.setViewport({ height: 800, width: 1280 });
                         await page.setExtraHTTPHeaders({
                             'Accept-Encoding': 'gzip, deflate, br',
                             'Accept-Language': 'en-US,en;q=0.9',
                             DNT: '1',
                             'Upgrade-Insecure-Requests': '1',
+                            'User-Agent': CHROME_USER_AGENT,
                         });
 
                         try {
-                            await page.goto(url, { waitUntil: 'networkidle2' });
-                            await new Promise((res) => setTimeout(res, 2000));
+                            await page.goto(url, { waitUntil: 'networkidle' });
+                            await page.waitForTimeout(2000);
 
                             try {
                                 // Wait for tweet content with a shorter timeout
@@ -57,7 +53,7 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
                                 );
                                 attempt++;
                                 if (attempt < maxRetries) {
-                                    await new Promise((res) => setTimeout(res, 15000));
+                                    await page.waitForTimeout(15000);
                                     continue;
                                 }
                                 throw new Error(
@@ -74,7 +70,7 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
                                 );
                                 attempt++;
                                 if (attempt < maxRetries) {
-                                    await new Promise((res) => setTimeout(res, 15000));
+                                    await page.waitForTimeout(15000);
                                     continue;
                                 }
                                 throw new Error('Max retries exceeded - no tweets found');
@@ -93,7 +89,7 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
 
                                 const linkHandle = await el.$('a.tweet-link');
                                 const link = linkHandle
-                                    ? await linkHandle.evaluate((a) => a.getAttribute('href'))
+                                    ? await linkHandle.getAttribute('href')
                                     : '';
                                 if (!link)
                                     console.log(`timeline-item[${i}] missing tweet-link href`);
@@ -103,15 +99,13 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
 
                                 const textHandle = await el.$('.tweet-content');
                                 const text = textHandle
-                                    ? await textHandle.evaluate(
-                                          (node) => node.textContent?.trim() || '',
-                                      )
+                                    ? (await textHandle.textContent())?.trim() || ''
                                     : '';
                                 if (!text) console.log(`timeline-item[${i}] missing tweet-content`);
 
                                 const dateHandle = await el.$('.tweet-date > a');
                                 const createdAtText = dateHandle
-                                    ? await dateHandle.evaluate((a) => a.getAttribute('title'))
+                                    ? await dateHandle.getAttribute('title')
                                     : '';
                                 if (!createdAtText)
                                     console.log(`timeline-item[${i}] missing tweet-date`);
@@ -121,9 +115,8 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
 
                                 const authorHandle = await el.$('.tweet-header .username');
                                 const author = authorHandle
-                                    ? await authorHandle.evaluate(
-                                          (node) => node.textContent?.replace('@', '').trim() || '',
-                                      )
+                                    ? (await authorHandle.textContent())?.replace('@', '').trim() ||
+                                      ''
                                     : '';
                                 if (!author) console.log(`timeline-item[${i}] missing author`);
 
@@ -150,7 +143,7 @@ export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
                             console.error(`Error on attempt ${attempt + 1}:`, error);
                             attempt++;
                             if (attempt < maxRetries) {
-                                await new Promise((res) => setTimeout(res, 15000));
+                                await page.waitForTimeout(15000);
                             } else {
                                 throw error;
                             }
