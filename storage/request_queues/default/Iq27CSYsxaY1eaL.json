@@ -1,0 +1,9 @@
+{
+	"id": "Iq27CSYsxaY1eaL",
+	"json": "{\"id\":\"Iq27CSYsxaY1eaL\",\"url\":\"https://nitter.net/midjourney\",\"loadedUrl\":\"https://nitter.net/midjourney\",\"uniqueKey\":\"https://nitter.net/midjourney\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2025-06-04T22:08:05.305Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://nitter.net/midjourney",
+	"url": "https://nitter.net/midjourney"
+}

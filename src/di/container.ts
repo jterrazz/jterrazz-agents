@@ -7,11 +7,6 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
-import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
-import { createDevNewsJob } from '../adapters/inbound/job-runner/jobs/dev-news.job.js';
-import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
-import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
-import { createTechEventsJob } from '../adapters/inbound/job-runner/jobs/tech-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 
@@ -46,9 +41,10 @@ const chatBot = Injectable(
  */
 const spaceEventsAgent = Injectable(
     'SpaceEventsAgent',
-    ['ChatBot', 'Logger'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort) =>
+    ['ChatBot', 'Logger', 'Configuration'] as const,
+    (chatBot: ChatBotPort, logger: LoggerPort, configuration: ConfigurationPort) =>
         createSpaceEventsAgent({
+            apiKey: configuration.getOutboundConfiguration().googleApiKey,
             channelName: 'space',
             chatBot,
             logger,
@@ -60,37 +56,49 @@ const spaceEventsAgent = Injectable(
  */
 const jobRunner = Injectable(
     'JobRunner',
-    ['Logger', 'ChatBot'] as const,
-    (logger: LoggerPort, chatBot: ChatBotPort) =>
+    ['Logger', 'ChatBot', 'Configuration'] as const,
+    (logger: LoggerPort, chatBot: ChatBotPort, configuration: ConfigurationPort) =>
         new NodeCronAdapter(logger, [
-            createSpaceEventsJob({
-                channelName: 'space',
-                chatBot,
-                logger,
-            }),
-            createInvestNewsJob({
-                channelName: 'invest',
-                chatBot,
-                logger,
-            }),
-            createCryptoNewsJob({
-                channelName: 'crypto',
-                chatBot,
-                logger,
-            }),
+            // createSpaceEventsJob({
+            //     channelName: 'space',
+            //     chatBot,
+            //     configuration,
+            //     logger,
+            // }),
+            // createInvestNewsJob({
+            //     channelName: 'invest',
+            //     chatBot,
+            //     configuration,
+            //     logger,
+            // }),
+            // createCryptoNewsJob({
+            //     channelName: 'crypto',
+            //     chatBot,
+            //     configuration,
+            //     logger,
+            // }),
+            // createAINewsJob({
+            //     channelName: 'ai',
+            //     chatBot,
+            //     configuration,
+            //     logger,
+            // }),
+            // createDevNewsJob({
+            //     channelName: 'dev',
+            //     chatBot,
+            //     configuration,
+            //     logger,
+            // }),
+            // createTechEventsJob({
+            //     channelName: 'tech',
+            //     chatBot,
+            //     configuration,
+            //     logger,
+            // }),
             createAINewsJob({
-                channelName: 'ai',
+                channelName: '__tests__',
                 chatBot,
-                logger,
-            }),
-            createDevNewsJob({
-                channelName: 'dev',
-                chatBot,
-                logger,
-            }),
-            createTechEventsJob({
-                channelName: 'tech',
-                chatBot,
+                configuration,
                 logger,
             }),
         ]),

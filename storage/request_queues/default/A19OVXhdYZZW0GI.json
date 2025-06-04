@@ -1,0 +1,9 @@
+{
+	"id": "A19OVXhdYZZW0GI",
+	"json": "{\"id\":\"A19OVXhdYZZW0GI\",\"url\":\"https://nitter.net/nvidia\",\"loadedUrl\":\"https://nitter.net/nvidia\",\"uniqueKey\":\"https://nitter.net/nvidia\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2025-06-04T22:07:54.589Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://nitter.net/nvidia",
+	"url": "https://nitter.net/nvidia"
+}

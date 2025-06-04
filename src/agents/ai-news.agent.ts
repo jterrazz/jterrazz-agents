@@ -10,10 +10,12 @@ import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messa
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createAINewsAgent({
+    apiKey,
     channelName,
     chatBot,
     logger,
 }: {
+    apiKey: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
@@ -22,6 +24,7 @@ export function createAINewsAgent({
 Only post about important news, discussions, or updates related to AI, machine learning, or the broader tech/AI ecosystem.
 `;
     return createChatAgent({
+        apiKey,
         logger,
         modelConfig: undefined,
         promptTemplate: [

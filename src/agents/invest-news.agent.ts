@@ -10,10 +10,12 @@ import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messa
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createInvestNewsAgent({
+    apiKey,
     channelName,
     chatBot,
     logger,
 }: {
+    apiKey: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
@@ -22,6 +24,7 @@ export function createInvestNewsAgent({
 Only post about important news, discussions or updates related to financial topics.
 `;
     const agent = createChatAgent({
+        apiKey,
         logger,
         modelConfig: undefined,
         promptTemplate: [

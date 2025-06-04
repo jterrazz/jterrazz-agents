@@ -13,20 +13,24 @@ import {
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createTechEventsAgent({
+    apiKey,
     channelName,
     chatBot,
     logger,
 }: {
+    apiKey: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 }) {
     const agentSpecific = `
-The audience is developers based in France. Only about these tech conferences: Apple, Google, Nvidia, Microsoft, AWS, CES).
+The audience is developers based in France.
+IMPORTANT: Only about these tech conferences: Apple, Google, Nvidia, Microsoft, AWS, CES).
 
 You will have nothing to say most of the time, as most of the events happening are not related to that.
 `;
     const agent = createChatAgent({
+        apiKey,
         logger,
         modelConfig: undefined,
         promptTemplate: [

@@ -1,0 +1,9 @@
+{
+	"id": "ASi5GOHHYA1fF9t",
+	"json": "{\"id\":\"ASi5GOHHYA1fF9t\",\"url\":\"https://nitter.net/OpenAI\",\"loadedUrl\":\"https://nitter.net/OpenAI\",\"uniqueKey\":\"https://nitter.net/OpenAI\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":0,\"errorMessages\":[],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":4}},\"handledAt\":\"2025-06-04T22:09:04.563Z\"}",
+	"method": "GET",
+	"orderNo": null,
+	"retryCount": 0,
+	"uniqueKey": "https://nitter.net/OpenAI",
+	"url": "https://nitter.net/OpenAI"
+}

@@ -9,6 +9,7 @@ import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
 import { withGoogleAIRateLimit } from '../../adapters/outbound/ai/google-ai-rate-limiter.js';
 
 export type NewsAgentOptions = {
+    apiKey: string;
     logger?: LoggerPort;
     modelConfig?: GoogleGenerativeAIChatInput;
     promptTemplate: Array<[string, string]>;
@@ -16,9 +17,16 @@ export type NewsAgentOptions = {
 };
 
 // TODO: Hot fix for retry, it should not know about the Discord API error, it should just retry the message sending
-export function createChatAgent({ logger, modelConfig, promptTemplate, tools }: NewsAgentOptions) {
+export function createChatAgent({
+    apiKey,
+    logger,
+    modelConfig,
+    promptTemplate,
+    tools,
+}: NewsAgentOptions) {
     const model = new ChatGoogleGenerativeAI(
         modelConfig ?? {
+            apiKey,
             maxOutputTokens: 64_000,
             model: 'gemini-2.5-flash-preview-05-20',
         },

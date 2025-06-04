@@ -1,72 +1,167 @@
-import puppeteer from 'puppeteer';
+import { PuppeteerCrawler } from 'crawlee';
+import puppeteer from 'puppeteer-extra';
+import StealthPlugin from 'puppeteer-extra-plugin-stealth';
 
 import {
     type SocialFeedMessage,
     type SocialFeedPort,
 } from '../../../ports/outbound/social-feed.port.js';
 
-export function createNitterAdapter(): SocialFeedPort {
+puppeteer.use(StealthPlugin());
+
+const CHROME_USER_AGENT =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36';
+
+export function createNitterAdapter(concurrency: number = 1): SocialFeedPort {
     return {
         async fetchLatestMessages(username: string, limit = 20): Promise<SocialFeedMessage[]> {
-            const browser = await puppeteer.launch({ headless: true });
-            const page = await browser.newPage();
-            await page.setUserAgent(
-                'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-            );
-            await page.goto(`https://nitter.net/${username}`, { waitUntil: 'networkidle2' });
-            let tweetsFound = false;
-            try {
-                await page.waitForSelector('.timeline-item', { timeout: 10000 });
-                tweetsFound = true;
-            } catch (e) {
-                // Not found, will log below
-            }
-            const messagesRaw = await page.evaluate((limit: number | undefined) => {
-                let items = Array.from(document.querySelectorAll('.timeline-item')).filter(
-                    (item) => !item.querySelector('.pinned'),
-                );
-                if (typeof limit === 'number' && limit > 0) {
-                    items = items.slice(0, limit);
-                }
-                return items.map((item) => {
-                    const link = item.querySelector('a.tweet-link')?.getAttribute('href') || '';
-                    const idMatch = link.match(/status\/(\d+)/);
-                    const id = idMatch ? idMatch[1] : '';
-                    const text = item.querySelector('.tweet-content')?.textContent?.trim() || '';
-                    const createdAtText =
-                        item.querySelector('.tweet-date > a')?.getAttribute('title') || '';
-                    const createdAt = createdAtText ? createdAtText : '';
-                    let url = link ? 'https://nitter.net' + link : '';
-                    const author =
-                        item
-                            .querySelector('.tweet-header .username')
-                            ?.textContent?.replace('@', '')
-                            .trim() || '';
-                    // Fallback: if id is present but url is missing, construct it
-                    if (!url && id && author) {
-                        url = `https://nitter.net/${author}/status/${id}`;
+            const results: SocialFeedMessage[] = [];
+            const NITTER_BASE_URL = 'https://nitter.net';
+            const url = `${NITTER_BASE_URL}/${username}`;
+            console.log(`[NitterAdapter] Fetching URL: ${url} (concurrency: ${concurrency})`);
+
+            const crawler = new PuppeteerCrawler({
+                launchContext: {
+                    launcher: puppeteer,
+                    launchOptions: {
+                        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+                        headless: true,
+                    },
+                },
+                maxRequestsPerCrawl: concurrency * 3,
+                async requestHandler({ page }) {
+                    const maxRetries = 3;
+                    let attempt = 0;
+
+                    while (attempt < maxRetries) {
+                        await page.setUserAgent(CHROME_USER_AGENT);
+                        await page.setViewport({ height: 800, width: 1280 });
+                        await page.setExtraHTTPHeaders({
+                            'Accept-Encoding': 'gzip, deflate, br',
+                            'Accept-Language': 'en-US,en;q=0.9',
+                            DNT: '1',
+                            'Upgrade-Insecure-Requests': '1',
+                        });
+
+                        try {
+                            await page.goto(url, { waitUntil: 'networkidle2' });
+                            await new Promise((res) => setTimeout(res, 2000));
+
+                            try {
+                                // Wait for tweet content with a shorter timeout
+                                await page.waitForSelector('.timeline-item', { timeout: 5000 });
+                                console.log('Found .timeline-item');
+                            } catch (e) {
+                                console.log(
+                                    `[NitterAdapter] Failed to find tweet content on attempt ${attempt + 1}, will retry after 15s.`,
+                                );
+                                attempt++;
+                                if (attempt < maxRetries) {
+                                    await new Promise((res) => setTimeout(res, 15000));
+                                    continue;
+                                }
+                                throw new Error(
+                                    'Max retries exceeded - could not find tweet content',
+                                );
+                            }
+
+                            const tweetElements = await page.$$('.timeline-item');
+                            console.log('Number of .timeline-item elements:', tweetElements.length);
+
+                            if (tweetElements.length === 0) {
+                                console.log(
+                                    `[NitterAdapter] No tweets found on attempt ${attempt + 1}, will retry after 15s.`,
+                                );
+                                attempt++;
+                                if (attempt < maxRetries) {
+                                    await new Promise((res) => setTimeout(res, 15000));
+                                    continue;
+                                }
+                                throw new Error('Max retries exceeded - no tweets found');
+                            }
+
+                            for (let i = 0; i < tweetElements.length; i++) {
+                                const el = tweetElements[i];
+                                const outerHTML = await el.evaluate((node) => node.outerHTML);
+                                console.log(`timeline-item[${i}] outerHTML:`, outerHTML);
+
+                                const isPinned = await el.$('.pinned');
+                                if (isPinned) {
+                                    console.log(`timeline-item[${i}] is pinned, skipping.`);
+                                    continue;
+                                }
+
+                                const linkHandle = await el.$('a.tweet-link');
+                                const link = linkHandle
+                                    ? await linkHandle.evaluate((a) => a.getAttribute('href'))
+                                    : '';
+                                if (!link)
+                                    console.log(`timeline-item[${i}] missing tweet-link href`);
+                                const idMatch = link ? link.match(/status\/(\d+)/) : null;
+                                const id = idMatch ? idMatch[1] : '';
+                                if (!id) console.log(`timeline-item[${i}] missing id`);
+
+                                const textHandle = await el.$('.tweet-content');
+                                const text = textHandle
+                                    ? await textHandle.evaluate(
+                                          (node) => node.textContent?.trim() || '',
+                                      )
+                                    : '';
+                                if (!text) console.log(`timeline-item[${i}] missing tweet-content`);
+
+                                const dateHandle = await el.$('.tweet-date > a');
+                                const createdAtText = dateHandle
+                                    ? await dateHandle.evaluate((a) => a.getAttribute('title'))
+                                    : '';
+                                if (!createdAtText)
+                                    console.log(`timeline-item[${i}] missing tweet-date`);
+                                const createdAt = createdAtText ? createdAtText : '';
+
+                                let tweetUrl = link ? NITTER_BASE_URL + link : '';
+
+                                const authorHandle = await el.$('.tweet-header .username');
+                                const author = authorHandle
+                                    ? await authorHandle.evaluate(
+                                          (node) => node.textContent?.replace('@', '').trim() || '',
+                                      )
+                                    : '';
+                                if (!author) console.log(`timeline-item[${i}] missing author`);
+
+                                if (!tweetUrl && id && author) {
+                                    tweetUrl = `${NITTER_BASE_URL}/${author}/status/${id}`;
+                                }
+
+                                console.log({ author, createdAt, i, id, text, tweetUrl });
+
+                                const parsedCreatedAt = createdAt
+                                    ? parseNitterDate(createdAt)
+                                    : new Date();
+                                results.push({
+                                    author,
+                                    createdAt: parsedCreatedAt,
+                                    id,
+                                    text,
+                                    timeAgo: formatTimeAgo(parsedCreatedAt),
+                                    url: tweetUrl,
+                                });
+                            }
+                            break; // Success, exit retry loop
+                        } catch (error) {
+                            console.error(`Error on attempt ${attempt + 1}:`, error);
+                            attempt++;
+                            if (attempt < maxRetries) {
+                                await new Promise((res) => setTimeout(res, 15000));
+                            } else {
+                                throw error;
+                            }
+                        }
                     }
-                    return { author, createdAt, id, text, url };
-                });
-            }, limit);
-            await browser.close();
-            // Convert createdAt to Date object using robust parsing
-            const messages: SocialFeedMessage[] = messagesRaw.map((msg: unknown) => {
-                const m = msg as {
-                    author: string;
-                    createdAt: string;
-                    id: string;
-                    text: string;
-                    url: string;
-                };
-                const createdAt = m.createdAt ? parseNitterDate(m.createdAt) : new Date();
-                return {
-                    ...m,
-                    createdAt,
-                    timeAgo: formatTimeAgo(createdAt),
-                };
+                },
             });
-            return messages;
+
+            await crawler.run([url]);
+            console.log('Results:', JSON.stringify(results, null, 2));
+            return results;
         },
     };
 }

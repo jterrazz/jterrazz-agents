@@ -1,5 +1,7 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
+import { type ConfigurationPort } from '../../../../ports/inbound/configuration.port.js';
+
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
@@ -8,16 +10,19 @@ import { createSpaceEventsAgent } from '../../../../agents/space-events.agent.js
 export type SpaceEventsJobDependencies = {
     channelName: string;
     chatBot: ChatBotPort;
+    configuration: ConfigurationPort;
     logger: LoggerPort;
 };
 
 export const createSpaceEventsJob = ({
     channelName,
     chatBot,
+    configuration,
     logger,
 }: SpaceEventsJobDependencies): Job => ({
     execute: async () => {
-        const agent = createSpaceEventsAgent({ channelName, chatBot, logger });
+        const apiKey = configuration.getOutboundConfiguration().googleApiKey;
+        const agent = createSpaceEventsAgent({ apiKey, channelName, chatBot, logger });
         await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,

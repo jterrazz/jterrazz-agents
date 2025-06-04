@@ -5,12 +5,10 @@ import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js
 import { createNitterAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
 
 export function createFetchAITweetsTool() {
-    const nitter = createNitterAdapter();
     const aiUsernames = [
         'GoogleAI',
         'nvidia',
         'AnthropicAI',
-        'metaai',
         'midjourney',
         'sama',
         'demishassabis',
@@ -18,8 +16,10 @@ export function createFetchAITweetsTool() {
         'Ronald_vanLoon',
         'alliekmiller',
         'DeepLearn007',
+        'OpenAI',
         'cursor_ai',
     ];
+    const nitter = createNitterAdapter(aiUsernames.length);
     return tool(
         async () => {
             try {
@@ -32,6 +32,7 @@ export function createFetchAITweetsTool() {
                 );
                 for (const username of usernames) {
                     const tweets = await nitter.fetchLatestMessages(username);
+                    console.log(`Fetched ${tweets.length} tweets for ${username}`);
                     const todaysTweets = tweets.filter((t) => {
                         const tweetDate = new Date(t.createdAt);
                         return (
@@ -40,6 +41,7 @@ export function createFetchAITweetsTool() {
                             tweetDate.getUTCDate() === todayUTC.getUTCDate()
                         );
                     });
+                    console.log(`Today's tweets for ${username}: ${todaysTweets.length}`);
                     allTweets = allTweets.concat(todaysTweets.map((t) => ({ ...t, username })));
                 }
 

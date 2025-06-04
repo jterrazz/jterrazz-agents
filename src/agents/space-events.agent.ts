@@ -13,10 +13,12 @@ import {
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createSpaceEventsAgent({
+    apiKey,
     channelName,
     chatBot,
     logger,
 }: {
+    apiKey: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
@@ -25,6 +27,7 @@ export function createSpaceEventsAgent({
 Only update about Starship launches. And events categorized as "space mission". Ignore other events.
 `;
     const agent = createChatAgent({
+        apiKey,
         logger,
         modelConfig: undefined,
         promptTemplate: [
