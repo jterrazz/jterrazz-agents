@@ -1,8 +1,8 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
-import type { AIPort } from '../ports/outbound/ai.port.js';
-import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
-import type { Tool } from '../ports/outbound/tool.port.js';
+import { type AgentToolPort } from '../ports/outbound/agent.port.js';
+import { type AIPort } from '../ports/outbound/ai.port.js';
+import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
@@ -13,15 +13,10 @@ export type DevNewsAgentDependencies = {
     ai: AIPort;
     chatBot: ChatBotPort;
     logger: LoggerPort;
-    tools: Tool[];
+    tools: AgentToolPort[];
 };
 
-export const createDevNewsAgent = ({
-    ai,
-    chatBot,
-    logger,
-    tools,
-}: DevNewsAgentDependencies) => {
+export const createDevNewsAgent = ({ ai, chatBot, logger, tools }: DevNewsAgentDependencies) => {
     const agentSpecific = `
 Only post about important news, discussions, or updates related to software development, open source, or the broader dev ecosystem.
 `;
