@@ -1,10 +1,11 @@
-import { tool } from '@langchain/core/tools';
+import { DynamicTool } from 'langchain/tools';
 
 import { getUpcomingTechEvents } from '../../adapters/outbound/web/techmeme.adapter.js';
 
-export function createFetchTechEventsTool() {
-    return tool(
-        async () => {
+export const createFetchTechEventsTool = () =>
+    new DynamicTool({
+        description: 'Get recent technology events and conferences.',
+        func: async () => {
             let events = await getUpcomingTechEvents();
             // Filter to only include events within the next 14 days
             const now = new Date();
@@ -15,14 +16,5 @@ export function createFetchTechEventsTool() {
             });
             return JSON.stringify(events);
         },
-        {
-            description:
-                'Fetches the internet for a generic list of upcoming tech events within the next 14 days.',
-            name: 'getUpcomingTechEvents',
-        },
-    );
-}
-
-export function withFetchTechEventsTool() {
-    return 'Use the getUpcomingTechEvents tool to check on the internet for a generic list of upcoming tech events.';
-}
+        name: 'fetchTechEvents',
+    });

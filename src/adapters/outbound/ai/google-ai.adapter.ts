@@ -19,4 +19,4 @@ export class GoogleAIAdapter implements AIPort {
     getModel(): BaseLanguageModel {
         return this.model;
     }
-} 
+}

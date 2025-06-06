@@ -5,9 +5,7 @@ export type SpaceEventsJobDependencies = {
     agent: AgentPort;
 };
 
-export const createSpaceEventsJob = ({
-    agent,
-}: SpaceEventsJobDependencies): Job => ({
+export const createSpaceEventsJob = ({ agent }: SpaceEventsJobDependencies): Job => ({
     execute: async () => {
         await agent.run('New task started');
     },
@@ -15,4 +13,3 @@ export const createSpaceEventsJob = ({
     name: 'space-events-agent',
     schedule: '0 17 * * *', // Every day at 5:00 PM
 });
- 

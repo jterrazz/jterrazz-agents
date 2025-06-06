@@ -35,6 +35,6 @@ Only post about important news, discussions or updates related to space topics.
             ['system', buildSystemPrompt(agentSpecific, useDiscordEventsMarkdownFormat())],
             ['human', '{input}'],
         ],
-        tools: [tools.getCurrentDate, tools.fetchRecentBotMessages.space],
+        tools: [tools.getCurrentDate, tools.getChatBotMessages.space],
     });
 };

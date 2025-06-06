@@ -35,10 +35,6 @@ Only post about important news, discussions or updates related to financial topi
             ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
             ['human', '{input}'],
         ],
-        tools: [
-            tools.fetchRecentBotMessages.finance,
-            tools.fetchFinancialTweets,
-            tools.getCurrentDate,
-        ],
+        tools: [tools.getChatBotMessages.finance, tools.fetchFinancialTweets, tools.getCurrentDate],
     });
 };

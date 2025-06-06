@@ -114,6 +114,7 @@ function extractJson(text: unknown): unknown {
         try {
             return JSON.parse(jsonString);
         } catch (e) {
+            console.log(e);
             try {
                 return eval('(' + jsonString + ')');
             } catch {

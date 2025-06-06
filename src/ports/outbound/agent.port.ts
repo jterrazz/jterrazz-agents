@@ -11,7 +11,8 @@ export type AvailableTools = {
     fetchCryptoTweets: AgentToolPort;
     fetchDevTweets: AgentToolPort;
     fetchFinancialTweets: AgentToolPort;
-    fetchRecentBotMessages: {
+    fetchTechEvents: AgentToolPort;
+    getChatBotMessages: {
         ai: AgentToolPort;
         crypto: AgentToolPort;
         dev: AgentToolPort;

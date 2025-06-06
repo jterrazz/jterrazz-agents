@@ -5,9 +5,7 @@ export type TechnologyEventsJobDependencies = {
     agent: AgentPort;
 };
 
-export const createTechnologyEventsJob = ({
-    agent,
-}: TechnologyEventsJobDependencies): Job => ({
+export const createTechnologyEventsJob = ({ agent }: TechnologyEventsJobDependencies): Job => ({
     execute: async () => {
         await agent.run('New task started');
     },

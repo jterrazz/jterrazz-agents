@@ -36,6 +36,6 @@ Only post about important news, discussions or updates related to development to
             ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
             ['human', '{input}'],
         ],
-        tools: [tools.fetchRecentBotMessages.dev, tools.fetchDevTweets, tools.getCurrentDate],
+        tools: [tools.getChatBotMessages.dev, tools.fetchDevTweets, tools.getCurrentDate],
     });
 };

@@ -5,9 +5,7 @@ export type CryptoNewsJobDependencies = {
     agent: AgentPort;
 };
 
-export const createCryptoNewsJob = ({
-    agent,
-}: CryptoNewsJobDependencies): Job => ({
+export const createCryptoNewsJob = ({ agent }: CryptoNewsJobDependencies): Job => ({
     execute: async () => {
         await agent.run('New task started');
     },

@@ -5,9 +5,7 @@ export type DevNewsJobDependencies = {
     agent: AgentPort;
 };
 
-export const createDevNewsJob = ({
-    agent,
-}: DevNewsJobDependencies): Job => ({
+export const createDevNewsJob = ({ agent }: DevNewsJobDependencies): Job => ({
     execute: async () => {
         await agent.run('New task started');
     },

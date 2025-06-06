@@ -36,6 +36,6 @@ Only post about important news, discussions or updates related to crypto topics.
             ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
             ['human', '{input}'],
         ],
-        tools: [tools.fetchRecentBotMessages.crypto, tools.fetchCryptoTweets, tools.getCurrentDate],
+        tools: [tools.getChatBotMessages.crypto, tools.fetchCryptoTweets, tools.getCurrentDate],
     });
 };

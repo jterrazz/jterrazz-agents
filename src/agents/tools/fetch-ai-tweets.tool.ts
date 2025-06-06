@@ -26,15 +26,15 @@ export function createFetchAITweetsTool(apifyToken: string) {
     const x = createXAdapter(apifyToken);
     return tool(
         async () => {
-                const usernames = aiUsernames;
+            const usernames = aiUsernames;
             let allTweets: TweetWithUsername[] = [];
-                for (const username of usernames) {
+            for (const username of usernames) {
                 const tweets = await x.fetchLatestMessages({
                     timeAgo: { hours: 24 },
                     username, // Get tweets from the last 24 hours
                 });
                 allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
-                }
+            }
             // Format tweets with newlines and clear structure
             return allTweets
                 .map(

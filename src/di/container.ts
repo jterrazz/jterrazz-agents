@@ -28,7 +28,8 @@ import { createFetchAITweetsTool } from '../agents/tools/fetch-ai-tweets.tool.js
 import { createFetchCryptoTweetsTool } from '../agents/tools/fetch-crypto-tweets.tool.js';
 import { createFetchDevTweetsTool } from '../agents/tools/fetch-dev-tweets.tool.js';
 import { createFetchFinancialTweetsTool } from '../agents/tools/fetch-financial-tweets.tool.js';
-import { createFetchRecentBotMessagesTool } from '../agents/tools/fetch-recent-bot-messages.tool.js';
+import { createFetchTechEventsTool } from '../agents/tools/fetch-tech-events.tool.js';
+import { createGetChatBotMessagesTool } from '../agents/tools/get-chatbot-messages.tool.js';
 import { createGetCurrentDateTool } from '../agents/tools/get-current-date.tool.js';
 
 /**
@@ -75,13 +76,14 @@ const tools = Injectable(
             fetchCryptoTweets: createFetchCryptoTweetsTool(apifyToken),
             fetchDevTweets: createFetchDevTweetsTool(apifyToken),
             fetchFinancialTweets: createFetchFinancialTweetsTool(apifyToken),
-            fetchRecentBotMessages: {
-                ai: createFetchRecentBotMessagesTool({ channelName: 'ai', chatBot }),
-                crypto: createFetchRecentBotMessagesTool({ channelName: 'crypto', chatBot }),
-                dev: createFetchRecentBotMessagesTool({ channelName: 'dev', chatBot }),
-                finance: createFetchRecentBotMessagesTool({ channelName: 'finance', chatBot }),
-                space: createFetchRecentBotMessagesTool({ channelName: 'space', chatBot }),
-                technology: createFetchRecentBotMessagesTool({
+            fetchTechEvents: createFetchTechEventsTool(),
+            getChatBotMessages: {
+                ai: createGetChatBotMessagesTool({ channelName: 'ai', chatBot }),
+                crypto: createGetChatBotMessagesTool({ channelName: 'crypto', chatBot }),
+                dev: createGetChatBotMessagesTool({ channelName: 'dev', chatBot }),
+                finance: createGetChatBotMessagesTool({ channelName: 'finance', chatBot }),
+                space: createGetChatBotMessagesTool({ channelName: 'space', chatBot }),
+                technology: createGetChatBotMessagesTool({
                     channelName: 'technology',
                     chatBot,
                 }),
