@@ -2,11 +2,13 @@ import { tool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
-import { createNitterAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
+import {
+    createXAdapter,
+} from '../../adapters/outbound/web-scraper/nitter.adapter.js';
 
 export function createFetchDevTweetsTool() {
-    const nitter = createNitterAdapter();
     const devUsernames = ['GithubProjects', 'nodejs', 'colinhacks', 'bunjavascript', 'deno_land'];
+    const nitter = createXAdapter();
     return tool(
         async () => {
             const usernames = devUsernames;

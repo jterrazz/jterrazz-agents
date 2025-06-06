@@ -1,9 +1,9 @@
 import { tool } from '@langchain/core/tools';
 
-import { createNitterAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
+import { createXAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
 
 export function createFetchFinancialTweetsTool() {
-    const nitter = createNitterAdapter();
+    const nitter = createXAdapter(1);
     return tool(
         async () => {
             const username = 'KobeissiLetter';

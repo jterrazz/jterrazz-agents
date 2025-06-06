@@ -1,11 +1,11 @@
 import { describe, expect, test } from '@jterrazz/test';
 
-import { createNitterAdapter } from '../nitter.adapter.js';
+import { createXAdapter } from '../nitter.adapter.js';
 
 describe('NitterTwitterAdapter', () => {
     test('it should fetch and parse latest messages from KobeissiLetter', async () => {
         // Given
-        const adapter = createNitterAdapter();
+        const adapter = createXAdapter(1);
         // When
         const messages = await adapter.fetchLatestMessages('KobeissiLetter');
         // Then

@@ -1,9 +1,0 @@
-{
-	"id": "Iq27CSYsxaY1eaL",
-	"json": "{\"id\":\"Iq27CSYsxaY1eaL\",\"url\":\"https://nitter.net/midjourney\",\"uniqueKey\":\"https://nitter.net/midjourney\",\"method\":\"GET\",\"noRetry\":false,\"retryCount\":1,\"errorMessages\":[\"page.goto: net::ERR_ABORTED at https://nitter.net/midjourney\\nCall log:\\n\\u001b[2m  - navigating to \\\"https://nitter.net/midjourney\\\", waiting until \\\"load\\\"\\u001b[22m\\n\\n    at gotoExtended (/Users/jterrazz/Developer/jterrazz-agents/node_modules/@crawlee/src/internals/utils/playwright-utils.ts:241:17)\\n    at PlaywrightCrawler._navigationHandler (/Users/jterrazz/Developer/jterrazz-agents/node_modules/@crawlee/src/internals/playwright-crawler.ts:250:28)\\n    at PlaywrightCrawler._handleNavigation (/Users/jterrazz/Developer/jterrazz-agents/node_modules/@crawlee/src/internals/browser-crawler.ts:651:52)\\n    at async PlaywrightCrawler._runRequestHandler (/Users/jterrazz/Developer/jterrazz-agents/node_modules/@crawlee/src/internals/browser-crawler.ts:552:13)\\n    at async PlaywrightCrawler._runRequestHandler (/Users/jterrazz/Developer/jterrazz-agents/node_modules/@crawlee/src/internals/playwright-crawler.ts:243:9)\\n    at async wrap (/Users/jterrazz/Developer/jterrazz-agents/node_modules/@apify/src/index.ts:77:27)\"],\"headers\":{},\"userData\":{\"__crawlee\":{\"state\":5}}}",
-	"method": "GET",
-	"orderNo": 1749079138213,
-	"retryCount": 1,
-	"uniqueKey": "https://nitter.net/midjourney",
-	"url": "https://nitter.net/midjourney"
-}

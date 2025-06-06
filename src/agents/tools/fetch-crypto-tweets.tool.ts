@@ -2,11 +2,11 @@ import { tool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
-import { createNitterAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
+import { createXAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
 
 export function createFetchCryptoTweetsTool() {
-    const nitter = createNitterAdapter();
     const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
+    const nitter = createXAdapter(cryptoUsernames.length);
     return tool(
         async () => {
             const usernames = cryptoUsernames;

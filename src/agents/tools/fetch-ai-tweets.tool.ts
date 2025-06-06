@@ -2,7 +2,7 @@ import { tool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
-import { createNitterAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
+import { createXAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
 
 export function createFetchAITweetsTool() {
     const aiUsernames = [
@@ -19,7 +19,7 @@ export function createFetchAITweetsTool() {
         'OpenAI',
         'cursor_ai',
     ];
-    const nitter = createNitterAdapter(aiUsernames.length);
+    const nitter = createXAdapter(aiUsernames.length);
     return tool(
         async () => {
             try {
