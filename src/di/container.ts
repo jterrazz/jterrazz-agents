@@ -80,6 +80,7 @@ const tools = Injectable(
                 crypto: createFetchRecentBotMessagesTool({ channelName: 'crypto', chatBot }),
                 dev: createFetchRecentBotMessagesTool({ channelName: 'dev', chatBot }),
                 finance: createFetchRecentBotMessagesTool({ channelName: 'finance', chatBot }),
+                space: createFetchRecentBotMessagesTool({ channelName: 'space', chatBot }),
                 technology: createFetchRecentBotMessagesTool({
                     channelName: 'technology',
                     chatBot,
@@ -183,7 +184,6 @@ const jobRunner = Injectable(
     'JobRunner',
     [
         'Logger',
-        'ChatBot',
         'AINewsAgent',
         'CryptoNewsAgent',
         'DevNewsAgent',
@@ -193,7 +193,6 @@ const jobRunner = Injectable(
     ] as const,
     (
         logger: LoggerPort,
-        chatBot: ChatBotPort,
         aiNewsAgent: AgentPort,
         cryptoNewsAgent: AgentPort,
         devNewsAgent: AgentPort,
@@ -204,33 +203,21 @@ const jobRunner = Injectable(
         new NodeCronAdapter(logger, [
             createAINewsJob({
                 agent: aiNewsAgent,
-                chatBot,
-                logger,
             }),
             createCryptoNewsJob({
                 agent: cryptoNewsAgent,
-                chatBot,
-                logger,
             }),
             createDevNewsJob({
                 agent: devNewsAgent,
-                chatBot,
-                logger,
             }),
             createFinanceNewsJob({
                 agent: financeNewsAgent,
-                chatBot,
-                logger,
             }),
             createSpaceEventsJob({
                 agent: spaceEventsAgent,
-                chatBot,
-                logger,
             }),
             createTechnologyEventsJob({
                 agent: technologyEventsAgent,
-                chatBot,
-                logger,
             }),
         ]),
 );
