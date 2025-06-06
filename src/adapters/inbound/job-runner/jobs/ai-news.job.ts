@@ -6,19 +6,17 @@ import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 export type AINewsJobDependencies = {
     agent: AgentPort;
-    channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 };
 
 export const createAINewsJob = ({
     agent,
-    channelName,
     chatBot,
     logger,
 }: AINewsJobDependencies): Job => ({
     execute: async () => {
-        await agent.run('New task started', chatBot, channelName);
+        await agent.run('New task started');
     },
     executeOnStartup: true,
     name: 'ai-news-agent',

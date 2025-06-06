@@ -1,9 +1,23 @@
 import type { DynamicTool } from '@langchain/core/tools';
 
-import type { ChatBotPort } from './chatbot.port.js';
-
-export interface AgentPort {
-    run(userQuery: string, chatBot: ChatBotPort, channelName: string): Promise<void>;
-}
+export type AgentPort = {
+    run(userQuery: string): Promise<void>;
+};
 
 export type AgentToolPort = DynamicTool<string>;
+
+export type AvailableTools = {
+    fetchAITweets: AgentToolPort;
+    fetchCryptoTweets: AgentToolPort;
+    fetchDevTweets: AgentToolPort;
+    fetchFinancialTweets: AgentToolPort;
+    fetchRecentBotMessages: {
+        ai: AgentToolPort;
+        crypto: AgentToolPort;
+        dev: AgentToolPort;
+        finance: AgentToolPort;
+        space: AgentToolPort;
+        technology: AgentToolPort;
+    };
+    getCurrentDate: AgentToolPort;
+};

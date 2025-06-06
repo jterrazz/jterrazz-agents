@@ -6,19 +6,17 @@ import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 export type SpaceEventsJobDependencies = {
     agent: AgentPort;
-    channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 };
 
 export const createSpaceEventsJob = ({
     agent,
-    channelName,
     chatBot,
     logger,
 }: SpaceEventsJobDependencies): Job => ({
     execute: async () => {
-        await agent.run('New task started', chatBot, channelName);
+        await agent.run('New task started');
     },
     executeOnStartup: true,
     name: 'space-events-agent',

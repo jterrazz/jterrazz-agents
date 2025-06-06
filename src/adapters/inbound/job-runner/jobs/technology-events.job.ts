@@ -6,19 +6,17 @@ import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 export type TechnologyEventsJobDependencies = {
     agent: AgentPort;
-    channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 };
 
 export const createTechnologyEventsJob = ({
     agent,
-    channelName,
     chatBot,
     logger,
 }: TechnologyEventsJobDependencies): Job => ({
     execute: async () => {
-        await agent.run('New task started', chatBot, channelName);
+        await agent.run('New task started');
     },
     executeOnStartup: true,
     name: 'technology-events-agent',

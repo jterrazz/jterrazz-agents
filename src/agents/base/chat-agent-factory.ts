@@ -10,6 +10,7 @@ import { withGoogleAIRateLimit } from '../../adapters/outbound/ai/google-ai-rate
 
 export type NewsAgentOptions = {
     ai: AIPort;
+    channelName: string;
     chatBot: ChatBotPort;
     logger?: LoggerPort;
     promptTemplate: Array<[string, string]>;
@@ -17,12 +18,19 @@ export type NewsAgentOptions = {
 };
 
 // TODO: Hot fix for retry, it should not know about the Discord API error, it should just retry the message sending
-export function createChatAgent({ ai, chatBot, logger, promptTemplate, tools }: NewsAgentOptions) {
+export function createChatAgent({
+    ai,
+    channelName,
+    chatBot,
+    logger,
+    promptTemplate,
+    tools,
+}: NewsAgentOptions) {
     const model = ai.getModel();
     const prompt = ChatPromptTemplate.fromMessages(promptTemplate);
     let executorPromise: null | Promise<AgentExecutor> = null;
     return {
-        async run(userQuery: string, channelName: string): Promise<void> {
+        async run(userQuery: string): Promise<void> {
             if (!executorPromise) {
                 executorPromise = (async () => {
                     const agent = await createStructuredChatAgent({

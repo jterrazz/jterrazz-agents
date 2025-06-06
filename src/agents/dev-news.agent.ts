@@ -1,40 +1,41 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
-import { type AgentToolPort } from '../ports/outbound/agent.port.js';
+import { type AvailableTools } from '../ports/outbound/agent.port.js';
 import { type AIPort } from '../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
-import { withFetchDevTweetsTool } from './tools/fetch-dev-tweets.tool.js';
 
 export type DevNewsAgentDependencies = {
     ai: AIPort;
+    channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
-    tools: AgentToolPort[];
+    tools: AvailableTools;
 };
 
-export const createDevNewsAgent = ({ ai, chatBot, logger, tools }: DevNewsAgentDependencies) => {
+export const createDevNewsAgent = ({
+    ai,
+    channelName,
+    chatBot,
+    logger,
+    tools,
+}: DevNewsAgentDependencies) => {
     const agentSpecific = `
-Only post about important news, discussions, or updates related to software development, open source, or the broader dev ecosystem.
+Only post about important news, discussions or updates related to development topics.
 `;
+
     return createChatAgent({
         ai,
+        channelName,
         chatBot,
         logger,
         promptTemplate: [
-            [
-                'system',
-                buildSystemPrompt(
-                    agentSpecific,
-                    withDiscordNewsMarkdownFormat(),
-                    withFetchDevTweetsTool(),
-                ),
-            ],
+            ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
             ['human', '{input}'],
         ],
-        tools,
+        tools: [tools.fetchRecentBotMessages.dev, tools.fetchDevTweets, tools.getCurrentDate],
     });
 };
