@@ -1,5 +1,6 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
+import type { AIPort } from '../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
@@ -13,14 +14,14 @@ import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messa
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createCryptoNewsAgent({
+    ai,
     apifyToken,
-    apiKey,
     channelName,
     chatBot,
     logger,
 }: {
+    ai: AIPort;
     apifyToken: string;
-    apiKey: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
@@ -29,7 +30,7 @@ export function createCryptoNewsAgent({
 Only post about important news, discussions or updates related to Bitcoin, Ethereum, or generic crypto topics.
 `;
     return createChatAgent({
-        apiKey,
+        ai,
         logger,
         promptTemplate: [
             [

@@ -1,6 +1,7 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
-import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import { type AIPort } from '../ports/outbound/ai.port.js';
+import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
@@ -12,26 +13,33 @@ import {
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
-export function createInvestNewsAgent({
-    apifyToken,
-    apiKey,
-    channelName,
-    chatBot,
-    logger,
-}: {
+export type InvestNewsAgentDependencies = {
+    ai: AIPort;
     apifyToken: string;
-    apiKey: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
-}) {
+};
+
+export const createInvestNewsAgent = ({
+    ai,
+    apifyToken,
+    channelName,
+    chatBot,
+    logger,
+}: InvestNewsAgentDependencies) => {
     const agentSpecific = `
 Only post about important news, discussions or updates related to financial topics.
 `;
-    const agent = createChatAgent({
-        apiKey,
+    const tools = [
+        createFetchRecentBotMessagesTool({ channelName, chatBot }),
+        createFetchFinancialTweetsTool(apifyToken),
+        createGetCurrentDateTool(),
+    ];
+
+    return createChatAgent({
+        ai,
         logger,
-        modelConfig: undefined,
         promptTemplate: [
             [
                 'system',
@@ -43,11 +51,6 @@ Only post about important news, discussions or updates related to financial topi
             ],
             ['human', '{input}'],
         ],
-        tools: [
-            createFetchRecentBotMessagesTool({ channelName, chatBot }),
-            createFetchFinancialTweetsTool(apifyToken),
-            createGetCurrentDateTool(),
-        ],
+        tools,
     });
-    return agent;
-}
+};

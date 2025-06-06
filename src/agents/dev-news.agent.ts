@@ -1,5 +1,6 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
+import type { AIPort } from '../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
@@ -10,13 +11,13 @@ import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messa
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createDevNewsAgent({
-    apiKey,
+    ai,
     apifyToken,
     channelName,
     chatBot,
     logger,
 }: {
-    apiKey: string;
+    ai: AIPort;
     apifyToken: string;
     channelName: string;
     chatBot: ChatBotPort;
@@ -26,7 +27,7 @@ export function createDevNewsAgent({
 Only post about important news, discussions, or updates related to software development, open source, or the broader dev ecosystem.
 `;
     return createChatAgent({
-        apiKey,
+        ai,
         logger,
         promptTemplate: [
             [

@@ -1,38 +1,23 @@
 import type { LoggerPort } from '@jterrazz/logger';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import type { DynamicTool } from '@langchain/core/tools';
-import { ChatGoogleGenerativeAI, type GoogleGenerativeAIChatInput } from '@langchain/google-genai';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
+import type { AIPort } from '../../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
 
 import { withGoogleAIRateLimit } from '../../adapters/outbound/ai/google-ai-rate-limiter.js';
 
 export type NewsAgentOptions = {
-    apiKey: string;
+    ai: AIPort;
     logger?: LoggerPort;
-    modelConfig?: GoogleGenerativeAIChatInput;
     promptTemplate: Array<[string, string]>;
     tools: Array<DynamicTool<string>>;
 };
 
 // TODO: Hot fix for retry, it should not know about the Discord API error, it should just retry the message sending
-export function createChatAgent({
-    apiKey,
-    logger,
-    modelConfig,
-    promptTemplate,
-    tools,
-}: NewsAgentOptions) {
-    const model = new ChatGoogleGenerativeAI(
-        modelConfig === undefined
-            ? {
-                  apiKey,
-                  maxOutputTokens: 64_000,
-                  model: 'gemini-2.5-flash-preview-05-20',
-              }
-            : modelConfig,
-    );
+export function createChatAgent({ ai, logger, promptTemplate, tools }: NewsAgentOptions) {
+    const model = ai.getModel();
     const prompt = ChatPromptTemplate.fromMessages(promptTemplate);
     let executorPromise: null | Promise<AgentExecutor> = null;
     return {

@@ -1,5 +1,6 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
+import type { AIPort } from '../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
@@ -10,23 +11,23 @@ import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messa
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createAINewsAgent({
+    ai,
     apifyToken,
     channelName,
     chatBot,
-    googleApiKey,
     logger,
 }: {
+    ai: AIPort;
     apifyToken: string;
     channelName: string;
     chatBot: ChatBotPort;
-    googleApiKey: string;
     logger: LoggerPort;
 }) {
     const agentSpecific = `
 Only post about important news, discussions, or updates related to AI, machine learning, or the broader tech/AI ecosystem.
 `;
     return createChatAgent({
-        apiKey: googleApiKey,
+        ai,
         logger,
         promptTemplate: [
             [

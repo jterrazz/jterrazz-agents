@@ -1,5 +1,6 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
+import type { AIPort } from '../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
@@ -13,12 +14,12 @@ import {
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createTechEventsAgent({
-    apiKey,
+    ai,
     channelName,
     chatBot,
     logger,
 }: {
-    apiKey: string;
+    ai: AIPort;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
@@ -29,10 +30,9 @@ IMPORTANT: Only about these tech conferences: Apple, Google, Nvidia, Microsoft, 
 
 You will have nothing to say most of the time, as most of the events happening are not related to that.
 `;
-    const agent = createChatAgent({
-        apiKey,
+    return createChatAgent({
+        ai,
         logger,
-        modelConfig: undefined,
         promptTemplate: [
             [
                 'system',
@@ -50,5 +50,4 @@ You will have nothing to say most of the time, as most of the events happening a
             createGetCurrentDateTool(),
         ],
     });
-    return agent;
 }

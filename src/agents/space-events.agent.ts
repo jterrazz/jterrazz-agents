@@ -1,5 +1,6 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
+import type { AIPort } from '../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
@@ -13,12 +14,12 @@ import {
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createSpaceEventsAgent({
-    apiKey,
+    ai,
     channelName,
     chatBot,
     logger,
 }: {
-    apiKey: string;
+    ai: AIPort;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
@@ -26,10 +27,9 @@ export function createSpaceEventsAgent({
     const agentSpecific = `
 Only update about Starship launches. And events categorized as "space mission". Ignore other events.
 `;
-    const agent = createChatAgent({
-        apiKey,
+    return createChatAgent({
+        ai,
         logger,
-        modelConfig: undefined,
         promptTemplate: [
             [
                 'system',
@@ -47,5 +47,4 @@ Only update about Starship launches. And events categorized as "space mission". 
             createGetCurrentDateTool(),
         ],
     });
-    return agent;
 }
