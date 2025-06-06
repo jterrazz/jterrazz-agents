@@ -3,6 +3,7 @@ export interface ConfigurationPort {
 }
 
 export interface OutboundConfigurationPort {
+    apifyToken: string;
     discordBotToken: string;
     googleApiKey: string;
 }

@@ -8,6 +8,9 @@ import {
 
 const configurationSchema = z.object({
     outbound: z.object({
+        apify: z.object({
+            token: z.string().min(1, 'An Apify token is required'),
+        }),
         discord: z.object({
             botToken: z.string().min(1, 'A Discord bot token is required'),
         }),
@@ -17,7 +20,7 @@ const configurationSchema = z.object({
     }),
 });
 
-type Configuration = z.infer<typeof configurationSchema>;
+export type Configuration = z.infer<typeof configurationSchema>;
 
 export class NodeConfigAdapter implements ConfigurationPort {
     private readonly configuration: Configuration;
@@ -25,6 +28,9 @@ export class NodeConfigAdapter implements ConfigurationPort {
     constructor() {
         this.configuration = configurationSchema.parse({
             outbound: {
+                apify: {
+                    token: config.get('outbound.apify.token'),
+                },
                 discord: {
                     botToken: config.get('outbound.discord.botToken'),
                 },
@@ -37,6 +43,7 @@ export class NodeConfigAdapter implements ConfigurationPort {
 
     getOutboundConfiguration(): OutboundConfigurationPort {
         return {
+            apifyToken: this.configuration.outbound.apify.token,
             discordBotToken: this.configuration.outbound.discord.botToken,
             googleApiKey: this.configuration.outbound.google.apiKey,
         };

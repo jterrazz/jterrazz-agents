@@ -6,11 +6,16 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
-import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
+import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
+import { createTechEventsJob } from '../adapters/inbound/job-runner/jobs/tech-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 
+import { createAINewsAgent } from '../agents/ai-news.agent.js';
+import { createCryptoNewsAgent } from '../agents/crypto-news.agent.js';
+import { createDevNewsAgent } from '../agents/dev-news.agent.js';
 import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
+import { createTechEventsAgent } from '../agents/tech-events.agent.js';
 
 /**
  * Inbound adapters
@@ -42,10 +47,63 @@ const chatBot = Injectable(
 const spaceEventsAgent = Injectable(
     'SpaceEventsAgent',
     ['ChatBot', 'Logger', 'Configuration'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, configuration: ConfigurationPort) =>
-        createSpaceEventsAgent({
-            apiKey: configuration.getOutboundConfiguration().googleApiKey,
+    (chatBot: ChatBotPort, logger: LoggerPort, configuration: ConfigurationPort) => {
+        const { googleApiKey } = configuration.getOutboundConfiguration();
+        return createSpaceEventsAgent({
+            apiKey: googleApiKey,
             channelName: 'space',
+            chatBot,
+            logger,
+        });
+    },
+);
+
+const aiNewsAgent = Injectable(
+    'AINewsAgent',
+    ['ChatBot', 'Logger', 'Configuration'] as const,
+    (chatBot: ChatBotPort, logger: LoggerPort, configuration: ConfigurationPort) => {
+        const { apifyToken, googleApiKey } = configuration.getOutboundConfiguration();
+        return createAINewsAgent({
+            apifyToken,
+            channelName: 'ai',
+            chatBot,
+            googleApiKey,
+            logger,
+        });
+    },
+);
+
+const devNewsAgent = Injectable(
+    'DevNewsAgent',
+    ['ChatBot', 'Logger', 'Configuration'] as const,
+    (chatBot: ChatBotPort, logger: LoggerPort, configuration: ConfigurationPort) =>
+        createDevNewsAgent({
+            apiKey: configuration.getOutboundConfiguration().googleApiKey,
+            channelName: 'dev',
+            chatBot,
+            logger,
+        }),
+);
+
+const cryptoNewsAgent = Injectable(
+    'CryptoNewsAgent',
+    ['ChatBot', 'Logger', 'Configuration'] as const,
+    (chatBot: ChatBotPort, logger: LoggerPort, configuration: ConfigurationPort) =>
+        createCryptoNewsAgent({
+            apiKey: configuration.getOutboundConfiguration().googleApiKey,
+            channelName: 'crypto',
+            chatBot,
+            logger,
+        }),
+);
+
+const techEventsAgent = Injectable(
+    'TechEventsAgent',
+    ['ChatBot', 'Logger', 'Configuration'] as const,
+    (chatBot: ChatBotPort, logger: LoggerPort, configuration: ConfigurationPort) =>
+        createTechEventsAgent({
+            apiKey: configuration.getOutboundConfiguration().googleApiKey,
+            channelName: 'tech',
             chatBot,
             logger,
         }),
@@ -95,7 +153,13 @@ const jobRunner = Injectable(
             //     configuration,
             //     logger,
             // }),
-            createAINewsJob({
+            createInvestNewsJob({
+                channelName: '__tests__',
+                chatBot,
+                configuration,
+                logger,
+            }),
+            createTechEventsJob({
                 channelName: '__tests__',
                 chatBot,
                 configuration,
@@ -116,5 +180,9 @@ export const createContainer = () =>
         .provides(chatBot)
         // Agents
         .provides(spaceEventsAgent)
+        .provides(aiNewsAgent)
+        .provides(devNewsAgent)
+        .provides(cryptoNewsAgent)
+        .provides(techEventsAgent)
         // JobRunner
         .provides(jobRunner);

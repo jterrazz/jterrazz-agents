@@ -13,11 +13,13 @@ import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messa
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createCryptoNewsAgent({
+    apifyToken,
     apiKey,
     channelName,
     chatBot,
     logger,
 }: {
+    apifyToken: string;
     apiKey: string;
     channelName: string;
     chatBot: ChatBotPort;
@@ -29,7 +31,6 @@ Only post about important news, discussions or updates related to Bitcoin, Ether
     return createChatAgent({
         apiKey,
         logger,
-        modelConfig: undefined,
         promptTemplate: [
             [
                 'system',
@@ -43,7 +44,7 @@ Only post about important news, discussions or updates related to Bitcoin, Ether
         ],
         tools: [
             createFetchRecentBotMessagesTool({ channelName, chatBot }),
-            createFetchCryptoTweetsTool(),
+            createFetchCryptoTweetsTool(apifyToken),
             createGetCurrentDateTool(),
         ],
     });

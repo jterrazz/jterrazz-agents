@@ -3,3 +3,5 @@ outbound:
     apiKey: GOOGLE_API_KEY
   discord:
     botToken: DISCORD_BOT_TOKEN
+  apify:
+    token: APIFY_TOKEN

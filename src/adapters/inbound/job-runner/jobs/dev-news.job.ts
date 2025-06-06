@@ -21,8 +21,14 @@ export const createDevNewsJob = ({
     logger,
 }: DevNewsJobDependencies): Job => ({
     execute: async () => {
-        const apiKey = configuration.getOutboundConfiguration().googleApiKey;
-        const agent = createDevNewsAgent({ apiKey, channelName, chatBot, logger });
+        const { apifyToken, googleApiKey } = configuration.getOutboundConfiguration();
+        const agent = createDevNewsAgent({
+            apifyToken,
+            apiKey: googleApiKey,
+            channelName,
+            chatBot,
+            logger,
+        });
         await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,

@@ -2,9 +2,13 @@ import { tool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
-import { createXAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
+import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
 
-export function createFetchAITweetsTool() {
+interface TweetWithUsername extends SocialFeedMessage {
+    username: string;
+}
+
+export function createFetchAITweetsTool(apifyToken: string) {
     const aiUsernames = [
         'GoogleAI',
         'nvidia',
@@ -19,39 +23,28 @@ export function createFetchAITweetsTool() {
         'OpenAI',
         'cursor_ai',
     ];
-    const nitter = createXAdapter(aiUsernames.length);
+    const x = createXAdapter(apifyToken);
     return tool(
         async () => {
-            try {
-                console.log('Fetching AI tweets');
-                const usernames = aiUsernames;
-                let allTweets: SocialFeedMessage[] = [];
-                const today = new Date();
-                const todayUTC = new Date(
-                    Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
-                );
-                for (const username of usernames) {
-                    const tweets = await nitter.fetchLatestMessages(username);
-                    console.log(`Fetched ${tweets.length} tweets for ${username}`);
-                    const todaysTweets = tweets.filter((t) => {
-                        const tweetDate = new Date(t.createdAt);
-                        return (
-                            tweetDate.getUTCFullYear() === todayUTC.getUTCFullYear() &&
-                            tweetDate.getUTCMonth() === todayUTC.getUTCMonth() &&
-                            tweetDate.getUTCDate() === todayUTC.getUTCDate()
-                        );
-                    });
-                    console.log(`Today's tweets for ${username}: ${todaysTweets.length}`);
-                    allTweets = allTweets.concat(todaysTweets.map((t) => ({ ...t, username })));
-                }
-
-                console.log(`Found ${allTweets.length} tweets related to AI`);
-
-                return JSON.stringify(allTweets);
-            } catch (error) {
-                console.error('Error fetching AI tweets', error);
-                throw error;
+            const usernames = aiUsernames;
+            let allTweets: TweetWithUsername[] = [];
+            for (const username of usernames) {
+                const tweets = await x.fetchLatestMessages({
+                    timeAgo: { hours: 24 },
+                    username, // Get tweets from the last 24 hours
+                });
+                allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
             }
+            // Format tweets with newlines and clear structure
+            return allTweets
+                .map(
+                    (tweet) =>
+                        `Author: ${tweet.author} (@${tweet.username})\n` +
+                        `Time: ${tweet.timeAgo}\n` +
+                        `Content: ${tweet.text}\n` +
+                        `URL: ${tweet.url}\n`,
+                )
+                .join('\n');
         },
         {
             description:

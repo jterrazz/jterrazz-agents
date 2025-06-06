@@ -1,3 +1,9 @@
+export interface FetchLatestMessagesParams {
+    limit?: number;
+    timeAgo?: { hours: number };
+    username: string;
+}
+
 export interface SocialFeedMessage {
     author: string;
     createdAt: Date;
@@ -8,5 +14,5 @@ export interface SocialFeedMessage {
 }
 
 export interface SocialFeedPort {
-    fetchLatestMessages(username: string, limit?: number): Promise<SocialFeedMessage[]>;
+    fetchLatestMessages(params: FetchLatestMessagesParams): Promise<SocialFeedMessage[]>;
 }

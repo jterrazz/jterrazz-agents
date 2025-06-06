@@ -1,0 +1,91 @@
+import { vi } from 'vitest';
+import { mockDeep } from 'vitest-mock-extended';
+
+vi.mock('config', () => {
+    const mockConfig = mockDeep<typeof config>();
+    return {
+        default: mockConfig,
+    };
+});
+
+import { beforeEach, describe, expect, test } from '@jterrazz/test';
+import config from 'config';
+
+import { type Configuration, NodeConfigAdapter } from '../node-config.adapter.js';
+
+describe('NodeConfigAdapter', () => {
+    const mockConfig: Configuration = {
+        outbound: {
+            apify: {
+                token: 'test-apify-token',
+            },
+            discord: {
+                botToken: 'test-discord-token',
+            },
+            google: {
+                apiKey: 'test-google-key',
+            },
+        },
+    };
+
+    const createMockConfig = (overrides: Record<string, unknown> = {}) => {
+        return (path: string) => {
+            if (path in overrides) return overrides[path];
+
+            const parts = path.split('.');
+            let current: unknown = mockConfig;
+            for (const part of parts) {
+                if (typeof current === 'object' && current !== null) {
+                    current = (current as Record<string, unknown>)[part];
+                }
+            }
+            return current;
+        };
+    };
+
+    beforeEach(() => {
+        vi.clearAllMocks();
+        vi.mocked(config.get).mockImplementation(createMockConfig());
+    });
+
+    test('should return correct outbound configuration', () => {
+        const adapter = new NodeConfigAdapter();
+        const config = adapter.getOutboundConfiguration();
+
+        expect(config).toEqual({
+            apifyToken: 'test-apify-token',
+            discordBotToken: 'test-discord-token',
+            googleApiKey: 'test-google-key',
+        });
+    });
+
+    test('should throw error when apify token is missing', () => {
+        vi.mocked(config.get).mockImplementation(
+            createMockConfig({
+                'outbound.apify.token': '',
+            }),
+        );
+
+        expect(() => new NodeConfigAdapter()).toThrow('An Apify token is required');
+    });
+
+    test('should throw error when discord bot token is missing', () => {
+        vi.mocked(config.get).mockImplementation(
+            createMockConfig({
+                'outbound.discord.botToken': '',
+            }),
+        );
+
+        expect(() => new NodeConfigAdapter()).toThrow('A Discord bot token is required');
+    });
+
+    test('should throw error when google api key is missing', () => {
+        vi.mocked(config.get).mockImplementation(
+            createMockConfig({
+                'outbound.google.apiKey': '',
+            }),
+        );
+
+        expect(() => new NodeConfigAdapter()).toThrow('A Google API key is required');
+    });
+});

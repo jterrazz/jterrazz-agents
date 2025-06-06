@@ -16,8 +16,14 @@ export type AINewsJobDependencies = {
 
 export const createAINewsJob = ({ channelName, chatBot, configuration, logger }: AINewsJobDependencies): Job => ({
     execute: async () => {
-        const apiKey = configuration.getOutboundConfiguration().googleApiKey;
-        const agent = createAINewsAgent({ apiKey, channelName, chatBot, logger });
+        const { apifyToken, googleApiKey } = configuration.getOutboundConfiguration();
+        const agent = createAINewsAgent({ 
+            apifyToken, 
+            channelName,
+            chatBot, 
+            googleApiKey, 
+            logger 
+        });
         await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,

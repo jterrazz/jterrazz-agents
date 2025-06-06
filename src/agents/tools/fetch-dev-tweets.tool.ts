@@ -2,32 +2,21 @@ import { tool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
-import {
-    createXAdapter,
-} from '../../adapters/outbound/web-scraper/nitter.adapter.js';
+import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
 
-export function createFetchDevTweetsTool() {
+export function createFetchDevTweetsTool(apifyToken: string) {
     const devUsernames = ['GithubProjects', 'nodejs', 'colinhacks', 'bunjavascript', 'deno_land'];
-    const nitter = createXAdapter();
+    const x = createXAdapter(apifyToken);
     return tool(
         async () => {
             const usernames = devUsernames;
             let allTweets: SocialFeedMessage[] = [];
-            const today = new Date();
-            const todayUTC = new Date(
-                Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
-            );
             for (const username of usernames) {
-                const tweets = await nitter.fetchLatestMessages(username);
-                const todaysTweets = tweets.filter((t) => {
-                    const tweetDate = new Date(t.createdAt);
-                    return (
-                        tweetDate.getUTCFullYear() === todayUTC.getUTCFullYear() &&
-                        tweetDate.getUTCMonth() === todayUTC.getUTCMonth() &&
-                        tweetDate.getUTCDate() === todayUTC.getUTCDate()
-                    );
+                const tweets = await x.fetchLatestMessages({
+                    timeAgo: { hours: 24 },
+                    username, // Get tweets from the last 24 hours
                 });
-                allTweets = allTweets.concat(todaysTweets.map((t) => ({ ...t, username })));
+                allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
             }
             return JSON.stringify(allTweets);
         },

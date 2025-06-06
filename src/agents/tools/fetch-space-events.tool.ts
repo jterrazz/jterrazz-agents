@@ -3,7 +3,7 @@ import { tool } from '@langchain/core/tools';
 import {
     getUpcomingEvents,
     getUpcomingRocketLaunches,
-} from '../../adapters/outbound/web-scraper/nextspaceflight.adapter.js';
+} from '../../adapters/outbound/web/nextspaceflight.adapter.js';
 
 export function createFetchSpaceEventsTool() {
     return tool(

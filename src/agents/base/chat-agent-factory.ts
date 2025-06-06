@@ -25,11 +25,13 @@ export function createChatAgent({
     tools,
 }: NewsAgentOptions) {
     const model = new ChatGoogleGenerativeAI(
-        modelConfig ?? {
-            apiKey,
-            maxOutputTokens: 64_000,
-            model: 'gemini-2.5-flash-preview-05-20',
-        },
+        modelConfig === undefined
+            ? {
+                  apiKey,
+                  maxOutputTokens: 64_000,
+                  model: 'gemini-2.5-flash-preview-05-20',
+              }
+            : modelConfig,
     );
     const prompt = ChatPromptTemplate.fromMessages(promptTemplate);
     let executorPromise: null | Promise<AgentExecutor> = null;

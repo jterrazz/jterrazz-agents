@@ -21,8 +21,14 @@ export const createCryptoNewsJob = ({
     logger,
 }: CryptoNewsJobDependencies): Job => ({
     execute: async () => {
-        const apiKey = configuration.getOutboundConfiguration().googleApiKey;
-        const agent = createCryptoNewsAgent({ apiKey, channelName, chatBot, logger });
+        const { apifyToken, googleApiKey } = configuration.getOutboundConfiguration();
+        const agent = createCryptoNewsAgent({
+            apifyToken,
+            apiKey: googleApiKey,
+            channelName,
+            chatBot,
+            logger,
+        });
         await agent.run('New task started', chatBot, channelName);
     },
     executeOnStartup: true,

@@ -5,17 +5,19 @@ import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
-import { createFetchDevTweetsTool,withFetchDevTweetsTool } from './tools/fetch-dev-tweets.tool.js';
+import { createFetchDevTweetsTool, withFetchDevTweetsTool } from './tools/fetch-dev-tweets.tool.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
 export function createDevNewsAgent({
     apiKey,
+    apifyToken,
     channelName,
     chatBot,
     logger,
 }: {
     apiKey: string;
+    apifyToken: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
@@ -26,14 +28,20 @@ Only post about important news, discussions, or updates related to software deve
     return createChatAgent({
         apiKey,
         logger,
-        modelConfig: undefined,
         promptTemplate: [
-            ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat(), withFetchDevTweetsTool())],
+            [
+                'system',
+                buildSystemPrompt(
+                    agentSpecific,
+                    withDiscordNewsMarkdownFormat(),
+                    withFetchDevTweetsTool(),
+                ),
+            ],
             ['human', '{input}'],
         ],
         tools: [
             createFetchRecentBotMessagesTool({ channelName, chatBot }),
-            createFetchDevTweetsTool(),
+            createFetchDevTweetsTool(apifyToken),
             createGetCurrentDateTool(),
         ],
     });

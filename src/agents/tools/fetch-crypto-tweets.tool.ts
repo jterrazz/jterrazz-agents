@@ -2,32 +2,36 @@ import { tool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
-import { createXAdapter } from '../../adapters/outbound/web-scraper/nitter.adapter.js';
+import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
 
-export function createFetchCryptoTweetsTool() {
+interface TweetWithUsername extends SocialFeedMessage {
+    username: string;
+}
+
+export function createFetchCryptoTweetsTool(apifyToken: string) {
     const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
-    const nitter = createXAdapter(cryptoUsernames.length);
+    const x = createXAdapter(apifyToken);
     return tool(
         async () => {
             const usernames = cryptoUsernames;
-            let allTweets: SocialFeedMessage[] = [];
-            const today = new Date();
-            const todayUTC = new Date(
-                Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()),
-            );
+            let allTweets: TweetWithUsername[] = [];
             for (const username of usernames) {
-                const tweets = await nitter.fetchLatestMessages(username);
-                const todaysTweets = tweets.filter((t) => {
-                    const tweetDate = new Date(t.createdAt);
-                    return (
-                        tweetDate.getUTCFullYear() === todayUTC.getUTCFullYear() &&
-                        tweetDate.getUTCMonth() === todayUTC.getUTCMonth() &&
-                        tweetDate.getUTCDate() === todayUTC.getUTCDate()
-                    );
+                const tweets = await x.fetchLatestMessages({
+                    timeAgo: { hours: 24 },
+                    username, // Get tweets from the last 24 hours
                 });
-                allTweets = allTweets.concat(todaysTweets.map((t) => ({ ...t, username })));
+                allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
             }
-            return JSON.stringify(allTweets);
+            // Format tweets with newlines and clear structure
+            return allTweets
+                .map(
+                    (tweet) =>
+                        `Author: ${tweet.author} (@${tweet.username})\n` +
+                        `Time: ${tweet.timeAgo}\n` +
+                        `Content: ${tweet.text}\n` +
+                        `URL: ${tweet.url}\n`,
+                )
+                .join('\n');
         },
         {
             description: 'Fetches latest crypto tweets from a predefined list of Twitter users.',
