@@ -6,34 +6,27 @@ import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
-import {
-    createFetchFinancialTweetsTool,
-    withFetchFinancialTweetsTool,
-} from './tools/fetch-financial-tweets.tool.js';
 import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
 import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
 
-export type FinanceNewsAgentDependencies = {
+export type TechnologyEventsAgentDependencies = {
     ai: AIPort;
-    apifyToken: string;
     channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
 };
 
-export const createFinanceNewsAgent = ({
+export const createTechnologyEventsAgent = ({
     ai,
-    apifyToken,
     channelName,
     chatBot,
     logger,
-}: FinanceNewsAgentDependencies) => {
+}: TechnologyEventsAgentDependencies) => {
     const agentSpecific = `
-Only post about important news, discussions or updates related to financial topics.
+Only post about important news, discussions or updates related to technology topics.
 `;
     const tools = [
         createFetchRecentBotMessagesTool({ channelName, chatBot }),
-        createFetchFinancialTweetsTool(apifyToken),
         createGetCurrentDateTool(),
     ];
 
@@ -46,7 +39,6 @@ Only post about important news, discussions or updates related to financial topi
                 buildSystemPrompt(
                     agentSpecific,
                     withDiscordNewsMarkdownFormat(),
-                    withFetchFinancialTweetsTool(),
                 ),
             ],
             ['human', '{input}'],

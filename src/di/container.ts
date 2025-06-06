@@ -11,9 +11,9 @@ import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
 import { createDevNewsJob } from '../adapters/inbound/job-runner/jobs/dev-news.job.js';
-import { createInvestNewsJob } from '../adapters/inbound/job-runner/jobs/invest-news.job.js';
+import { createFinanceNewsJob } from '../adapters/inbound/job-runner/jobs/finance-news.job.js';
 import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
-import { createTechEventsJob } from '../adapters/inbound/job-runner/jobs/tech-events.job.js';
+import { createTechnologyEventsJob } from '../adapters/inbound/job-runner/jobs/technology-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { GoogleAIAdapter } from '../adapters/outbound/ai/google-ai.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
@@ -21,9 +21,9 @@ import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js'
 import { createAINewsAgent } from '../agents/ai-news.agent.js';
 import { createCryptoNewsAgent } from '../agents/crypto-news.agent.js';
 import { createDevNewsAgent } from '../agents/dev-news.agent.js';
-import { createInvestNewsAgent } from '../agents/invest-news.agent.js';
+import { createFinanceNewsAgent } from '../agents/finance-news.agent.js';
 import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
-import { createTechEventsAgent } from '../agents/tech-events.agent.js';
+import { createTechnologyEventsAgent } from '../agents/technology-events.agent.js';
 
 /**
  * Inbound adapters
@@ -117,28 +117,28 @@ const cryptoNewsAgent = Injectable(
     },
 );
 
-const investNewsAgent = Injectable(
-    'InvestNewsAgent',
+const financeNewsAgent = Injectable(
+    'FinanceNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Configuration'] as const,
     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, configuration: ConfigurationPort) => {
         const { apifyToken } = configuration.getOutboundConfiguration();
-        return createInvestNewsAgent({
+        return createFinanceNewsAgent({
             ai,
             apifyToken,
-            channelName: 'invest',
+            channelName: 'finance',
             chatBot,
             logger,
         });
     },
 );
 
-const techEventsAgent = Injectable(
-    'TechEventsAgent',
+const technologyEventsAgent = Injectable(
+    'TechnologyEventsAgent',
     ['ChatBot', 'Logger', 'AI'] as const,
     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort) =>
-        createTechEventsAgent({
+        createTechnologyEventsAgent({
             ai,
-            channelName: 'tech',
+            channelName: 'technology',
             chatBot,
             logger,
         }),
@@ -155,9 +155,9 @@ const jobRunner = Injectable(
         'AINewsAgent',
         'CryptoNewsAgent',
         'DevNewsAgent',
-        'InvestNewsAgent',
+        'FinanceNewsAgent',
         'SpaceEventsAgent',
-        'TechEventsAgent',
+        'TechnologyEventsAgent',
     ] as const,
     (
         logger: LoggerPort,
@@ -165,9 +165,9 @@ const jobRunner = Injectable(
         aiNewsAgent: AgentPort,
         cryptoNewsAgent: AgentPort,
         devNewsAgent: AgentPort,
-        investNewsAgent: AgentPort,
+        financeNewsAgent: AgentPort,
         spaceEventsAgent: AgentPort,
-        techEventsAgent: AgentPort,
+        technologyEventsAgent: AgentPort,
     ) =>
         new NodeCronAdapter(logger, [
             createAINewsJob({
@@ -188,8 +188,8 @@ const jobRunner = Injectable(
                 chatBot,
                 logger,
             }),
-            createInvestNewsJob({
-                agent: investNewsAgent,
+            createFinanceNewsJob({
+                agent: financeNewsAgent,
                 channelName: 'invest',
                 chatBot,
                 logger,
@@ -200,8 +200,8 @@ const jobRunner = Injectable(
                 chatBot,
                 logger,
             }),
-            createTechEventsJob({
-                agent: techEventsAgent,
+            createTechnologyEventsJob({
+                agent: technologyEventsAgent,
                 channelName: 'tech',
                 chatBot,
                 logger,
@@ -225,7 +225,7 @@ export const createContainer = () =>
         .provides(aiNewsAgent)
         .provides(devNewsAgent)
         .provides(cryptoNewsAgent)
-        .provides(investNewsAgent)
-        .provides(techEventsAgent)
+        .provides(financeNewsAgent)
+        .provides(technologyEventsAgent)
         // JobRunner
         .provides(jobRunner);
