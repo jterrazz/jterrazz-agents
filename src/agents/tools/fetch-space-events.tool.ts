@@ -1,4 +1,4 @@
-import { tool } from '@langchain/core/tools';
+import { DynamicTool } from 'langchain/tools';
 
 import {
     getUpcomingEvents,
@@ -6,8 +6,9 @@ import {
 } from '../../adapters/outbound/web/nextspaceflight.adapter.js';
 
 export function createFetchSpaceEventsTool() {
-    return tool(
-        async () => {
+    return new DynamicTool({
+        description: 'Fetches upcoming space missions and rocket launches within the next 5 days.',
+        func: async () => {
             const [missions, launches] = await Promise.all([
                 getUpcomingEvents(),
                 getUpcomingRocketLaunches(),
@@ -22,12 +23,8 @@ export function createFetchSpaceEventsTool() {
             });
             return JSON.stringify(events);
         },
-        {
-            description:
-                'Fetches upcoming space missions and rocket launches within the next 5 days.',
-            name: 'getUpcomingSpaceEvents',
-        },
-    );
+        name: 'getUpcomingSpaceEvents',
+    });
 }
 
 export function withFetchSpaceEventsTool() {

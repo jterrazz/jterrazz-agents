@@ -36,6 +36,10 @@ Only post about important news, discussions or updates related to technology top
             ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
             ['human', '{input}'],
         ],
-        tools: [tools.getChatBotMessages.technology, tools.getCurrentDate, tools.fetchTechEvents],
+        tools: [
+            tools.getChatBotMessages.technology,
+            tools.getCurrentDate,
+            tools.fetchTechnologyEvents,
+        ],
     });
 };

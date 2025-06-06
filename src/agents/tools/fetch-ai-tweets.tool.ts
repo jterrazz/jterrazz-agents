@@ -1,4 +1,4 @@
-import { tool } from '@langchain/core/tools';
+import { DynamicTool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
@@ -24,8 +24,9 @@ export function createFetchAITweetsTool(apifyToken: string) {
         'cursor_ai',
     ];
     const x = createXAdapter(apifyToken);
-    return tool(
-        async () => {
+    return new DynamicTool({
+        description: 'Fetches latest AI-related tweets from a predefined list of Twitter users.',
+        func: async () => {
             const usernames = aiUsernames;
             let allTweets: TweetWithUsername[] = [];
             for (const username of usernames) {
@@ -46,12 +47,8 @@ export function createFetchAITweetsTool(apifyToken: string) {
                 )
                 .join('\n');
         },
-        {
-            description:
-                'Fetches latest AI-related tweets from a predefined list of Twitter users.',
-            name: 'fetchAITweets',
-        },
-    );
+        name: 'fetchAITweets',
+    });
 }
 
 export function withFetchAITweetsTool() {

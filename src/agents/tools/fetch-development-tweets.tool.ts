@@ -1,17 +1,23 @@
-import { tool } from '@langchain/core/tools';
+import { DynamicTool } from 'langchain/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
 import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
 
-export function createFetchDevTweetsTool(apifyToken: string) {
-    const devUsernames = ['GithubProjects', 'nodejs', 'colinhacks', 'bunjavascript', 'deno_land'];
-    const x = createXAdapter(apifyToken);
-    return tool(
-        async () => {
-            const usernames = devUsernames;
+export const createFetchDevelopmentTweetsTool = (apifyToken: string) =>
+    new DynamicTool({
+        description: 'Get recent development-related tweets.',
+        func: async () => {
+            const devUsernames = [
+                'GithubProjects',
+                'nodejs',
+                'colinhacks',
+                'bunjavascript',
+                'deno_land',
+            ];
+            const x = createXAdapter(apifyToken);
             let allTweets: SocialFeedMessage[] = [];
-            for (const username of usernames) {
+            for (const username of devUsernames) {
                 const tweets = await x.fetchLatestMessages({
                     timeAgo: { hours: 24 },
                     username, // Get tweets from the last 24 hours
@@ -20,13 +26,8 @@ export function createFetchDevTweetsTool(apifyToken: string) {
             }
             return JSON.stringify(allTweets);
         },
-        {
-            description:
-                'Fetches latest dev-related tweets from a predefined list of Twitter users.',
-            name: 'fetchDevTweets',
-        },
-    );
-}
+        name: 'fetchDevelopmentTweets',
+    });
 
 export function withFetchDevTweetsTool() {
     return 'Use the fetchDevTweets tool to get latest information about software development.';

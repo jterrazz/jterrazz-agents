@@ -1,4 +1,4 @@
-import { tool } from '@langchain/core/tools';
+import { DynamicTool } from 'langchain/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
@@ -11,8 +11,9 @@ interface TweetWithUsername extends SocialFeedMessage {
 export function createFetchFinancialTweetsTool(apifyToken: string) {
     const financialUsernames = ['KobeissiLetter'];
     const x = createXAdapter(apifyToken);
-    return tool(
-        async () => {
+    return new DynamicTool({
+        description: 'Fetches latest financial tweets from a predefined list of Twitter users.',
+        func: async () => {
             try {
                 const usernames = financialUsernames;
                 let allTweets: TweetWithUsername[] = [];
@@ -40,11 +41,8 @@ export function createFetchFinancialTweetsTool(apifyToken: string) {
                 throw error; // Re-throw to let the agent handle it
             }
         },
-        {
-            description: 'Fetches latest financial tweets from a predefined list of Twitter users.',
-            name: 'fetchFinancialTweets',
-        },
-    );
+        name: 'fetchFinancialTweets',
+    });
 }
 
 export function withFetchFinancialTweetsTool() {

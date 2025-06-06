@@ -1,4 +1,4 @@
-import { tool } from '@langchain/core/tools';
+import { DynamicTool } from 'langchain/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
 
@@ -11,8 +11,9 @@ interface TweetWithUsername extends SocialFeedMessage {
 export function createFetchCryptoTweetsTool(apifyToken: string) {
     const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
     const x = createXAdapter(apifyToken);
-    return tool(
-        async () => {
+    return new DynamicTool({
+        description: 'Fetches latest crypto tweets from a predefined list of Twitter users.',
+        func: async () => {
             const usernames = cryptoUsernames;
             let allTweets: TweetWithUsername[] = [];
             for (const username of usernames) {
@@ -33,11 +34,8 @@ export function createFetchCryptoTweetsTool(apifyToken: string) {
                 )
                 .join('\n');
         },
-        {
-            description: 'Fetches latest crypto tweets from a predefined list of Twitter users.',
-            name: 'fetchCryptoTweets',
-        },
-    );
+        name: 'fetchCryptoTweets',
+    });
 }
 
 export function withFetchCryptoTweetsTool() {

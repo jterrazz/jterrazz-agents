@@ -1,15 +1,15 @@
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 import { type AgentPort } from '../../../../ports/outbound/agent.port.js';
 
-export type DevNewsJobDependencies = {
+export type DevelopmentNewsJobDependencies = {
     agent: AgentPort;
 };
 
-export const createDevNewsJob = ({ agent }: DevNewsJobDependencies): Job => ({
+export const createDevelopmentNewsJob = ({ agent }: DevelopmentNewsJobDependencies): Job => ({
     execute: async () => {
         await agent.run('New task started');
     },
     executeOnStartup: true,
-    name: 'dev-news-agent',
+    name: 'development-news-agent',
     schedule: '0 17 * * *', // Every day at 5:00 PM
 });

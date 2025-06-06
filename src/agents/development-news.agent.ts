@@ -8,7 +8,7 @@ import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
 
-export type DevNewsAgentDependencies = {
+export type DevelopmentNewsAgentDependencies = {
     ai: AIPort;
     channelName: string;
     chatBot: ChatBotPort;
@@ -16,13 +16,13 @@ export type DevNewsAgentDependencies = {
     tools: AvailableTools;
 };
 
-export const createDevNewsAgent = ({
+export const createDevelopmentNewsAgent = ({
     ai,
     channelName,
     chatBot,
     logger,
     tools,
-}: DevNewsAgentDependencies) => {
+}: DevelopmentNewsAgentDependencies) => {
     const agentSpecific = `
 Only post about important news, discussions or updates related to development topics.
 `;
@@ -36,6 +36,10 @@ Only post about important news, discussions or updates related to development to
             ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
             ['human', '{input}'],
         ],
+        tools: [
+            tools.getChatBotMessages.development,
+            tools.fetchDevelopmentTweets,
+            tools.getCurrentDate,
         tools: [tools.getChatBotMessages.dev, tools.fetchDevTweets, tools.getCurrentDate],
     });
 };

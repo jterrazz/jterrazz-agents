@@ -9,13 +9,13 @@ export type AgentToolPort = DynamicTool<string>;
 export type AvailableTools = {
     fetchAITweets: AgentToolPort;
     fetchCryptoTweets: AgentToolPort;
-    fetchDevTweets: AgentToolPort;
+    fetchDevelopmentTweets: AgentToolPort;
     fetchFinancialTweets: AgentToolPort;
-    fetchTechEvents: AgentToolPort;
+    fetchTechnologyEvents: AgentToolPort;
     getChatBotMessages: {
         ai: AgentToolPort;
         crypto: AgentToolPort;
-        dev: AgentToolPort;
+        development: AgentToolPort;
         finance: AgentToolPort;
         space: AgentToolPort;
         technology: AgentToolPort;

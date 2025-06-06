@@ -10,7 +10,7 @@ import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
-import { createDevNewsJob } from '../adapters/inbound/job-runner/jobs/dev-news.job.js';
+import { createDevelopmentNewsJob } from '../adapters/inbound/job-runner/jobs/development-news.job.js';
 import { createFinanceNewsJob } from '../adapters/inbound/job-runner/jobs/finance-news.job.js';
 import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
 import { createTechnologyEventsJob } from '../adapters/inbound/job-runner/jobs/technology-events.job.js';
@@ -20,15 +20,15 @@ import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js'
 
 import { createAINewsAgent } from '../agents/ai-news.agent.js';
 import { createCryptoNewsAgent } from '../agents/crypto-news.agent.js';
-import { createDevNewsAgent } from '../agents/dev-news.agent.js';
+import { createDevelopmentNewsAgent } from '../agents/development-news.agent.js';
 import { createFinanceNewsAgent } from '../agents/finance-news.agent.js';
 import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
 import { createTechnologyEventsAgent } from '../agents/technology-events.agent.js';
 import { createFetchAITweetsTool } from '../agents/tools/fetch-ai-tweets.tool.js';
 import { createFetchCryptoTweetsTool } from '../agents/tools/fetch-crypto-tweets.tool.js';
-import { createFetchDevTweetsTool } from '../agents/tools/fetch-dev-tweets.tool.js';
+import { createFetchDevelopmentTweetsTool } from '../agents/tools/fetch-development-tweets.tool.js';
 import { createFetchFinancialTweetsTool } from '../agents/tools/fetch-financial-tweets.tool.js';
-import { createFetchTechEventsTool } from '../agents/tools/fetch-tech-events.tool.js';
+import { createFetchTechnologyEventsTool } from '../agents/tools/fetch-technology-events.tool.js';
 import { createGetChatBotMessagesTool } from '../agents/tools/get-chatbot-messages.tool.js';
 import { createGetCurrentDateTool } from '../agents/tools/get-current-date.tool.js';
 
@@ -74,13 +74,13 @@ const tools = Injectable(
         return {
             fetchAITweets: createFetchAITweetsTool(apifyToken),
             fetchCryptoTweets: createFetchCryptoTweetsTool(apifyToken),
-            fetchDevTweets: createFetchDevTweetsTool(apifyToken),
+            fetchDevelopmentTweets: createFetchDevelopmentTweetsTool(apifyToken),
             fetchFinancialTweets: createFetchFinancialTweetsTool(apifyToken),
-            fetchTechEvents: createFetchTechEventsTool(),
+            fetchTechnologyEvents: createFetchTechnologyEventsTool(),
             getChatBotMessages: {
                 ai: createGetChatBotMessagesTool({ channelName: 'ai', chatBot }),
                 crypto: createGetChatBotMessagesTool({ channelName: 'crypto', chatBot }),
-                dev: createGetChatBotMessagesTool({ channelName: 'dev', chatBot }),
+                development: createGetChatBotMessagesTool({ channelName: 'development', chatBot }),
                 finance: createGetChatBotMessagesTool({ channelName: 'finance', chatBot }),
                 space: createGetChatBotMessagesTool({ channelName: 'space', chatBot }),
                 technology: createGetChatBotMessagesTool({
@@ -138,13 +138,13 @@ const aiNewsAgent = Injectable(
     },
 );
 
-const devNewsAgent = Injectable(
-    'DevNewsAgent',
+const developmentNewsAgent = Injectable(
+    'DevelopmentNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) => {
-        return createDevNewsAgent({
+        return createDevelopmentNewsAgent({
             ai,
-            channelName: 'dev',
+            channelName: 'development',
             chatBot,
             logger,
             tools,
@@ -188,7 +188,7 @@ const jobRunner = Injectable(
         'Logger',
         'AINewsAgent',
         'CryptoNewsAgent',
-        'DevNewsAgent',
+        'DevelopmentNewsAgent',
         'FinanceNewsAgent',
         'SpaceEventsAgent',
         'TechnologyEventsAgent',
@@ -197,7 +197,7 @@ const jobRunner = Injectable(
         logger: LoggerPort,
         aiNewsAgent: AgentPort,
         cryptoNewsAgent: AgentPort,
-        devNewsAgent: AgentPort,
+        developmentNewsAgent: AgentPort,
         financeNewsAgent: AgentPort,
         spaceEventsAgent: AgentPort,
         technologyEventsAgent: AgentPort,
@@ -209,8 +209,8 @@ const jobRunner = Injectable(
             createCryptoNewsJob({
                 agent: cryptoNewsAgent,
             }),
-            createDevNewsJob({
-                agent: devNewsAgent,
+            createDevelopmentNewsJob({
+                agent: developmentNewsAgent,
             }),
             createFinanceNewsJob({
                 agent: financeNewsAgent,
@@ -240,7 +240,7 @@ export const createContainer = () =>
         // Agents
         .provides(spaceEventsAgent)
         .provides(aiNewsAgent)
-        .provides(devNewsAgent)
+        .provides(developmentNewsAgent)
         .provides(cryptoNewsAgent)
         .provides(financeNewsAgent)
         .provides(technologyEventsAgent)

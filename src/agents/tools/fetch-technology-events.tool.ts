@@ -2,7 +2,7 @@ import { DynamicTool } from 'langchain/tools';
 
 import { getUpcomingTechEvents } from '../../adapters/outbound/web/techmeme.adapter.js';
 
-export const createFetchTechEventsTool = () =>
+export const createFetchTechnologyEventsTool = () =>
     new DynamicTool({
         description: 'Get recent technology events and conferences.',
         func: async () => {
@@ -16,5 +16,5 @@ export const createFetchTechEventsTool = () =>
             });
             return JSON.stringify(events);
         },
-        name: 'fetchTechEvents',
+        name: 'fetchTechnologyEvents',
     });
