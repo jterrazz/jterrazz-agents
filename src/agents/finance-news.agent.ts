@@ -1,44 +1,34 @@
 import type { LoggerPort } from '@jterrazz/logger';
 
-import { type AIPort } from '../ports/outbound/ai.port.js';
-import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import type { AIPort } from '../ports/outbound/ai.port.js';
+import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import type { Tool } from '../ports/outbound/tool.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
-import {
-    createFetchFinancialTweetsTool,
-    withFetchFinancialTweetsTool,
-} from './tools/fetch-financial-tweets.tool.js';
-import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
-import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
+import { withFetchFinanceNewsTool } from './tools/fetch-finance-news.tool.js';
 
 export type FinanceNewsAgentDependencies = {
     ai: AIPort;
-    apifyToken: string;
-    channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
+    tools: Tool[];
 };
 
 export const createFinanceNewsAgent = ({
     ai,
-    apifyToken,
-    channelName,
     chatBot,
     logger,
+    tools,
 }: FinanceNewsAgentDependencies) => {
     const agentSpecific = `
 Only post about important news, discussions or updates related to financial topics.
 `;
-    const tools = [
-        createFetchRecentBotMessagesTool({ channelName, chatBot }),
-        createFetchFinancialTweetsTool(apifyToken),
-        createGetCurrentDateTool(),
-    ];
 
     return createChatAgent({
         ai,
+        chatBot,
         logger,
         promptTemplate: [
             [
@@ -46,7 +36,7 @@ Only post about important news, discussions or updates related to financial topi
                 buildSystemPrompt(
                     agentSpecific,
                     withDiscordNewsMarkdownFormat(),
-                    withFetchFinancialTweetsTool(),
+                    withFetchFinanceNewsTool(),
                 ),
             ],
             ['human', '{input}'],

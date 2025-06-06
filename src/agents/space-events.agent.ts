@@ -2,33 +2,32 @@ import type { LoggerPort } from '@jterrazz/logger';
 
 import type { AIPort } from '../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import type { Tool } from '../ports/outbound/tool.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { useDiscordEventsMarkdownFormat } from './templates/discord-space-events-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
-import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
-import {
-    createFetchSpaceEventsTool,
-    withFetchSpaceEventsTool,
-} from './tools/fetch-space-events.tool.js';
-import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
+import { withFetchSpaceEventsTool } from './tools/fetch-space-events.tool.js';
+
+export type SpaceEventsAgentDependencies = {
+    ai: AIPort;
+    chatBot: ChatBotPort;
+    logger: LoggerPort;
+    tools: Tool[];
+};
 
 export function createSpaceEventsAgent({
     ai,
-    channelName,
     chatBot,
     logger,
-}: {
-    ai: AIPort;
-    channelName: string;
-    chatBot: ChatBotPort;
-    logger: LoggerPort;
-}) {
+    tools,
+}: SpaceEventsAgentDependencies) {
     const agentSpecific = `
 Only update about Starship launches. And events categorized as "space mission". Ignore other events.
 `;
     return createChatAgent({
         ai,
+        chatBot,
         logger,
         promptTemplate: [
             [
@@ -41,10 +40,6 @@ Only update about Starship launches. And events categorized as "space mission". 
             ],
             ['human', '{input}'],
         ],
-        tools: [
-            createFetchRecentBotMessagesTool({ channelName, chatBot }),
-            createFetchSpaceEventsTool(),
-            createGetCurrentDateTool(),
-        ],
+        tools,
     });
 }

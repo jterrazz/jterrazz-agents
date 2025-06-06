@@ -7,6 +7,7 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 import { type AgentPort } from '../ports/outbound/agent.port.js';
 import { type AIPort } from '../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import { type Tool } from '../ports/outbound/tool.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
@@ -24,6 +25,12 @@ import { createDevNewsAgent } from '../agents/dev-news.agent.js';
 import { createFinanceNewsAgent } from '../agents/finance-news.agent.js';
 import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
 import { createTechnologyEventsAgent } from '../agents/technology-events.agent.js';
+import { createFetchAITweetsTool } from '../agents/tools/fetch-ai-tweets.tool.js';
+import { createFetchCryptoTweetsTool } from '../agents/tools/fetch-crypto-tweets.tool.js';
+import { createFetchDevTweetsTool } from '../agents/tools/fetch-dev-tweets.tool.js';
+import { createFetchFinancialTweetsTool } from '../agents/tools/fetch-financial-tweets.tool.js';
+import { createFetchRecentBotMessagesTool } from '../agents/tools/fetch-recent-bot-messages.tool.js';
+import { createGetCurrentDateTool } from '../agents/tools/get-current-date.tool.js';
 
 /**
  * Inbound adapters
@@ -57,90 +64,217 @@ const ai = Injectable(
 );
 
 /**
+ * Tools
+ */
+const fetchRecentBotMessagesTool = Injectable(
+    'FetchRecentBotMessagesTool',
+    ['ChatBot'] as const,
+    (chatBot: ChatBotPort): Tool =>
+        createFetchRecentBotMessagesTool({ channelName: 'finance', chatBot }),
+);
+
+const fetchDevRecentBotMessagesTool = Injectable(
+    'FetchDevRecentBotMessagesTool',
+    ['ChatBot'] as const,
+    (chatBot: ChatBotPort): Tool =>
+        createFetchRecentBotMessagesTool({ channelName: 'dev', chatBot }),
+);
+
+const fetchCryptoRecentBotMessagesTool = Injectable(
+    'FetchCryptoRecentBotMessagesTool',
+    ['ChatBot'] as const,
+    (chatBot: ChatBotPort): Tool =>
+        createFetchRecentBotMessagesTool({ channelName: 'crypto', chatBot }),
+);
+
+const fetchAINewsRecentBotMessagesTool = Injectable(
+    'FetchAINewsRecentBotMessagesTool',
+    ['ChatBot'] as const,
+    (chatBot: ChatBotPort): Tool =>
+        createFetchRecentBotMessagesTool({ channelName: 'ai', chatBot }),
+);
+
+const fetchFinancialTweetsTool = Injectable(
+    'FetchFinancialTweetsTool',
+    ['Configuration'] as const,
+    (configuration: ConfigurationPort): Tool => {
+        const { apifyToken } = configuration.getOutboundConfiguration();
+        return createFetchFinancialTweetsTool(apifyToken);
+    },
+);
+
+const fetchDevTweetsTool = Injectable(
+    'FetchDevTweetsTool',
+    ['Configuration'] as const,
+    (configuration: ConfigurationPort): Tool => {
+        const { apifyToken } = configuration.getOutboundConfiguration();
+        return createFetchDevTweetsTool(apifyToken);
+    },
+);
+
+const fetchCryptoTweetsTool = Injectable(
+    'FetchCryptoTweetsTool',
+    ['Configuration'] as const,
+    (configuration: ConfigurationPort): Tool => {
+        const { apifyToken } = configuration.getOutboundConfiguration();
+        return createFetchCryptoTweetsTool(apifyToken);
+    },
+);
+
+const fetchAITweetsTool = Injectable(
+    'FetchAITweetsTool',
+    ['Configuration'] as const,
+    (configuration: ConfigurationPort): Tool => {
+        const { apifyToken } = configuration.getOutboundConfiguration();
+        return createFetchAITweetsTool(apifyToken);
+    },
+);
+
+const getCurrentDateTool = Injectable(
+    'GetCurrentDateTool',
+    [] as const,
+    (): Tool => createGetCurrentDateTool(),
+);
+
+/**
  * Agents
  */
-const spaceEventsAgent = Injectable(
-    'SpaceEventsAgent',
-    ['ChatBot', 'Logger', 'AI'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort) => {
-        return createSpaceEventsAgent({
+const financeNewsAgent = Injectable(
+    'FinanceNewsAgent',
+    [
+        'ChatBot',
+        'Logger',
+        'AI',
+        'FetchRecentBotMessagesTool',
+        'FetchFinancialTweetsTool',
+        'GetCurrentDateTool',
+    ] as const,
+    (
+        chatBot: ChatBotPort,
+        logger: LoggerPort,
+        ai: AIPort,
+        fetchRecentBotMessagesTool: Tool,
+        fetchFinancialTweetsTool: Tool,
+        getCurrentDateTool: Tool,
+    ) => {
+        return createFinanceNewsAgent({
             ai,
-            channelName: 'space',
             chatBot,
             logger,
+            tools: [fetchRecentBotMessagesTool, fetchFinancialTweetsTool, getCurrentDateTool],
+        });
+    },
+);
+
+const spaceEventsAgent = Injectable(
+    'SpaceEventsAgent',
+    ['ChatBot', 'Logger', 'AI', 'GetCurrentDateTool'] as const,
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, getCurrentDateTool: Tool) => {
+        return createSpaceEventsAgent({
+            ai,
+            chatBot,
+            logger,
+            tools: [getCurrentDateTool],
         });
     },
 );
 
 const aiNewsAgent = Injectable(
     'AINewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Configuration'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, configuration: ConfigurationPort) => {
-        const { apifyToken } = configuration.getOutboundConfiguration();
+    [
+        'ChatBot',
+        'Logger',
+        'AI',
+        'FetchAINewsRecentBotMessagesTool',
+        'FetchAITweetsTool',
+        'GetCurrentDateTool',
+    ] as const,
+    (
+        chatBot: ChatBotPort,
+        logger: LoggerPort,
+        ai: AIPort,
+        fetchRecentBotMessagesTool: Tool,
+        fetchAITweetsTool: Tool,
+        getCurrentDateTool: Tool,
+    ) => {
         return createAINewsAgent({
             ai,
-            apifyToken,
-            channelName: 'ai',
             chatBot,
             logger,
+            tools: [fetchRecentBotMessagesTool, fetchAITweetsTool, getCurrentDateTool],
         });
     },
 );
 
 const devNewsAgent = Injectable(
     'DevNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Configuration'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, configuration: ConfigurationPort) => {
-        const { apifyToken } = configuration.getOutboundConfiguration();
+    [
+        'ChatBot',
+        'Logger',
+        'AI',
+        'FetchDevRecentBotMessagesTool',
+        'FetchDevTweetsTool',
+        'GetCurrentDateTool',
+    ] as const,
+    (
+        chatBot: ChatBotPort,
+        logger: LoggerPort,
+        ai: AIPort,
+        fetchRecentBotMessagesTool: Tool,
+        fetchDevTweetsTool: Tool,
+        getCurrentDateTool: Tool,
+    ) => {
         return createDevNewsAgent({
             ai,
-            apifyToken,
-            channelName: 'dev',
             chatBot,
             logger,
+            tools: [fetchRecentBotMessagesTool, fetchDevTweetsTool, getCurrentDateTool],
         });
     },
 );
 
 const cryptoNewsAgent = Injectable(
     'CryptoNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Configuration'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, configuration: ConfigurationPort) => {
-        const { apifyToken } = configuration.getOutboundConfiguration();
+    [
+        'ChatBot',
+        'Logger',
+        'AI',
+        'FetchCryptoRecentBotMessagesTool',
+        'FetchCryptoTweetsTool',
+        'GetCurrentDateTool',
+    ] as const,
+    (
+        chatBot: ChatBotPort,
+        logger: LoggerPort,
+        ai: AIPort,
+        fetchRecentBotMessagesTool: Tool,
+        fetchCryptoTweetsTool: Tool,
+        getCurrentDateTool: Tool,
+    ) => {
         return createCryptoNewsAgent({
             ai,
-            apifyToken,
-            channelName: 'crypto',
             chatBot,
             logger,
-        });
-    },
-);
-
-const financeNewsAgent = Injectable(
-    'FinanceNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Configuration'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, configuration: ConfigurationPort) => {
-        const { apifyToken } = configuration.getOutboundConfiguration();
-        return createFinanceNewsAgent({
-            ai,
-            apifyToken,
-            channelName: 'finance',
-            chatBot,
-            logger,
+            tools: [fetchRecentBotMessagesTool, fetchCryptoTweetsTool, getCurrentDateTool],
         });
     },
 );
 
 const technologyEventsAgent = Injectable(
     'TechnologyEventsAgent',
-    ['ChatBot', 'Logger', 'AI'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort) =>
+    ['ChatBot', 'Logger', 'AI', 'FetchRecentBotMessagesTool', 'GetCurrentDateTool'] as const,
+    (
+        chatBot: ChatBotPort,
+        logger: LoggerPort,
+        ai: AIPort,
+        fetchRecentBotMessagesTool: Tool,
+        getCurrentDateTool: Tool,
+    ) =>
         createTechnologyEventsAgent({
             ai,
-            channelName: 'technology',
             chatBot,
             logger,
+            tools: [fetchRecentBotMessagesTool, getCurrentDateTool],
         }),
 );
 
@@ -220,6 +354,16 @@ export const createContainer = () =>
         .provides(logger)
         .provides(chatBot)
         .provides(ai)
+        // Tools
+        .provides(fetchRecentBotMessagesTool)
+        .provides(fetchDevRecentBotMessagesTool)
+        .provides(fetchCryptoRecentBotMessagesTool)
+        .provides(fetchAINewsRecentBotMessagesTool)
+        .provides(fetchFinancialTweetsTool)
+        .provides(fetchDevTweetsTool)
+        .provides(fetchCryptoTweetsTool)
+        .provides(fetchAITweetsTool)
+        .provides(getCurrentDateTool)
         // Agents
         .provides(spaceEventsAgent)
         .provides(aiNewsAgent)

@@ -2,35 +2,32 @@ import type { LoggerPort } from '@jterrazz/logger';
 
 import type { AIPort } from '../ports/outbound/ai.port.js';
 import type { ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import type { Tool } from '../ports/outbound/tool.port.js';
 
 import { createChatAgent } from './base/chat-agent-factory.js';
 import { withDiscordNewsMarkdownFormat } from './templates/discord-news-markdown.template.js';
 import { buildSystemPrompt } from './templates/system.js';
-import {
-    createFetchCryptoTweetsTool,
-    withFetchCryptoTweetsTool,
-} from './tools/fetch-crypto-tweets.tool.js';
-import { createFetchRecentBotMessagesTool } from './tools/fetch-recent-bot-messages.tool.js';
-import { createGetCurrentDateTool } from './tools/get-current-date.tool.js';
+import { withFetchCryptoNewsTool } from './tools/fetch-crypto-news.tool.js';
 
-export function createCryptoNewsAgent({
-    ai,
-    apifyToken,
-    channelName,
-    chatBot,
-    logger,
-}: {
+export type CryptoNewsAgentDependencies = {
     ai: AIPort;
-    apifyToken: string;
-    channelName: string;
     chatBot: ChatBotPort;
     logger: LoggerPort;
-}) {
+    tools: Tool[];
+};
+
+export const createCryptoNewsAgent = ({
+    ai,
+    chatBot,
+    logger,
+    tools,
+}: CryptoNewsAgentDependencies) => {
     const agentSpecific = `
 Only post about important news, discussions or updates related to Bitcoin, Ethereum, or generic crypto topics.
 `;
     return createChatAgent({
         ai,
+        chatBot,
         logger,
         promptTemplate: [
             [
@@ -38,15 +35,11 @@ Only post about important news, discussions or updates related to Bitcoin, Ether
                 buildSystemPrompt(
                     agentSpecific,
                     withDiscordNewsMarkdownFormat(),
-                    withFetchCryptoTweetsTool(),
+                    withFetchCryptoNewsTool(),
                 ),
             ],
             ['human', '{input}'],
         ],
-        tools: [
-            createFetchRecentBotMessagesTool({ channelName, chatBot }),
-            createFetchCryptoTweetsTool(apifyToken),
-            createGetCurrentDateTool(),
-        ],
+        tools,
     });
-}
+};
