@@ -2,12 +2,8 @@ export function useDiscordEventsMarkdownFormat(): string {
     return `
 Use this beautiful and modern Discord Markdown template for each event:
 
-- You can publish multiple ideas / news / paragraphs in the same message.
 - IMPORTANT: The output MUST be a maximum of 1700 letters. Do not break the url links that are sent. But evaluate everything in the character limit, including the url links.
-- IMPORTANT: DO NOT send multiple messages / reminders for the same event.
 - Add a blank line between events.
-- Do not repeat the event title anywhere except as the bolded title.
-- Do not include a global title or heading; only output the event list.
 - Use blockquotes for event details for clarity and visual separation.
 - Use emoji for each field for visual appeal.
 - If an image URL is available, show it as an embedded image below the event details.

@@ -2,10 +2,8 @@ export function withDiscordNewsMarkdownFormat(): string {
     return `
 Use this clear and modern Discord Markdown template for each item.
 
-- You can publish multiple ideas / news / paragraphs in the same message.
-- IMPORTANT: The output MUST be a maximum of 1700 letters. Do not break the url links that are sent. But evaluate everything in the character limit, including the url links.
+- IMPORTANT: The total output MUST be a maximum of 1700 letters. But keep the integrity of links.
 - Add a blank line between items for readability.
-- Do not repeat the title anywhere except as the bolded title.
 - If a URL or tweet link is available, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
 - Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
 
