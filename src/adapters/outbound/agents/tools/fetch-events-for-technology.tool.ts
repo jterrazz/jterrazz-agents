@@ -1,13 +1,14 @@
 import { DynamicTool } from 'langchain/tools';
 
+import { filterEventsByDateRange } from './utils/event-filters.js';
+
 import { getUpcomingTechEvents } from '../../web/techmeme.adapter.js';
 
-import { filterEventsByDateRange } from './filters/event-filters.js';
 import { formatEvents } from './formatters/event-formatter.js';
 
 export const createFetchEventsForTechnologyTool = () =>
     new DynamicTool({
-        description: 'Get recent technology events and conferences.',
+        description: 'Get technology events and conferences within the next 14 days.',
         func: async () => {
             const events = await getUpcomingTechEvents();
             const filteredEvents = filterEventsByDateRange(events, 14);

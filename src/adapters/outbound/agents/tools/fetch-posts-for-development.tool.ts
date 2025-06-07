@@ -1,27 +1,24 @@
 import { DynamicTool } from 'langchain/tools';
 
-import { type XPort, type XPostPort } from '../../../../ports/outbound/web/x.port.js';
+import { type XPort } from '../../../../ports/outbound/web/x.port.js';
+
+import { formatXPosts } from './formatters/x-post-formatter.js';
+
+const USERNAMES = ['GithubProjects', 'nodejs', 'colinhacks', 'bunjavascript', 'deno_land'];
 
 export const createFetchPostsForDevelopmentTool = (x: XPort) =>
     new DynamicTool({
-        description: 'Get recent development-related posts.',
+        description: 'Fetches latest Development-related posts from a predefined list of X users.',
         func: async () => {
-            const devUsernames = [
-                'GithubProjects',
-                'nodejs',
-                'colinhacks',
-                'bunjavascript',
-                'deno_land',
-            ];
-            let allPosts: XPostPort[] = [];
-            for (const username of devUsernames) {
-                const posts = await x.fetchLatestMessages({
-                    timeAgo: { hours: 24 },
-                    username, // Get posts from the last 24 hours
-                });
-                allPosts = allPosts.concat(posts);
-            }
-            return JSON.stringify(allPosts);
+            const posts = await Promise.all(
+                USERNAMES.map((username) =>
+                    x.fetchLatestMessages({
+                        timeAgo: { hours: 24 },
+                        username,
+                    }),
+                ),
+            );
+            return formatXPosts(posts.flat());
         },
         name: 'fetchPostsForDevelopment',
     });

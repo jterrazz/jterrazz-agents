@@ -1,8 +1,9 @@
 import { DynamicTool } from 'langchain/tools';
 
+import { filterEventsByDateRange } from './utils/event-filters.js';
+
 import { getUpcomingEvents, getUpcomingRocketLaunches } from '../../web/nextspaceflight.adapter.js';
 
-import { filterEventsByDateRange } from './filters/event-filters.js';
 import { formatEvents } from './formatters/event-formatter.js';
 
 export function createFetchEventsForSpaceTool() {
