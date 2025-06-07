@@ -4,10 +4,10 @@ import { Container, Injectable } from '@snap/ts-inject';
 import { NodeConfigAdapter } from '../adapters/inbound/configuration/node-config.adapter.js';
 import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
-import { type AgentPort, type AvailableAgentTools } from '../ports/outbound/agent.port.js';
+import { type AgentPort, type AvailableAgentTools } from '../ports/outbound/agents.port.js';
 import { type AIPort } from '../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
-import { type XPort } from '../ports/outbound/x.port.js';
+import { type XPort } from '../ports/outbound/web/x.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';

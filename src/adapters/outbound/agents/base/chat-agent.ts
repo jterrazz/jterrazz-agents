@@ -1,7 +1,7 @@
 import { type LoggerPort } from '@jterrazz/logger';
 import { type DynamicTool } from 'langchain/tools';
 
-import { type AvailableAgentTools } from '../../../../ports/outbound/agent.port.js';
+import { type AvailableAgentTools } from '../../../../ports/outbound/agents.port.js';
 import { type AIPort } from '../../../../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 

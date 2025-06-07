@@ -1,7 +1,7 @@
 import { ApifyClient } from 'apify-client';
 import { z } from 'zod';
 
-import { type XPort, type XPostPort } from '../../../ports/outbound/x.port.js';
+import { type XPort, type XPostPort } from '../../../ports/outbound/web/x.port.js';
 
 const authorSchema = z.object({
     avatar: z.string().nullable(),

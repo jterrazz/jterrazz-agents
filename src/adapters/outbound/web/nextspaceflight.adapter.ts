@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { type Event, EventTypeEnum } from '../../../ports/outbound/events.port.js';
+import { type Event, EventTypeEnum } from '../../../ports/outbound/web/events.port.js';
 
 const NEXTSPACEFLIGHT_EVENTS_URL = 'https://nextspaceflight.com/events/';
 const NEXTSPACEFLIGHT_LAUNCHES_URL = 'https://nextspaceflight.com/launches/';

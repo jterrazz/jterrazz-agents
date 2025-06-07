@@ -3,6 +3,7 @@ import { DynamicTool } from 'langchain/tools';
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 import { formatDate } from './utils/date-formatter.js';
+import { formatTimeAgo } from './utils/time-ago-formatter.js';
 
 type FetchChatBotMessagesToolDependencies = {
     channelName: string;
@@ -20,7 +21,7 @@ export const createFetchChatBotMessagesTool = ({
             return messages
                 .map(
                     (message) =>
-                        `Date: ${formatDate(message.date)} (${message.timeAgo})\n` +
+                        `Date: ${formatDate(message.date)} (${formatTimeAgo(message.date)})\n` +
                         `Content: ${message.content}\n`,
                 )
                 .join('\n');

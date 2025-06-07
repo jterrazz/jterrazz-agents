@@ -1,5 +1,5 @@
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
-import { type AgentPort } from '../../../../ports/outbound/agent.port.js';
+import { type AgentPort } from '../../../../ports/outbound/agents.port.js';
 
 export type FinanceNewsJobDependencies = {
     agent: AgentPort;

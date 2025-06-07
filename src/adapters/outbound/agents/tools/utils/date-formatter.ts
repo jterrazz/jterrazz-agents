@@ -6,6 +6,7 @@ export function formatDate(date: Date | string): string {
         hour12: true,
         minute: 'numeric',
         month: 'long',
+        timeZone: 'UTC',
         year: 'numeric',
     });
 } 

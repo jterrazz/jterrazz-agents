@@ -1,6 +1,6 @@
 import { DynamicTool } from 'langchain/tools';
 
-import { type XPort, type XPostPort } from '../../../../ports/outbound/x.port.js';
+import { type XPort, type XPostPort } from '../../../../ports/outbound/web/x.port.js';
 
 export const createFetchPostsForDevelopmentTool = (x: XPort) =>
     new DynamicTool({

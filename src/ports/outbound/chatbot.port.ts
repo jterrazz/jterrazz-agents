@@ -1,7 +1,6 @@
 export type ChatBotMessage = {
     content: string;
-    date: string;
-    timeAgo: string;
+    date: Date;
 };
 
 export interface ChatBotPort {
