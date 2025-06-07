@@ -27,11 +27,11 @@ import { createFinanceNewsAgent } from '../agents/finance-news.agent.js';
 import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
 import { createTechnologyEventsAgent } from '../agents/technology-events.agent.js';
 import { createFetchAITweetsTool } from '../agents/tools/fetch-ai-tweets.tool.js';
+import { createFetchChatBotMessagesTool } from '../agents/tools/fetch-chatbot-messages.tool.js';
 import { createFetchCryptoTweetsTool } from '../agents/tools/fetch-crypto-tweets.tool.js';
 import { createFetchDevelopmentTweetsTool } from '../agents/tools/fetch-development-tweets.tool.js';
 import { createFetchFinancialTweetsTool } from '../agents/tools/fetch-financial-tweets.tool.js';
 import { createFetchTechnologyEventsTool } from '../agents/tools/fetch-technology-events.tool.js';
-import { createFetchChatBotMessagesTool } from '../agents/tools/get-chatbot-messages.tool.js';
 import { createGetCurrentDateTool } from '../agents/tools/get-current-date.tool.js';
 
 /**
