@@ -4,7 +4,7 @@ import { Container, Injectable } from '@snap/ts-inject';
 import { NodeConfigAdapter } from '../adapters/inbound/configuration/node-config.adapter.js';
 import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
-import { type AgentPort, type AvailableTools } from '../ports/outbound/agent.port.js';
+import { type AgentPort, type AvailableAgentTools } from '../ports/outbound/agent.port.js';
 import { type AIPort } from '../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { type XPort } from '../ports/outbound/x.port.js';
@@ -77,7 +77,7 @@ const x = Injectable('X', ['Configuration'] as const, (config: ConfigurationPort
 const tools = Injectable(
     'Tools',
     ['ChatBot', 'Configuration', 'X'] as const,
-    (chatBot: ChatBotPort, config: ConfigurationPort, x: XPort): AvailableTools => {
+    (chatBot: ChatBotPort, config: ConfigurationPort, x: XPort): AvailableAgentTools => {
         return {
             fetchChatBotMessages: {
                 ai: createFetchChatBotMessagesTool({ channelName: 'ai', chatBot }),
@@ -110,7 +110,7 @@ const tools = Injectable(
 const financeNewsAgent = Injectable(
     'FinanceNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
         new FinanceNewsAgent({
             ai,
             channelName: 'invest',
@@ -123,7 +123,7 @@ const financeNewsAgent = Injectable(
 const spaceEventsAgent = Injectable(
     'SpaceEventsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
         new SpaceEventsAgent({
             ai,
             channelName: 'space',
@@ -136,7 +136,7 @@ const spaceEventsAgent = Injectable(
 const aiNewsAgent = Injectable(
     'AINewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
         new AINewsAgent({
             ai,
             channelName: 'ai',
@@ -149,7 +149,7 @@ const aiNewsAgent = Injectable(
 const developmentNewsAgent = Injectable(
     'DevelopmentNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
         new DevelopmentNewsAgent({
             ai,
             channelName: 'development',
@@ -162,7 +162,7 @@ const developmentNewsAgent = Injectable(
 const cryptoNewsAgent = Injectable(
     'CryptoNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
         new CryptoNewsAgent({
             ai,
             channelName: 'crypto',
@@ -175,7 +175,7 @@ const cryptoNewsAgent = Injectable(
 const technologyEventsAgent = Injectable(
     'TechnologyEventsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
         new TechnologyEventsAgent({
             ai,
             channelName: 'tech',

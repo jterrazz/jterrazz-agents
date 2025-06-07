@@ -1,9 +1,9 @@
-import { type DynamicTool } from 'langchain/tools';
+import { type AgentTool } from '../ports/outbound/agent.port.js';
 
-import { type AgentDependencies, ChatAgent } from './base/chat-agent.js';
+import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
 
 export class CryptoNewsAgent extends ChatAgent {
-    constructor(dependencies: AgentDependencies) {
+    constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies.ai,
             dependencies.channelName,
@@ -14,7 +14,7 @@ export class CryptoNewsAgent extends ChatAgent {
         );
     }
 
-    protected getTools(): DynamicTool[] {
+    protected getTools(): AgentTool[] {
         return [
             this.tools.fetchChatBotMessages.crypto,
             this.tools.getCurrentDate,
