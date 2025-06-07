@@ -37,9 +37,9 @@ Only post about important news, discussions or updates related to development to
             ['human', '{input}'],
         ],
         tools: [
-            tools.getChatBotMessages.development,
-            tools.fetchDevelopmentTweets,
+            tools.fetchChatBotMessages.development,
             tools.getCurrentDate,
-        tools: [tools.getChatBotMessages.dev, tools.fetchDevTweets, tools.getCurrentDate],
+            tools.fetchDevelopmentTweets,
+        ],
     });
 };

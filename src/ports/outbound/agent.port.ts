@@ -1,24 +1,23 @@
-import type { DynamicTool } from '@langchain/core/tools';
+import { type DynamicTool } from 'langchain/tools';
+
 
 export type AgentPort = {
     run(userQuery: string): Promise<void>;
 };
 
-export type AgentToolPort = DynamicTool<string>;
-
 export type AvailableTools = {
-    fetchAITweets: AgentToolPort;
-    fetchCryptoTweets: AgentToolPort;
-    fetchDevelopmentTweets: AgentToolPort;
-    fetchFinancialTweets: AgentToolPort;
-    fetchTechnologyEvents: AgentToolPort;
-    getChatBotMessages: {
-        ai: AgentToolPort;
-        crypto: AgentToolPort;
-        development: AgentToolPort;
-        finance: AgentToolPort;
-        space: AgentToolPort;
-        technology: AgentToolPort;
+    fetchAITweets: DynamicTool;
+    fetchChatBotMessages: {
+        ai: DynamicTool;
+        crypto: DynamicTool;
+        development: DynamicTool;
+        finance: DynamicTool;
+        space: DynamicTool;
+        technology: DynamicTool;
     };
-    getCurrentDate: AgentToolPort;
+    fetchCryptoTweets: DynamicTool;
+    fetchDevelopmentTweets: DynamicTool;
+    fetchFinancialTweets: DynamicTool;
+    fetchTechnologyEvents: DynamicTool;
+    getCurrentDate: DynamicTool;
 };

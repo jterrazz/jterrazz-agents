@@ -37,7 +37,7 @@ Only post about important news, discussions or updates related to technology top
             ['human', '{input}'],
         ],
         tools: [
-            tools.getChatBotMessages.technology,
+            tools.fetchChatBotMessages.technology,
             tools.getCurrentDate,
             tools.fetchTechnologyEvents,
         ],

@@ -31,7 +31,7 @@ import { createFetchCryptoTweetsTool } from '../agents/tools/fetch-crypto-tweets
 import { createFetchDevelopmentTweetsTool } from '../agents/tools/fetch-development-tweets.tool.js';
 import { createFetchFinancialTweetsTool } from '../agents/tools/fetch-financial-tweets.tool.js';
 import { createFetchTechnologyEventsTool } from '../agents/tools/fetch-technology-events.tool.js';
-import { createGetChatBotMessagesTool } from '../agents/tools/get-chatbot-messages.tool.js';
+import { createFetchChatBotMessagesTool } from '../agents/tools/get-chatbot-messages.tool.js';
 import { createGetCurrentDateTool } from '../agents/tools/get-current-date.tool.js';
 
 /**
@@ -79,21 +79,21 @@ const tools = Injectable(
     (chatBot: ChatBotPort, config: ConfigurationPort, x: XPort): AvailableTools => {
         return {
             fetchAITweets: createFetchAITweetsTool(x),
-            fetchCryptoTweets: createFetchCryptoTweetsTool(x),
-            fetchDevelopmentTweets: createFetchDevelopmentTweetsTool(x),
-            fetchFinancialTweets: createFetchFinancialTweetsTool(x),
-            fetchTechnologyEvents: createFetchTechnologyEventsTool(),
-            getChatBotMessages: {
-                ai: createGetChatBotMessagesTool({ channelName: 'ai', chatBot }),
-                crypto: createGetChatBotMessagesTool({ channelName: 'crypto', chatBot }),
-                development: createGetChatBotMessagesTool({ channelName: 'development', chatBot }),
-                finance: createGetChatBotMessagesTool({ channelName: 'finance', chatBot }),
-                space: createGetChatBotMessagesTool({ channelName: 'space', chatBot }),
-                technology: createGetChatBotMessagesTool({
+            fetchChatBotMessages: {
+                ai: createFetchChatBotMessagesTool({ channelName: 'ai', chatBot }),
+                crypto: createFetchChatBotMessagesTool({ channelName: 'crypto', chatBot }),
+                development: createFetchChatBotMessagesTool({ channelName: 'development', chatBot }),
+                finance: createFetchChatBotMessagesTool({ channelName: 'finance', chatBot }),
+                space: createFetchChatBotMessagesTool({ channelName: 'space', chatBot }),
+                technology: createFetchChatBotMessagesTool({
                     channelName: 'technology',
                     chatBot,
                 }),
             },
+            fetchCryptoTweets: createFetchCryptoTweetsTool(x),
+            fetchDevelopmentTweets: createFetchDevelopmentTweetsTool(x),
+            fetchFinancialTweets: createFetchFinancialTweetsTool(x),
+            fetchTechnologyEvents: createFetchTechnologyEventsTool(),
             getCurrentDate: createGetCurrentDateTool(),
         };
     },
