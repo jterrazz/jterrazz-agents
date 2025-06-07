@@ -93,8 +93,6 @@ export const createXAdapter = (apiToken: string): XPort => {
     return {
         async fetchLatestMessages(params: FetchLatestPostsParams): Promise<XPostPort[]> {
             const { limit, timeAgo, username } = params;
-            console.log('Fetching latest posts for username:', username);
-            console.log('With timeAgo filter:', timeAgo);
 
             // Prepare the actor input
             const input = {

@@ -23,5 +23,9 @@ export const formatEvent = (event: Event): string => {
 };
 
 export const formatEvents = (events: Event[]): string => {
+    if (events.length === 0) {
+        return 'No recent events found.';
+    }
+
     return events.map(formatEvent).join('\n\n');
 };

@@ -1,3 +1,4 @@
+import { type LoggerPort } from '@jterrazz/logger';
 import { DynamicTool } from '@langchain/core/tools';
 
 import { type XPort } from '../../../../ports/outbound/web/x.port.js';
@@ -19,10 +20,12 @@ const USERNAMES = [
     'cursor_ai',
 ];
 
-export function createFetchPostsForAITool(x: XPort) {
+export function createFetchPostsForAITool(x: XPort, logger: LoggerPort) {
     return new DynamicTool({
         description: 'Fetches latest AI-related posts from a predefined list of X users.',
         func: async () => {
+            logger.info('Fetching AI posts', { timeframe: '24h', usernames: USERNAMES });
+
             const posts = await Promise.all(
                 USERNAMES.map((username) =>
                     x.fetchLatestMessages({
@@ -31,7 +34,14 @@ export function createFetchPostsForAITool(x: XPort) {
                     }),
                 ),
             );
-            return formatXPosts(posts.flat());
+
+            const allPosts = posts.flat();
+            logger.info('Retrieved AI posts', {
+                totalPosts: allPosts.length,
+                userCount: USERNAMES.length,
+            });
+
+            return formatXPosts(allPosts);
         },
         name: 'fetchPostsForAI',
     });

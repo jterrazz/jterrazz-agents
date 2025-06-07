@@ -65,29 +65,35 @@ const x = Injectable('X', ['Configuration'] as const, (config: ConfigurationPort
  */
 const tools = Injectable(
     'Tools',
-    ['ChatBot', 'Configuration', 'X'] as const,
-    (chatBot: ChatBotPort, config: ConfigurationPort, x: XPort): AvailableAgentTools => {
+    ['ChatBot', 'X', 'Logger'] as const,
+    (chatBot: ChatBotPort, x: XPort, logger: LoggerPort): AvailableAgentTools => {
         return {
             fetchChatBotMessages: {
-                ai: createFetchChatBotMessagesTool({ channelName: '__tests__', chatBot }),
-                crypto: createFetchChatBotMessagesTool({ channelName: 'crypto', chatBot }),
+                ai: createFetchChatBotMessagesTool({ channelName: '__tests__', chatBot, logger }),
+                crypto: createFetchChatBotMessagesTool({ channelName: 'crypto', chatBot, logger }),
                 development: createFetchChatBotMessagesTool({
                     channelName: 'development',
                     chatBot,
+                    logger,
                 }),
-                finance: createFetchChatBotMessagesTool({ channelName: 'finance', chatBot }),
-                space: createFetchChatBotMessagesTool({ channelName: 'space', chatBot }),
+                finance: createFetchChatBotMessagesTool({
+                    channelName: 'finance',
+                    chatBot,
+                    logger,
+                }),
+                space: createFetchChatBotMessagesTool({ channelName: 'space', chatBot, logger }),
                 technology: createFetchChatBotMessagesTool({
                     channelName: 'technology',
                     chatBot,
+                    logger,
                 }),
             },
-            fetchEventsForSpace: createFetchEventsForSpaceTool(),
-            fetchEventsForTechnology: createFetchEventsForTechnologyTool(),
-            fetchPostsForAI: createFetchPostsForAITool(x),
-            fetchPostsForCrypto: createFetchPostsForCryptoTool(x),
-            fetchPostsForDevelopment: createFetchPostsForDevelopmentTool(x),
-            fetchPostsForFinance: createFetchPostsForFinanceTool(x),
+            fetchEventsForSpace: createFetchEventsForSpaceTool(logger),
+            fetchEventsForTechnology: createFetchEventsForTechnologyTool(logger),
+            fetchPostsForAI: createFetchPostsForAITool(x, logger),
+            fetchPostsForCrypto: createFetchPostsForCryptoTool(x, logger),
+            fetchPostsForDevelopment: createFetchPostsForDevelopmentTool(x, logger),
+            fetchPostsForFinance: createFetchPostsForFinanceTool(x, logger),
             getCurrentDate: createGetCurrentDateTool(),
         };
     },

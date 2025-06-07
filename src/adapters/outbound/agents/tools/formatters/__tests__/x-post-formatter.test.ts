@@ -83,7 +83,7 @@ describe('x-post-formatter', () => {
 
         it('should handle empty posts array', () => {
             const formatted = formatXPosts([]);
-            expect(formatted).toBe('');
+            expect(formatted).toBe('No recent posts found.');
         });
 
         it('should handle single post array', () => {

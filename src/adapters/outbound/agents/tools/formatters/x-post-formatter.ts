@@ -10,5 +10,9 @@ export const formatXPost = (post: XPostPort & { username: string }): string => {
 };
 
 export const formatXPosts = (posts: Array<XPostPort & { username: string }>): string => {
+    if (posts.length === 0) {
+        return 'No recent posts found.';
+    }
+    
     return posts.map(formatXPost).join('\n\n');
 };

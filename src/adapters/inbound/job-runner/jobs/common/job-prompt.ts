@@ -6,4 +6,5 @@ I will make this prompt multiple times in a day, but this doesn't mean you must 
 - This is based on the quality of the information you want to pass, and your ChatBot's chat history
 - If you choose not to post something when i'm making this prompt, it is an expected behavior
 - If there is nothing new or relevant to add, do not respond anything
-- Only include the most essential and impactful information, skip anything that is not much relevant`;
+- Only include the most essential and impactful information, skip anything that is not much relevant
+- Start by fetching the ChatBot's messages and stop if you already posted something recently`;

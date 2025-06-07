@@ -103,7 +103,7 @@ describe('event-formatter', () => {
             }> = [];
 
             const formatted = formatEvents(events);
-            expect(formatted).toBe('');
+            expect(formatted).toBe('No recent events found.');
         });
     });
 });
