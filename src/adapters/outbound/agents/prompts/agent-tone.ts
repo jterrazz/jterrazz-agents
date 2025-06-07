@@ -1,7 +1,7 @@
 import { funTone } from './tones/fun-tone.js';
 import { professionalTone } from './tones/professional-tone.js';
 
-export const useTone = () => ({
+export const agentTone = () => ({
     fun: funTone,
     professional: professionalTone,
 });

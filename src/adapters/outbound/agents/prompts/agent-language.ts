@@ -1,5 +1,5 @@
 import { frenchLanguage } from './languages/french.js';
 
-export const useLanguage = () => ({
+export const agentLanguage = () => ({
     french: frenchLanguage,
 });

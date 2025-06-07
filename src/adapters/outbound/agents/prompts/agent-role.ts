@@ -1,5 +1,5 @@
 import { contributorRole } from './roles/contributor.js';
 
-export const useRole = () => ({
+export const agentRole = () => ({
     contributor: contributorRole,
 });
