@@ -26,11 +26,9 @@ export type ChatAgentDependencies = {
 
 // Schemas
 const AgentResponseSchema = z.object({
-    response: z.object({
-        action: z.enum(['post', 'noop']),
-        content: z.string().max(2000).nullish(),
-        reason: z.string().nullish(),
-    }),
+    message: z.string().max(2000).optional(),
+    reason: z.string().optional(),
+    shouldPost: z.boolean(),
 });
 
 export abstract class ChatAgent {
@@ -91,12 +89,22 @@ ${JSON.stringify(z.toJSONSchema(AgentResponseSchema), null, 4).replaceAll('{', '
 \u0060\u0060\u0060
 
 IMPORTANT RESPONSE FORMAT RULES:
-- When you want to use a tool, respond with: Action: <tool_name>
+- When you want to use a tool, respond with:
+\u0060\u0060\u0060
+Action: <tool_name>
 Action Input: <tool_input>
-- When you want to give a final answer (not use a tool), respond with: Final Answer: followed by the JSON object
-- For final "noop" responses: Final Answer: {{"response": {{"action": "noop", "reason": "<your reason>"}}}}
-- For final "post" responses: Final Answer: {{"response": {{"action": "post", "content": "<the message to post>"}}}}
-- **NEVER mix tool usage syntax with final answer syntax**
+\u0060\u0060\u0060
+- When you want to give a final answer (not use a tool), respond with:
+\u0060\u0060\u0060
+Action: Final Answer
+Action Input: {{"shouldPost": false, "reason": "<your reason>"}}
+\u0060\u0060\u0060
+or
+\u0060\u0060\u0060
+Action: Final Answer
+Action Input: {{"shouldPost": true, "message": "<the message to post>"}}
+\u0060\u0060\u0060
+- **Always wrap actions in markdown code blocks**
 
 AGENT PROMPT:
 ${agentPrompt}
@@ -122,14 +130,14 @@ ${prompts.join('\n')}`;
         const prompt = ChatPromptTemplate.fromMessages(promptTemplate);
         let executor: AgentExecutor | null = null;
 
-        const handleResponse = async (response: AgentResponse['response']): Promise<void> => {
-            if (response.action === 'post' && response.content) {
-                await this.chatBot.sendMessage(this.channelName, response.content);
+        const handleResponse = async (response: AgentResponse): Promise<void> => {
+            if (response.shouldPost && response.message) {
+                await this.chatBot.sendMessage(this.channelName, response.message);
                 this.logger.info(`Message sent to #${this.channelName}`, { agent: this.name });
                 return;
             }
 
-            if (response.action === 'noop') {
+            if (!response.shouldPost) {
                 this.logger.info('Noop action', {
                     agent: this.name,
                     reason: response.reason,
@@ -152,9 +160,17 @@ ${prompts.join('\n')}`;
                 return null;
             }
 
-            // Handle "Final Answer:" prefix from StructuredChatAgent
             let cleanText = text;
-            if (text.includes('Final Answer:')) {
+
+            // Handle "Action: Final Answer" format from StructuredChatAgent
+            if (text.includes('Action: Final Answer')) {
+                const actionInputMatch = text.match(/Action Input:\s*([\s\S]*?)$/i);
+                if (actionInputMatch) {
+                    cleanText = actionInputMatch[1].trim();
+                }
+            }
+            // Handle legacy "Final Answer:" format
+            else if (text.includes('Final Answer:')) {
                 const finalAnswerMatch = text.match(/Final Answer:\s*([\s\S]*?)$/i);
                 if (finalAnswerMatch) {
                     cleanText = finalAnswerMatch[1].trim();
@@ -203,7 +219,7 @@ ${prompts.join('\n')}`;
                     throw new Error(`Invalid agent response: ${JSON.stringify(parsed.error)}`);
                 }
 
-                await handleResponse(parsed.data.response);
+                await handleResponse(parsed.data);
             },
         };
     }
