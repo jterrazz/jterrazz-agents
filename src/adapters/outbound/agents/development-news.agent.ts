@@ -11,7 +11,7 @@ export class DevelopmentNewsAgent extends ChatAgent {
         super(
             dependencies,
             'DevelopmentNewsAgent',
-            'An agent that posts about important news, discussions or updates related to software development topics.',
+            'You are a specialized agent that posts about important news, discussions or updates related to software development, programming languages, and development tools, based on the tools you\'re provided.',
             [useRole().contributor, useTone().fun, useFormat().discordNews, useLanguage().french],
         );
     }

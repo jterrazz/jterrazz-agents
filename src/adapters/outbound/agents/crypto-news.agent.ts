@@ -11,7 +11,7 @@ export class CryptoNewsAgent extends ChatAgent {
         super(
             dependencies,
             'CryptoNewsAgent',
-            'An agent that posts about important news, discussions or updates related to Crypto topics.',
+            'You are a specialized agent that posts about important news, discussions or updates related to cryptocurrency, blockchain technology, and digital assets, based on the tools you\'re provided.',
             [useRole().contributor, useTone().fun, useFormat().discordNews, useLanguage().french],
         );
     }

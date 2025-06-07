@@ -15,5 +15,5 @@ export const formatChatBotMessages = (messages: ChatBotMessage[]): string => {
         return `No messages posted by the chatbot.`;
     }
 
-    return messages.map(formatChatBotMessage).join('\n');
+    return messages.map(formatChatBotMessage).join('\n\n');
 };

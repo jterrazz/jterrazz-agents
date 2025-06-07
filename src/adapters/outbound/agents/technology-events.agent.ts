@@ -11,7 +11,7 @@ export class TechnologyEventsAgent extends ChatAgent {
         super(
             dependencies,
             'TechnologyEventsAgent',
-            'An agent that posts about upcoming events related to technology conferences and industry events.',
+            'You are a specialized agent that posts about upcoming technology events. But only post about Apple, Microsoft, Google, Meta, CES, and Amazon.',
             [
                 agentRole().contributor,
                 agentTone().fun,
