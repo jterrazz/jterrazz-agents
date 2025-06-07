@@ -23,12 +23,14 @@ export abstract class ChatAgent {
     protected readonly logger: LoggerPort;
     protected readonly tools: AvailableAgentTools;
 
-    constructor(dependencies: ChatAgentDependencies, systemPrompt: string) {
+    constructor(dependencies: ChatAgentDependencies, agentPrompt: string, prompts: string[]) {
         this.ai = dependencies.ai;
         this.channelName = dependencies.channelName;
         this.chatBot = dependencies.chatBot;
         this.logger = dependencies.logger;
         this.tools = dependencies.tools;
+
+        const systemPrompt = this.buildSystemPrompt(agentPrompt, prompts);
 
         this.agent = createChatAgent({
             ai: this.ai,
@@ -36,16 +38,7 @@ export abstract class ChatAgent {
             chatBot: this.chatBot,
             logger: this.logger,
             promptTemplate: [
-                [
-                    'system',
-                    systemPrompt +
-                        `
-EXPECTED OUTPUT FORMAT:
-- If you decide not to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "action": "Final Answer", "action_input": {{ "action": "noop", "reason": "<your reason>" }} }}\n\u0060\u0060\u0060.
-- If you decide to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "action": "Final Answer", "action_input": {{ "action": "post", "content": "<the message to post>" }} }}\n\u0060\u0060\u0060.
-- For tool calls, use: \u0060\u0060\u0060json\n{{ "action": <tool_name>, "action_input": <tool_input> }}\n\u0060\u0060\u0060.
-- **Always output ONLY a valid JSON object. Do not include any code block, explanation, or formatting—just the JSON.**`,
-                ],
+                ['system', systemPrompt],
                 ['human', '{input}'],
             ],
             tools: this.getTools(),
@@ -57,4 +50,20 @@ EXPECTED OUTPUT FORMAT:
     }
 
     protected abstract getTools(): DynamicTool[];
+
+    private buildSystemPrompt(agentPrompt: string, prompts: string[]): string {
+        const expectedOutputFormat = `
+EXPECTED OUTPUT FORMAT:
+- If you decide not to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "action": "Final Answer", "action_input": {{ "action": "noop", "reason": "<your reason>" }} }}\n\u0060\u0060\u0060.
+- If you decide to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "action": "Final Answer", "action_input": {{ "action": "post", "content": "<the message to post>" }} }}\n\u0060\u0060\u0060.
+- For tool calls, use: \u0060\u0060\u0060json\n{{ "action": <tool_name>, "action_input": <tool_input> }}\n\u0060\u0060\u0060.
+- **Always output ONLY a valid JSON object. Do not include any code block, explanation, or formatting—just the JSON.**
+
+AGENT PROMPT:
+${agentPrompt}
+
+${prompts.join('\n')}`;
+
+        return expectedOutputFormat;
+    }
 }

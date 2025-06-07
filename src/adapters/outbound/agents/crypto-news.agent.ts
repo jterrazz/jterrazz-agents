@@ -1,7 +1,6 @@
 import { type AgentTool } from '../../../ports/outbound/agents.port.js';
 
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
-import { buildSystemPrompt } from './prompts/system.js';
 import { useFormat } from './prompts/use-format.js';
 import { useLanguage } from './prompts/use-language.js';
 import { useRole } from './prompts/use-role.js';
@@ -11,13 +10,13 @@ export class CryptoNewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            buildSystemPrompt(
+            'An agent that posts about important news, discussions or updates related to Crypto topics.',
+            [
                 useRole().contributor,
-                'An agent that posts about important news, discussions or updates related to Crypto topics.',
                 useTone().fun,
                 useFormat().discordNews,
                 useLanguage().french,
-            ),
+            ],
         );
     }
 

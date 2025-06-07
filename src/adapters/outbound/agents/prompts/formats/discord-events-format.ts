@@ -2,7 +2,6 @@ import { discordHeader } from './discord.js';
 
 export const discordEventsFormat = `
 ${discordHeader}
-
 - IMPORTANT: DO NOT send multiple Discord messages / reminders for the same event.
 - Use blockquotes for event details for clarity and visual separation.
 - Use emoji for each field for visual appeal.

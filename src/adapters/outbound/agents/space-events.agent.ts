@@ -1,7 +1,6 @@
 import { type AgentTool } from '../../../ports/outbound/agents.port.js';
 
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
-import { buildSystemPrompt } from './prompts/system.js';
 import { useFormat } from './prompts/use-format.js';
 import { useLanguage } from './prompts/use-language.js';
 import { useRole } from './prompts/use-role.js';
@@ -11,13 +10,8 @@ export class SpaceEventsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            buildSystemPrompt(
-                useRole().contributor,
-                'An agent that posts about upcoming events related to space exploration and space technology.',
-                useTone().fun,
-                useFormat().discordEvents,
-                useLanguage().french,
-            ),
+            'An agent that posts about upcoming events related to space exploration and space technology.',
+            [useRole().contributor, useTone().fun, useFormat().discordEvents, useLanguage().french],
         );
     }
 

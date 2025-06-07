@@ -2,7 +2,6 @@ import { discordHeader } from './discord.js';
 
 export const discordNewsFormat = `
 ${discordHeader}
-
 - Add a blank line between items for readability.
 - If a URL or tweet link is available, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
 
