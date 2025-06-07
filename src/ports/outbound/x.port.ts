@@ -1,11 +1,11 @@
-export interface FetchLatestMessagesParams {
+export interface FetchLatestPostsParams {
     limit?: number;
     timeAgo?: { hours: number };
     username: string;
 }
 
 export type XPort = {
-    fetchLatestMessages: (params: FetchLatestMessagesParams) => Promise<XPostPort[]>;
+    fetchLatestMessages: (params: FetchLatestPostsParams) => Promise<XPostPort[]>;
 };
 
 export interface XPostPort {

@@ -4,7 +4,7 @@ import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
 
 export const createFetchDevelopmentTweetsTool = (x: XPort) =>
     new DynamicTool({
-        description: 'Get recent development-related tweets.',
+        description: 'Get recent development-related posts.',
         func: async () => {
             const devUsernames = [
                 'GithubProjects',
@@ -13,15 +13,15 @@ export const createFetchDevelopmentTweetsTool = (x: XPort) =>
                 'bunjavascript',
                 'deno_land',
             ];
-            let allTweets: XPostPort[] = [];
+            let allPosts: XPostPort[] = [];
             for (const username of devUsernames) {
-                const tweets = await x.fetchLatestMessages({
+                const posts = await x.fetchLatestMessages({
                     timeAgo: { hours: 24 },
-                    username, // Get tweets from the last 24 hours
+                    username, // Get posts from the last 24 hours
                 });
-                allTweets = allTweets.concat(tweets);
+                allPosts = allPosts.concat(posts);
             }
-            return JSON.stringify(allTweets);
+            return JSON.stringify(allPosts);
         },
         name: 'fetchDevelopmentTweets',
     });

@@ -59,7 +59,7 @@ const entitiesSchema = z.object({
     user_mentions: z.array(z.any()),
 });
 
-const tweetSchema = z.object({
+const postSchema = z.object({
     author: authorSchema,
     bookmarks: z.number(),
     conversation_id: z.string(),
@@ -79,7 +79,7 @@ const tweetSchema = z.object({
     views: z.string(),
 });
 
-export interface FetchLatestMessagesParams {
+export interface FetchLatestPostsParams {
     limit?: number;
     timeAgo?: { hours: number };
     username: string;
@@ -91,9 +91,9 @@ export const createXAdapter = (apiToken: string): XPort => {
     });
 
     return {
-        async fetchLatestMessages(params: FetchLatestMessagesParams): Promise<XPostPort[]> {
+        async fetchLatestMessages(params: FetchLatestPostsParams): Promise<XPostPort[]> {
             const { limit, timeAgo, username } = params;
-            console.log('Fetching latest messages for username:', username);
+            console.log('Fetching latest posts for username:', username);
             console.log('With timeAgo filter:', timeAgo);
 
             // Prepare the actor input
@@ -111,23 +111,23 @@ export const createXAdapter = (apiToken: string): XPort => {
             const { items } = await client.dataset(run.defaultDatasetId).listItems();
 
             // Parse and validate the results
-            const tweets = z.array(tweetSchema).parse(items);
+            const posts = z.array(postSchema).parse(items);
 
-            // Filter tweets based on timeAgo if provided
+            // Filter posts based on timeAgo if provided
             const now = new Date();
-            const filteredTweets = timeAgo
-                ? tweets.filter((tweet) => {
-                      const tweetDate = new Date(tweet.created_at);
-                      const hoursAgo = (now.getTime() - tweetDate.getTime()) / (1000 * 60 * 60);
+            const filteredPosts = timeAgo
+                ? posts.filter((post) => {
+                      const postDate = new Date(post.created_at);
+                      const hoursAgo = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60);
                       return hoursAgo <= timeAgo.hours;
                   })
-                : tweets;
+                : posts;
 
             // Apply limit after filtering
-            const limitedTweets = limit ? filteredTweets.slice(0, limit) : filteredTweets;
+            const limitedPosts = limit ? filteredPosts.slice(0, limit) : filteredPosts;
 
             // Transform to SocialFeedMessage format
-            return limitedTweets.map((tweet) => ({
+            return limitedPosts.map((tweet) => ({
                 author: tweet.author.name,
                 createdAt: new Date(tweet.created_at),
                 id: tweet.tweet_id,
