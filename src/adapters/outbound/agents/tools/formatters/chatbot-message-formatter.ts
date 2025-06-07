@@ -12,8 +12,8 @@ export const formatChatBotMessage = (message: ChatBotMessage): string => {
 
 export const formatChatBotMessages = (messages: ChatBotMessage[]): string => {
     if (messages.length === 0) {
-        return `No recent messages posted by the chatbot.`;
+        return `No messages posted by the chatbot.`;
     }
 
     return messages.map(formatChatBotMessage).join('\n');
-}; 
+};

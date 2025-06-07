@@ -17,7 +17,7 @@ export function createFetchChatBotMessagesTool({
     logger,
 }: FetchChatBotMessagesToolDependencies) {
     return new DynamicTool({
-        description: `Get recent chatbot messages. DO NOT CALL THIS TOOL MULTIPLE TIMES, IT ONLY WORKS ONCE.`,
+        description: `Get recent chatbot messages.`,
         func: async () => {
             logger.info(`Fetching recent bot messages from #${channelName}`, { channelName });
 
@@ -27,8 +27,6 @@ export function createFetchChatBotMessagesTool({
                 channelName,
                 messageCount: messages.length,
             });
-
-            console.log(formatChatBotMessages(messages));
 
             return formatChatBotMessages(messages);
         },
