@@ -2,8 +2,8 @@ import { DynamicTool } from 'langchain/tools';
 
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
-import { formatDate } from './utils/date-formatter.js';
-import { formatTimeAgo } from './utils/time-ago-formatter.js';
+import { formatDate } from './formatters/date-formatter.js';
+import { formatTimeAgo } from './formatters/time-ago-formatter.js';
 
 type FetchChatBotMessagesToolDependencies = {
     channelName: string;

@@ -1,6 +1,6 @@
 import { DynamicTool } from 'langchain/tools';
 
-import { formatDate } from './utils/date-formatter.js';
+import { formatDate } from './formatters/date-formatter.js';
 
 export function createGetCurrentDateTool() {
     return new DynamicTool({

@@ -1,9 +1,9 @@
 import { DynamicTool } from 'langchain/tools';
 
-import {
-    getUpcomingEvents,
-    getUpcomingRocketLaunches,
-} from '../../web/nextspaceflight.adapter.js';
+import { getUpcomingEvents, getUpcomingRocketLaunches } from '../../web/nextspaceflight.adapter.js';
+
+import { filterEventsByDateRange } from './filters/event-filters.js';
+import { formatEvents } from './formatters/event-formatter.js';
 
 export function createFetchEventsForSpaceTool() {
     return new DynamicTool({
@@ -13,15 +13,9 @@ export function createFetchEventsForSpaceTool() {
                 getUpcomingEvents(),
                 getUpcomingRocketLaunches(),
             ]);
-            let events = [...missions, ...launches];
-            // Filter to only include events within the next 5 days
-            const now = new Date();
-            const fiveDaysFromNow = new Date(now.getTime() + 5 * 24 * 60 * 60 * 1000);
-            events = events.filter((e) => {
-                const eventDate = new Date(e.date);
-                return eventDate >= now && eventDate <= fiveDaysFromNow;
-            });
-            return JSON.stringify(events);
+            const events = [...missions, ...launches];
+            const filteredEvents = filterEventsByDateRange(events, 5);
+            return formatEvents(filteredEvents);
         },
         name: 'fetchEventsForSpace',
     });
