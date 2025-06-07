@@ -1,23 +1,18 @@
 import { type AgentTool } from '../../../ports/outbound/agents.port.js';
 
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
-import { useFormat } from './prompts/use-format.js';
-import { useLanguage } from './prompts/use-language.js';
-import { useRole } from './prompts/use-role.js';
-import { useTone } from './prompts/use-tone.js';
+import { useFormat } from './prompts/agent-format.js';
+import { useLanguage } from './prompts/agent-language.js';
+import { useRole } from './prompts/agent-role.js';
+import { useTone } from './prompts/agent-tone.js';
 
 export class FinanceNewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
+            'FinanceNewsAgent',
             'An agent that posts about important news, discussions or updates related to financial markets and economy.',
-            [
-                useRole().contributor,
-                useTone().fun,
-                useFormat().discordNews,
-                useLanguage().french,
-            ],
-            'FinanceNewsAgent'
+            [useRole().contributor, useTone().fun, useFormat().discordNews, useLanguage().french],
         );
     }
 

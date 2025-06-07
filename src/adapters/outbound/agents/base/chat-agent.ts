@@ -4,12 +4,18 @@ import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 import { type DynamicTool } from 'langchain/tools';
 import { z } from 'zod';
 
-import { type AvailableAgentTools } from '../../../../ports/outbound/agents.port.js';
+import {
+    type AgentPort,
+    type AvailableAgentTools,
+} from '../../../../ports/outbound/agents.port.js';
 import { type AIPort } from '../../../../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 import { withGoogleAIRateLimit } from '../../ai/google-ai-rate-limiter.js';
 
+export type AgentResponse = z.infer<typeof AgentResponseSchema>;
+
+// Types
 export type ChatAgentDependencies = {
     ai: AIPort;
     channelName: string;
@@ -18,6 +24,7 @@ export type ChatAgentDependencies = {
     tools: AvailableAgentTools;
 };
 
+// Schemas
 const AgentResponseSchema = z.object({
     response: z.object({
         action: z.enum(['post', 'noop']),
@@ -26,17 +33,8 @@ const AgentResponseSchema = z.object({
     }),
 });
 
-type NewsAgentOptions = {
-    ai: AIPort;
-    channelName: string;
-    chatBot: ChatBotPort;
-    logger?: LoggerPort;
-    promptTemplate: Array<[string, string]>;
-    tools: Array<DynamicTool<string>>;
-};
-
 export abstract class ChatAgent {
-    protected readonly agent: ReturnType<typeof this.createAgent>;
+    protected readonly agent: AgentPort;
     protected readonly ai: AIPort;
     protected readonly channelName: string;
     protected readonly chatBot: ChatBotPort;
@@ -46,9 +44,9 @@ export abstract class ChatAgent {
 
     constructor(
         dependencies: ChatAgentDependencies,
+        name: string,
         agentPrompt: string,
         prompts: string[],
-        name: string,
     ) {
         this.ai = dependencies.ai;
         this.channelName = dependencies.channelName;
@@ -73,24 +71,13 @@ export abstract class ChatAgent {
     }
 
     public async run(userQuery: string): Promise<void> {
-        const result = await this.agent.run(userQuery);
-        const extractedJson = this.extractJson(result);
-        const parsed = AgentResponseSchema.safeParse(extractedJson);
-
-        if (!parsed.success) {
-            this.logger.error('Invalid agent response', { agent: this.name, error: parsed.error });
-            return;
-        }
-
-        const { response } = parsed.data;
-
-        if (response.action === 'post' && response.content) {
-            await this.chatBot.sendMessage(this.channelName, response.content);
-            this.logger.info(`Message sent to #${this.channelName}`, { agent: this.name });
-        } else if (response.action === 'noop') {
-            this.logger.info('Noop action', { agent: this.name, reason: response.reason });
-        } else {
-            this.logger.error('Unknown agent action', { agent: this.name, response });
+        try {
+            await this.agent.run(userQuery);
+        } catch (error) {
+            this.logger.error('Error running agent', {
+                agent: this.name,
+                error: error instanceof Error ? error.message : 'Unknown error',
+            });
         }
     }
 
@@ -99,9 +86,15 @@ export abstract class ChatAgent {
     private buildSystemPrompt(agentPrompt: string, prompts: string[]): string {
         const expectedOutputFormat = `
 EXPECTED OUTPUT FORMAT:
-- If you decide not to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "response": {{ "action": "noop", "reason": "<your reason>" }} }}\n\u0060\u0060\u0060.
-- If you decide to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "response": {{ "action": "post", "content": "<the message to post>" }} }}\n\u0060\u0060\u0060.
-- For tool calls, use: \u0060\u0060\u0060json\n{{ "action": <tool_name>, "response": <tool_input> }}\n\u0060\u0060\u0060.
+- If you decide not to post, respond with a JSON object: \`\`\`json
+{ "response": { "action": "noop", "reason": "<your reason>" } }
+\`\`\`
+- If you decide to post, respond with a JSON object: \`\`\`json
+{ "response": { "action": "post", "content": "<the message to post>" } }
+\`\`\`
+- For tool calls, use: \`\`\`json
+{ "action": <tool_name>, "response": <tool_input> }
+\`\`\`
 - **Always output ONLY a valid JSON object. Do not include any code block, explanation, or formatting—just the JSON.**
 
 AGENT PROMPT:
@@ -112,13 +105,72 @@ ${prompts.join('\n')}`;
         return expectedOutputFormat;
     }
 
-    private createAgent({ ai, promptTemplate, tools }: NewsAgentOptions) {
+    private createAgent({
+        ai,
+        promptTemplate,
+        tools,
+    }: {
+        ai: AIPort;
+        channelName: string;
+        chatBot: ChatBotPort;
+        logger: LoggerPort;
+        promptTemplate: Array<[string, string]>;
+        tools: Array<DynamicTool<string>>;
+    }): AgentPort {
         const model = ai.getModel();
         const prompt = ChatPromptTemplate.fromMessages(promptTemplate);
         let executor: AgentExecutor | null = null;
 
+        const handleResponse = async (response: AgentResponse['response']): Promise<void> => {
+            if (response.action === 'post' && response.content) {
+                await this.chatBot.sendMessage(this.channelName, response.content);
+                this.logger.info(`Message sent to #${this.channelName}`, { agent: this.name });
+                return;
+            }
+
+            if (response.action === 'noop') {
+                this.logger.info('Noop action', {
+                    agent: this.name,
+                    reason: response.reason,
+                });
+                return;
+            }
+
+            this.logger.error('Unknown agent action', {
+                agent: this.name,
+                response,
+            });
+        };
+
+        const extractJson = (text: unknown): unknown => {
+            if (typeof text === 'object' && text !== null) {
+                return text;
+            }
+
+            if (typeof text !== 'string') {
+                return null;
+            }
+
+            try {
+                // First try to parse the entire string as JSON
+                return JSON.parse(text);
+            } catch {
+                // If that fails, try to extract JSON from code blocks
+                const match = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+                if (!match) {
+                    return null;
+                }
+
+                try {
+                    return JSON.parse(match[1].trim());
+                } catch {
+                    return null;
+                }
+            }
+        };
+
         return {
-            async run(userQuery: string): Promise<string> {
+            async run(userQuery: string): Promise<void> {
                 if (!executor) {
                     const agent = await createStructuredChatAgent({
                         llm: model,
@@ -127,25 +179,20 @@ ${prompts.join('\n')}`;
                     });
                     executor = AgentExecutor.fromAgentAndTools({ agent, tools });
                 }
+
                 const result = await withGoogleAIRateLimit(() =>
                     executor!.invoke({ input: userQuery }),
                 );
-                return result.output;
+
+                const extractedJson = extractJson(result.output);
+                const parsed = AgentResponseSchema.safeParse(extractedJson);
+
+                if (!parsed.success) {
+                    throw new Error(`Invalid agent response: ${JSON.stringify(parsed.error)}`);
+                }
+
+                await handleResponse(parsed.data.response);
             },
         };
-    }
-
-    private extractJson(text: unknown): unknown {
-        if (typeof text === 'object' && text !== null) return text;
-        if (typeof text === 'string') {
-            const match = text.match(/```json\s*([\s\S]*?)```/i);
-            const jsonString = match ? match[1] : text;
-            try {
-                return JSON.parse(jsonString);
-            } catch (_e) {
-                return null;
-            }
-        }
-        return null;
     }
 }
