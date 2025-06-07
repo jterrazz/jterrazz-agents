@@ -1,7 +1,6 @@
 import { DynamicTool } from 'langchain/tools';
 
-import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
-import { type XPort } from '../../ports/outbound/x.port.js';
+import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
 
 export const createFetchDevelopmentTweetsTool = (x: XPort) =>
     new DynamicTool({
@@ -14,13 +13,13 @@ export const createFetchDevelopmentTweetsTool = (x: XPort) =>
                 'bunjavascript',
                 'deno_land',
             ];
-            let allTweets: SocialFeedMessage[] = [];
+            let allTweets: XPostPort[] = [];
             for (const username of devUsernames) {
                 const tweets = await x.fetchLatestMessages({
                     timeAgo: { hours: 24 },
                     username, // Get tweets from the last 24 hours
                 });
-                allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
+                allTweets = allTweets.concat(tweets);
             }
             return JSON.stringify(allTweets);
         },

@@ -1,11 +1,6 @@
 import { DynamicTool } from 'langchain/tools';
 
-import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
-import { type XPort } from '../../ports/outbound/x.port.js';
-
-interface TweetWithUsername extends SocialFeedMessage {
-    username: string;
-}
+import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
 
 export function createFetchFinancialTweetsTool(x: XPort) {
     const financialUsernames = ['KobeissiLetter'];
@@ -14,13 +9,13 @@ export function createFetchFinancialTweetsTool(x: XPort) {
         func: async () => {
             try {
                 const usernames = financialUsernames;
-                let allTweets: TweetWithUsername[] = [];
+                let allTweets: XPostPort[] = [];
                 for (const username of usernames) {
                     const tweets = await x.fetchLatestMessages({
                         timeAgo: { hours: 24 },
                         username, // Get tweets from the last 24 hours
                     });
-                    allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
+                    allTweets = allTweets.concat(tweets);
                 }
 
                 console.log('allTweets', JSON.stringify(allTweets, null, 2));

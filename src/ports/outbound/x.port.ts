@@ -1,8 +1,19 @@
-import { type SocialFeedMessage } from './social-feed.port.js';
+export interface FetchLatestMessagesParams {
+    limit?: number;
+    timeAgo?: { hours: number };
+    username: string;
+}
 
 export type XPort = {
-    fetchLatestMessages: (params: {
-        timeAgo: { hours: number };
-        username: string;
-    }) => Promise<SocialFeedMessage[]>;
+    fetchLatestMessages: (params: FetchLatestMessagesParams) => Promise<XPostPort[]>;
 };
+
+export interface XPostPort {
+    author: string;
+    createdAt: Date;
+    id: string;
+    text: string;
+    timeAgo: string; // Human-readable time difference from now
+    url: string;
+    username: string;
+}

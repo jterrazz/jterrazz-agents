@@ -1,11 +1,6 @@
 import { DynamicTool } from '@langchain/core/tools';
 
-import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
-import { type XPort } from '../../ports/outbound/x.port.js';
-
-interface TweetWithUsername extends SocialFeedMessage {
-    username: string;
-}
+import { type XPort,type XPostPort } from '../../ports/outbound/x.port.js';
 
 export function createFetchAITweetsTool(x: XPort) {
     const aiUsernames = [
@@ -26,7 +21,7 @@ export function createFetchAITweetsTool(x: XPort) {
         description: 'Fetches latest AI-related tweets from a predefined list of Twitter users.',
         func: async () => {
             const usernames = aiUsernames;
-            let allTweets: TweetWithUsername[] = [];
+            let allTweets: XPostPort[] = [];
             for (const username of usernames) {
                 const tweets = await x.fetchLatestMessages({
                     timeAgo: { hours: 24 },

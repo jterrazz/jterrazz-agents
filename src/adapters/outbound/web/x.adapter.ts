@@ -1,10 +1,7 @@
 import { ApifyClient } from 'apify-client';
 import { z } from 'zod';
 
-import {
-    type SocialFeedMessage,
-    type SocialFeedPort,
-} from '../../../ports/outbound/social-feed.port.js';
+import { type XPort, type XPostPort } from '../../../ports/outbound/x.port.js';
 
 const authorSchema = z.object({
     avatar: z.string().nullable(),
@@ -88,13 +85,13 @@ export interface FetchLatestMessagesParams {
     username: string;
 }
 
-export const createXAdapter = (apiToken: string): SocialFeedPort => {
+export const createXAdapter = (apiToken: string): XPort => {
     const client = new ApifyClient({
         token: apiToken,
     });
 
     return {
-        async fetchLatestMessages(params: FetchLatestMessagesParams): Promise<SocialFeedMessage[]> {
+        async fetchLatestMessages(params: FetchLatestMessagesParams): Promise<XPostPort[]> {
             const { limit, timeAgo, username } = params;
             console.log('Fetching latest messages for username:', username);
             console.log('With timeAgo filter:', timeAgo);
@@ -137,6 +134,7 @@ export const createXAdapter = (apiToken: string): SocialFeedPort => {
                 text: tweet.text,
                 timeAgo: formatTimeAgo(new Date(tweet.created_at)),
                 url: `https://twitter.com/${tweet.author.screen_name}/status/${tweet.tweet_id}`,
+                username,
             }));
         },
     };
