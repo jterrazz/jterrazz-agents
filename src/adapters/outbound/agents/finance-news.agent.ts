@@ -17,6 +17,7 @@ export class FinanceNewsAgent extends ChatAgent {
                 useFormat().discordNews,
                 useLanguage().french,
             ],
+            'FinanceNewsAgent'
         );
     }
 

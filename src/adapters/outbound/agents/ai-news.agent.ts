@@ -11,12 +11,8 @@ export class AINewsAgent extends ChatAgent {
         super(
             dependencies,
             'An agent that posts about important news, discussions or updates related to AI topics.',
-            [
-                useRole().contributor,
-                useTone().fun,
-                useFormat().discordNews,
-                useLanguage().french,
-            ],
+            [useRole().contributor, useTone().fun, useFormat().discordNews, useLanguage().french],
+            'AINewsAgent',
         );
     }
 

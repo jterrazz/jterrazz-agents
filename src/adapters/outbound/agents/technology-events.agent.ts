@@ -11,12 +11,8 @@ export class TechnologyEventsAgent extends ChatAgent {
         super(
             dependencies,
             'An agent that posts about upcoming events related to technology conferences and industry events.',
-            [
-                useRole().contributor,
-                useTone().fun,
-                useFormat().discordEvents,
-                useLanguage().french,
-            ],
+            [useRole().contributor, useTone().fun, useFormat().discordEvents, useLanguage().french],
+            'TechnologyEventsAgent',
         );
     }
 
