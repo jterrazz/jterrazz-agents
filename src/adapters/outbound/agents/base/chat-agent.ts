@@ -2,7 +2,7 @@ import { type LoggerPort } from '@jterrazz/logger';
 import { ChatPromptTemplate } from '@langchain/core/prompts';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 import { type DynamicTool } from 'langchain/tools';
-import { z } from 'zod';
+import { z } from 'zod/v4';
 
 import {
     type AgentPort,
@@ -28,8 +28,8 @@ export type ChatAgentDependencies = {
 const AgentResponseSchema = z.object({
     response: z.object({
         action: z.enum(['post', 'noop']),
-        content: z.string().max(2000).optional(),
-        reason: z.string().optional(),
+        content: z.string().max(2000).nullish(),
+        reason: z.string().nullish(),
     }),
 });
 
@@ -86,16 +86,17 @@ export abstract class ChatAgent {
     private buildSystemPrompt(agentPrompt: string, prompts: string[]): string {
         const expectedOutputFormat = `
 EXPECTED OUTPUT FORMAT:
-- If you decide not to post, respond with a JSON object: \`\`\`json
-{ "response": { "action": "noop", "reason": "<your reason>" } }
-\`\`\`
-- If you decide to post, respond with a JSON object: \`\`\`json
-{ "response": { "action": "post", "content": "<the message to post>" } }
-\`\`\`
-- For tool calls, use: \`\`\`json
-{ "action": <tool_name>, "response": <tool_input> }
-\`\`\`
-- **Always output ONLY a valid JSON object. Do not include any code block, explanation, or formatting—just the JSON.**
+\u0060\u0060\u0060json
+${JSON.stringify(z.toJSONSchema(AgentResponseSchema), null, 4).replaceAll('{', '{{').replaceAll('}', '}}')}
+\u0060\u0060\u0060
+
+IMPORTANT RESPONSE FORMAT RULES:
+- When you want to use a tool, respond with: Action: <tool_name>
+Action Input: <tool_input>
+- When you want to give a final answer (not use a tool), respond with: Final Answer: followed by the JSON object
+- For final "noop" responses: Final Answer: {{"response": {{"action": "noop", "reason": "<your reason>"}}}}
+- For final "post" responses: Final Answer: {{"response": {{"action": "post", "content": "<the message to post>"}}}}
+- **NEVER mix tool usage syntax with final answer syntax**
 
 AGENT PROMPT:
 ${agentPrompt}
@@ -151,12 +152,21 @@ ${prompts.join('\n')}`;
                 return null;
             }
 
+            // Handle "Final Answer:" prefix from StructuredChatAgent
+            let cleanText = text;
+            if (text.includes('Final Answer:')) {
+                const finalAnswerMatch = text.match(/Final Answer:\s*([\s\S]*?)$/i);
+                if (finalAnswerMatch) {
+                    cleanText = finalAnswerMatch[1].trim();
+                }
+            }
+
             try {
                 // First try to parse the entire string as JSON
-                return JSON.parse(text);
+                return JSON.parse(cleanText);
             } catch {
                 // If that fails, try to extract JSON from code blocks
-                const match = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+                const match = cleanText.match(/```(?:json)?\s*([\s\S]*?)```/i);
                 if (!match) {
                     return null;
                 }
@@ -177,13 +187,15 @@ ${prompts.join('\n')}`;
                         prompt,
                         tools,
                     });
-                    executor = AgentExecutor.fromAgentAndTools({ agent, tools });
+                    executor = AgentExecutor.fromAgentAndTools({
+                        agent,
+                        tools,
+                    });
                 }
 
                 const result = await withGoogleAIRateLimit(() =>
                     executor!.invoke({ input: userQuery }),
                 );
-
                 const extractedJson = extractJson(result.output);
                 const parsed = AgentResponseSchema.safeParse(extractedJson);
 

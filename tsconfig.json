@@ -1,3 +1,6 @@
 {
-  "extends": "@jterrazz/typescript/tsconfig/node-esm"
+  "extends": "@jterrazz/typescript/tsconfig/node-esm",
+  "compilerOptions": {
+    "lib": ["ES2021"]
+  }
 }
