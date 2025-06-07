@@ -3,6 +3,8 @@ import { type Channel, Client, GatewayIntentBits, type TextChannel } from 'disco
 
 import type { ChatBotMessage, ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
 
+const CONNECTION_TIMEOUT_MS = 10000; // 10 seconds timeout
+
 export class DiscordAdapter implements ChatBotPort {
     private client: Client;
     private logger: LoggerPort;
@@ -24,13 +26,38 @@ export class DiscordAdapter implements ChatBotPort {
         if (!this.token) {
             throw new Error('A Discord bot token is required');
         }
-        await this.client.login(this.token);
-        await new Promise<void>((resolve) => {
-            this.client.once('ready', () => {
-                this.logger.info(`Bot connecté en tant que ${this.client.user?.tag}`);
-                resolve();
+
+        try {
+            await Promise.race([
+                this.client.login(this.token),
+                new Promise((_, reject) =>
+                    setTimeout(
+                        () => reject(new Error('Discord connection timeout')),
+                        CONNECTION_TIMEOUT_MS,
+                    ),
+                ),
+            ]);
+
+            await Promise.race([
+                new Promise<void>((resolve) => {
+                    this.client.once('ready', () => {
+                        this.logger.info(`Bot connecté en tant que ${this.client.user?.tag}`);
+                        resolve();
+                    });
+                }),
+                new Promise((_, reject) =>
+                    setTimeout(
+                        () => reject(new Error('Discord ready event timeout')),
+                        CONNECTION_TIMEOUT_MS,
+                    ),
+                ),
+            ]);
+        } catch (error) {
+            this.logger.error('Failed to connect to Discord:', {
+                error: error instanceof Error ? error.message : String(error),
             });
-        });
+            throw error;
+        }
     }
 
     async getRecentBotMessages(channelName: string, limit = 20): Promise<ChatBotMessage[]> {

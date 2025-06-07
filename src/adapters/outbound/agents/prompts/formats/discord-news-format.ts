@@ -1,11 +1,11 @@
-export function withDiscordNewsMarkdownFormat(): string {
-    return `
-Use this clear and modern Discord Markdown template for each item.
+import { discordHeader } from './discord.js';
 
-- IMPORTANT: The total output MUST be a maximum of 1700 letters. But keep the integrity of links.
+export const discordNewsFormat = `
+${discordHeader}
+
 - Add a blank line between items for readability.
 - If a URL or tweet link is available, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
-- Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
+
 
 ###START OF THE TEMPLATE###
 A genuinely human, casual phrase, based on the last messages you already sent.
@@ -42,4 +42,3 @@ _Rust continues to improve developer experience and performance with its latest 
 
 ###END OF THE EXAMPLE###
 `;
-}

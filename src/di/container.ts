@@ -10,18 +10,8 @@ import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { type XPort } from '../ports/outbound/web/x.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
-import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
-import { createDevelopmentNewsJob } from '../adapters/inbound/job-runner/jobs/development-news.job.js';
-import { createFinanceNewsJob } from '../adapters/inbound/job-runner/jobs/finance-news.job.js';
-import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
-import { createTechnologyEventsJob } from '../adapters/inbound/job-runner/jobs/technology-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { AINewsAgent } from '../adapters/outbound/agents/ai-news.agent.js';
-import { CryptoNewsAgent } from '../adapters/outbound/agents/crypto-news.agent.js';
-import { DevelopmentNewsAgent } from '../adapters/outbound/agents/development-news.agent.js';
-import { FinanceNewsAgent } from '../adapters/outbound/agents/finance-news.agent.js';
-import { SpaceEventsAgent } from '../adapters/outbound/agents/space-events.agent.js';
-import { TechnologyEventsAgent } from '../adapters/outbound/agents/technology-events.agent.js';
 import { createFetchChatBotMessagesTool } from '../adapters/outbound/agents/tools/fetch-chatbot-messages.tool.js';
 import { createFetchEventsForSpaceTool } from '../adapters/outbound/agents/tools/fetch-events-for-space.tool.js';
 import { createFetchEventsForTechnologyTool } from '../adapters/outbound/agents/tools/fetch-events-for-technology.tool.js';
@@ -79,7 +69,7 @@ const tools = Injectable(
     (chatBot: ChatBotPort, config: ConfigurationPort, x: XPort): AvailableAgentTools => {
         return {
             fetchChatBotMessages: {
-                ai: createFetchChatBotMessagesTool({ channelName: 'ai', chatBot }),
+                ai: createFetchChatBotMessagesTool({ channelName: '__tests__', chatBot }),
                 crypto: createFetchChatBotMessagesTool({ channelName: 'crypto', chatBot }),
                 development: createFetchChatBotMessagesTool({
                     channelName: 'development',
@@ -106,31 +96,31 @@ const tools = Injectable(
 /**
  * Agents
  */
-const financeNewsAgent = Injectable(
-    'FinanceNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
-        new FinanceNewsAgent({
-            ai,
-            channelName: 'invest',
-            chatBot,
-            logger,
-            tools,
-        }),
-);
+// const financeNewsAgent = Injectable(
+//     'FinanceNewsAgent',
+//     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
+//     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
+//         new FinanceNewsAgent({
+//             ai,
+//             channelName: 'finance',
+//             chatBot,
+//             logger,
+//             tools,
+//         }),
+// );
 
-const spaceEventsAgent = Injectable(
-    'SpaceEventsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
-        new SpaceEventsAgent({
-            ai,
-            channelName: 'space',
-            chatBot,
-            logger,
-            tools,
-        }),
-);
+// const spaceEventsAgent = Injectable(
+//     'SpaceEventsAgent',
+//     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
+//     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
+//         new SpaceEventsAgent({
+//             ai,
+//             channelName: 'space',
+//             chatBot,
+//             logger,
+//             tools,
+//         }),
+// );
 
 const aiNewsAgent = Injectable(
     'AINewsAgent',
@@ -138,51 +128,51 @@ const aiNewsAgent = Injectable(
     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
         new AINewsAgent({
             ai,
-            channelName: 'ai',
+            channelName: '__tests__',
             chatBot,
             logger,
             tools,
         }),
 );
 
-const developmentNewsAgent = Injectable(
-    'DevelopmentNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
-        new DevelopmentNewsAgent({
-            ai,
-            channelName: 'development',
-            chatBot,
-            logger,
-            tools,
-        }),
-);
+// const developmentNewsAgent = Injectable(
+//     'DevelopmentNewsAgent',
+//     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
+//     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
+//         new DevelopmentNewsAgent({
+//             ai,
+//             channelName: 'development',
+//             chatBot,
+//             logger,
+//             tools,
+//         }),
+// );
 
-const cryptoNewsAgent = Injectable(
-    'CryptoNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
-        new CryptoNewsAgent({
-            ai,
-            channelName: 'crypto',
-            chatBot,
-            logger,
-            tools,
-        }),
-);
+// const cryptoNewsAgent = Injectable(
+//     'CryptoNewsAgent',
+//     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
+//     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
+//         new CryptoNewsAgent({
+//             ai,
+//             channelName: 'crypto',
+//             chatBot,
+//             logger,
+//             tools,
+//         }),
+// );
 
-const technologyEventsAgent = Injectable(
-    'TechnologyEventsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
-        new TechnologyEventsAgent({
-            ai,
-            channelName: 'tech',
-            chatBot,
-            logger,
-            tools,
-        }),
-);
+// const technologyEventsAgent = Injectable(
+//     'TechnologyEventsAgent',
+//     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
+//     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableAgentTools) =>
+//         new TechnologyEventsAgent({
+//             ai,
+//             channelName: 'tech',
+//             chatBot,
+//             logger,
+//             tools,
+//         }),
+// );
 
 /**
  * JobRunner
@@ -192,40 +182,40 @@ const jobRunner = Injectable(
     [
         'Logger',
         'AINewsAgent',
-        'CryptoNewsAgent',
-        'DevelopmentNewsAgent',
-        'FinanceNewsAgent',
-        'SpaceEventsAgent',
-        'TechnologyEventsAgent',
+        // 'CryptoNewsAgent',
+        // 'DevelopmentNewsAgent',
+        // 'FinanceNewsAgent',
+        // 'SpaceEventsAgent',
+        // 'TechnologyEventsAgent',
     ] as const,
     (
         logger: LoggerPort,
         aiNewsAgent: AgentPort,
-        cryptoNewsAgent: AgentPort,
-        developmentNewsAgent: AgentPort,
-        financeNewsAgent: AgentPort,
-        spaceEventsAgent: AgentPort,
-        technologyEventsAgent: AgentPort,
+        // cryptoNewsAgent: AgentPort,
+        // developmentNewsAgent: AgentPort,
+        // financeNewsAgent: AgentPort,
+        // spaceEventsAgent: AgentPort,
+        // technologyEventsAgent: AgentPort,
     ) =>
         new NodeCronAdapter(logger, [
             createAINewsJob({
                 agent: aiNewsAgent,
             }),
-            createCryptoNewsJob({
-                agent: cryptoNewsAgent,
-            }),
-            createDevelopmentNewsJob({
-                agent: developmentNewsAgent,
-            }),
-            createFinanceNewsJob({
-                agent: financeNewsAgent,
-            }),
-            createSpaceEventsJob({
-                agent: spaceEventsAgent,
-            }),
-            createTechnologyEventsJob({
-                agent: technologyEventsAgent,
-            }),
+            // createCryptoNewsJob({
+            //     agent: cryptoNewsAgent,
+            // }),
+            // createDevelopmentNewsJob({
+            //     agent: developmentNewsAgent,
+            // }),
+            // createFinanceNewsJob({
+            //     agent: financeNewsAgent,
+            // }),
+            // createSpaceEventsJob({
+            //     agent: spaceEventsAgent,
+            // }),
+            // createTechnologyEventsJob({
+            //     agent: technologyEventsAgent,
+            // }),
         ]),
 );
 
@@ -244,11 +234,11 @@ export const createContainer = () =>
         // Tools
         .provides(tools)
         // Agents
-        .provides(spaceEventsAgent)
+        // .provides(spaceEventsAgent)
         .provides(aiNewsAgent)
-        .provides(developmentNewsAgent)
-        .provides(cryptoNewsAgent)
-        .provides(financeNewsAgent)
-        .provides(technologyEventsAgent)
+        // .provides(developmentNewsAgent)
+        // .provides(cryptoNewsAgent)
+        // .provides(financeNewsAgent)
+        // .provides(technologyEventsAgent)
         // JobRunner
         .provides(jobRunner);

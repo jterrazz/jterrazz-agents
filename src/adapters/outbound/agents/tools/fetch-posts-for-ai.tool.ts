@@ -5,17 +5,17 @@ import { type XPort } from '../../../../ports/outbound/web/x.port.js';
 import { formatXPosts } from './formatters/x-post-formatter.js';
 
 const USERNAMES = [
-    'GoogleAI',
-    'nvidia',
-    'AnthropicAI',
-    'midjourney',
-    'sama',
-    'demishassabis',
-    'AndrewYNg',
-    'Ronald_vanLoon',
-    'alliekmiller',
-    'DeepLearn007',
-    'OpenAI',
+    // 'GoogleAI',
+    // 'nvidia',
+    // 'AnthropicAI',
+    // 'midjourney',
+    // 'sama',
+    // 'demishassabis',
+    // 'AndrewYNg',
+    // 'Ronald_vanLoon',
+    // 'alliekmiller',
+    // 'DeepLearn007',
+    // 'OpenAI',
     'cursor_ai',
 ];
 

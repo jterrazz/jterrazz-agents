@@ -1,12 +1,21 @@
 import { type AgentTool } from '../../../ports/outbound/agents.port.js';
 
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
+import { buildSystemPrompt } from './prompts/system.js';
+import { useFormat } from './prompts/use-format.js';
+import { useRole } from './prompts/use-role.js';
+import { useTone } from './prompts/use-tone.js';
 
 export class TechnologyEventsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            'An agent that posts about upcoming events related to technology conferences and industry events.',
+            buildSystemPrompt(
+                useRole().animator,
+                'An agent that posts about upcoming events related to technology conferences and industry events.',
+                useTone().fun,
+                useFormat().discordEvents,
+            ),
         );
     }
 

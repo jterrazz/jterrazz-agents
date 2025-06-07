@@ -1,1 +1,0 @@
-`IMPORTANT: DO NOT send multiple messages / reminders for the same event.`

@@ -1,13 +1,12 @@
-export function useDiscordEventsMarkdownFormat(): string {
-    return `
-Use this beautiful and modern Discord Markdown template for each event:
+import { discordHeader } from './discord.js';
 
-- IMPORTANT: The output MUST be a maximum of 1700 letters. Do not break the url links that are sent. But evaluate everything in the character limit, including the url links.
-- Add a blank line between events.
+export const discordEventsFormat = `
+${discordHeader}
+
+- IMPORTANT: DO NOT send multiple Discord messages / reminders for the same event.
 - Use blockquotes for event details for clarity and visual separation.
 - Use emoji for each field for visual appeal.
 - If an image URL is available, show it as an embedded image below the event details.
-- Make it fun and engaging for Discord users (emojis, bold, italic, etc.)
 
 ###START OF THE TEMPLATE###
 
@@ -37,4 +36,3 @@ _The new SpaceX Starship is set to launch on June 1st, 2025. This is a major mil
 
 ###END OF THE EXAMPLE###
 `;
-}

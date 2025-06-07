@@ -5,9 +5,6 @@ import { type AvailableAgentTools } from '../../../../ports/outbound/agents.port
 import { type AIPort } from '../../../../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
-import { withDiscordNewsMarkdownFormat } from '../templates/discord-news-markdown.template.js';
-import { buildSystemPrompt } from '../templates/system.js';
-
 import { createChatAgent } from './chat-agent-factory.js';
 
 export type ChatAgentDependencies = {
@@ -26,7 +23,7 @@ export abstract class ChatAgent {
     protected readonly logger: LoggerPort;
     protected readonly tools: AvailableAgentTools;
 
-    constructor(dependencies: ChatAgentDependencies, agentSpecific: string) {
+    constructor(dependencies: ChatAgentDependencies, systemPrompt: string) {
         this.ai = dependencies.ai;
         this.channelName = dependencies.channelName;
         this.chatBot = dependencies.chatBot;
@@ -39,13 +36,7 @@ export abstract class ChatAgent {
             chatBot: this.chatBot,
             logger: this.logger,
             promptTemplate: [
-                [
-                    'system',
-                    buildSystemPrompt(
-                        'Agent definition:' + agentSpecific,
-                        withDiscordNewsMarkdownFormat(),
-                    ),
-                ],
+                ['system', systemPrompt],
                 ['human', '{input}'],
             ],
             tools: this.getTools(),
