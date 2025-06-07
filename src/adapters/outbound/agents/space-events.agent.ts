@@ -1,4 +1,4 @@
-import { type AgentTool } from '../ports/outbound/agent.port.js';
+import { type AgentTool } from '../../../ports/outbound/agent.port.js';
 
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
 

@@ -1,6 +1,6 @@
 import { DynamicTool } from '@langchain/core/tools';
 
-import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
+import { type XPort, type XPostPort } from '../../../../ports/outbound/x.port.js';
 
 export function createFetchPostsForAITool(x: XPort) {
     const aiUsernames = [

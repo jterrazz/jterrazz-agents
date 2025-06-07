@@ -3,10 +3,10 @@ import { ChatPromptTemplate } from '@langchain/core/prompts';
 import type { DynamicTool } from '@langchain/core/tools';
 import { AgentExecutor, createStructuredChatAgent } from 'langchain/agents';
 
-import type { AIPort } from '../../ports/outbound/ai.port.js';
-import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
+import type { AIPort } from '../../../../ports/outbound/ai.port.js';
+import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
-import { withGoogleAIRateLimit } from '../../adapters/outbound/ai/google-ai-rate-limiter.js';
+import { withGoogleAIRateLimit } from '../../ai/google-ai-rate-limiter.js';
 
 export type NewsAgentOptions = {
     ai: AIPort;

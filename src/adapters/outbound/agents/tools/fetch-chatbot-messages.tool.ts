@@ -1,6 +1,6 @@
 import { DynamicTool } from 'langchain/tools';
 
-import type { ChatBotPort } from '../../ports/outbound/chatbot.port.js';
+import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 type FetchChatBotMessagesToolDependencies = {
     channelName: string;

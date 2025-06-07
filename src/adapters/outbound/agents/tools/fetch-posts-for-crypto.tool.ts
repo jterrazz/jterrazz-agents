@@ -1,6 +1,6 @@
 import { DynamicTool } from 'langchain/tools';
 
-import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
+import { type XPort, type XPostPort } from '../../../../ports/outbound/x.port.js';
 
 export function createFetchPostsForCryptoTool(x: XPort) {
     const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];

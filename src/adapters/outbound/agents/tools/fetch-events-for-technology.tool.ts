@@ -1,6 +1,6 @@
 import { DynamicTool } from 'langchain/tools';
 
-import { getUpcomingTechEvents } from '../../adapters/outbound/web/techmeme.adapter.js';
+import { getUpcomingTechEvents } from '../../web/techmeme.adapter.js';
 
 export const createFetchEventsForTechnologyTool = () =>
     new DynamicTool({

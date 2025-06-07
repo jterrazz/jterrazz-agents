@@ -3,7 +3,7 @@ import { DynamicTool } from 'langchain/tools';
 import {
     getUpcomingEvents,
     getUpcomingRocketLaunches,
-} from '../../adapters/outbound/web/nextspaceflight.adapter.js';
+} from '../../web/nextspaceflight.adapter.js';
 
 export function createFetchEventsForSpaceTool() {
     return new DynamicTool({

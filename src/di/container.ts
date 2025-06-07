@@ -16,24 +16,23 @@ import { createFinanceNewsJob } from '../adapters/inbound/job-runner/jobs/financ
 import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
 import { createTechnologyEventsJob } from '../adapters/inbound/job-runner/jobs/technology-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
+import { AINewsAgent } from '../adapters/outbound/agents/ai-news.agent.js';
+import { CryptoNewsAgent } from '../adapters/outbound/agents/crypto-news.agent.js';
+import { DevelopmentNewsAgent } from '../adapters/outbound/agents/development-news.agent.js';
+import { FinanceNewsAgent } from '../adapters/outbound/agents/finance-news.agent.js';
+import { SpaceEventsAgent } from '../adapters/outbound/agents/space-events.agent.js';
+import { TechnologyEventsAgent } from '../adapters/outbound/agents/technology-events.agent.js';
+import { createFetchChatBotMessagesTool } from '../adapters/outbound/agents/tools/fetch-chatbot-messages.tool.js';
+import { createFetchEventsForSpaceTool } from '../adapters/outbound/agents/tools/fetch-events-for-space.tool.js';
+import { createFetchEventsForTechnologyTool } from '../adapters/outbound/agents/tools/fetch-events-for-technology.tool.js';
+import { createFetchPostsForAITool } from '../adapters/outbound/agents/tools/fetch-posts-for-ai.tool.js';
+import { createFetchPostsForCryptoTool } from '../adapters/outbound/agents/tools/fetch-posts-for-crypto.tool.js';
+import { createFetchPostsForDevelopmentTool } from '../adapters/outbound/agents/tools/fetch-posts-for-development.tool.js';
+import { createFetchPostsForFinanceTool } from '../adapters/outbound/agents/tools/fetch-posts-for-finance.tool.js';
+import { createGetCurrentDateTool } from '../adapters/outbound/agents/tools/get-current-date.tool.js';
 import { GoogleAIAdapter } from '../adapters/outbound/ai/google-ai.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 import { createXAdapter } from '../adapters/outbound/web/x.adapter.js';
-
-import { AINewsAgent } from '../agents/ai-news.agent.js';
-import { CryptoNewsAgent } from '../agents/crypto-news.agent.js';
-import { DevelopmentNewsAgent } from '../agents/development-news.agent.js';
-import { FinanceNewsAgent } from '../agents/finance-news.agent.js';
-import { SpaceEventsAgent } from '../agents/space-events.agent.js';
-import { TechnologyEventsAgent } from '../agents/technology-events.agent.js';
-import { createFetchChatBotMessagesTool } from '../agents/tools/fetch-chatbot-messages.tool.js';
-import { createFetchEventsForSpaceTool } from '../agents/tools/fetch-events-for-space.tool.js';
-import { createFetchEventsForTechnologyTool } from '../agents/tools/fetch-events-for-technology.tool.js';
-import { createFetchPostsForAITool } from '../agents/tools/fetch-posts-for-ai.tool.js';
-import { createFetchPostsForCryptoTool } from '../agents/tools/fetch-posts-for-crypto.tool.js';
-import { createFetchPostsForDevelopmentTool } from '../agents/tools/fetch-posts-for-development.tool.js';
-import { createFetchPostsForFinanceTool } from '../agents/tools/fetch-posts-for-finance.tool.js';
-import { createGetCurrentDateTool } from '../agents/tools/get-current-date.tool.js';
 
 /**
  * Inbound adapters
