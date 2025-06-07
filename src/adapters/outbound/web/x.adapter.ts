@@ -127,13 +127,13 @@ export const createXAdapter = (apiToken: string): XPort => {
             const limitedPosts = limit ? filteredPosts.slice(0, limit) : filteredPosts;
 
             // Transform to SocialFeedMessage format
-            return limitedPosts.map((tweet) => ({
-                author: tweet.author.name,
-                createdAt: new Date(tweet.created_at),
-                id: tweet.tweet_id,
-                text: tweet.text,
-                timeAgo: formatTimeAgo(new Date(tweet.created_at)),
-                url: `https://twitter.com/${tweet.author.screen_name}/status/${tweet.tweet_id}`,
+            return limitedPosts.map((post) => ({
+                author: post.author.name,
+                createdAt: new Date(post.created_at),
+                id: post.tweet_id,
+                text: post.text,
+                timeAgo: formatTimeAgo(new Date(post.created_at)),
+                url: `https://twitter.com/${post.author.screen_name}/status/${post.tweet_id}`,
                 username,
             }));
         },

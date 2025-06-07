@@ -18,25 +18,25 @@ export function createFetchAITweetsTool(x: XPort) {
         'cursor_ai',
     ];
     return new DynamicTool({
-        description: 'Fetches latest AI-related tweets from a predefined list of Twitter users.',
+        description: 'Fetches latest AI-related posts from a predefined list of X users.',
         func: async () => {
             const usernames = aiUsernames;
-            let allTweets: XPostPort[] = [];
+            let allPosts: XPostPort[] = [];
             for (const username of usernames) {
-                const tweets = await x.fetchLatestMessages({
+                const posts = await x.fetchLatestMessages({
                     timeAgo: { hours: 24 },
-                    username, // Get tweets from the last 24 hours
+                    username, // Get posts from the last 24 hours
                 });
-                allTweets = allTweets.concat(tweets.map((t) => ({ ...t, username })));
+                allPosts = allPosts.concat(posts.map((p) => ({ ...p, username })));
             }
-            // Format tweets with newlines and clear structure
-            return allTweets
+            // Format posts with newlines and clear structure
+            return allPosts
                 .map(
-                    (tweet) =>
-                        `Author: ${tweet.author} (@${tweet.username})\n` +
-                        `Time: ${tweet.timeAgo}\n` +
-                        `Content: ${tweet.text}\n` +
-                        `URL: ${tweet.url}\n`,
+                    (post) =>
+                        `Author: ${post.author} (@${post.username})\n` +
+                        `Time: ${post.timeAgo}\n` +
+                        `Content: ${post.text}\n` +
+                        `URL: ${post.url}\n`,
                 )
                 .join('\n');
         },
