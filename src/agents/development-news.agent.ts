@@ -5,11 +5,7 @@ import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
 export class DevelopmentNewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
-            dependencies.ai,
-            dependencies.channelName,
-            dependencies.chatBot,
-            dependencies.logger,
-            dependencies.tools,
+            dependencies,
             'Only post about important news, discussions or updates related to software development topics.',
         );
     }

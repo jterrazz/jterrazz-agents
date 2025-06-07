@@ -20,20 +20,24 @@ export type ChatAgentDependencies = {
 
 export abstract class ChatAgent {
     protected readonly agent: ReturnType<typeof createChatAgent>;
+    protected readonly ai: AIPort;
+    protected readonly channelName: string;
+    protected readonly chatBot: ChatBotPort;
+    protected readonly logger: LoggerPort;
+    protected readonly tools: AvailableAgentTools;
 
-    constructor(
-        ai: AIPort,
-        channelName: string,
-        chatBot: ChatBotPort,
-        logger: LoggerPort,
-        protected readonly tools: AvailableAgentTools,
-        agentSpecific: string,
-    ) {
+    constructor(dependencies: ChatAgentDependencies, agentSpecific: string) {
+        this.ai = dependencies.ai;
+        this.channelName = dependencies.channelName;
+        this.chatBot = dependencies.chatBot;
+        this.logger = dependencies.logger;
+        this.tools = dependencies.tools;
+
         this.agent = createChatAgent({
-            ai,
-            channelName,
-            chatBot,
-            logger,
+            ai: this.ai,
+            channelName: this.channelName,
+            chatBot: this.chatBot,
+            logger: this.logger,
             promptTemplate: [
                 ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
                 ['human', '{input}'],
