@@ -13,7 +13,6 @@ export interface XPostPort {
     createdAt: Date;
     id: string;
     text: string;
-    timeAgo: string; // Human-readable time difference from now
     url: string;
     username: string;
 }
