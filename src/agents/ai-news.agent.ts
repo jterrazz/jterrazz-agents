@@ -36,6 +36,6 @@ Only post about important news, discussions or updates related to AI topics.
             ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
             ['human', '{input}'],
         ],
-        tools: [tools.fetchChatBotMessages.ai, tools.getCurrentDate, tools.fetchAITweets],
+        tools: [tools.fetchChatBotMessages.ai, tools.getCurrentDate, tools.fetchPostsForAI],
     });
 };

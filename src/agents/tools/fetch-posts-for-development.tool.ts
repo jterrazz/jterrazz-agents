@@ -2,7 +2,7 @@ import { DynamicTool } from 'langchain/tools';
 
 import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
 
-export const createFetchDevelopmentTweetsTool = (x: XPort) =>
+export const createFetchPostsForDevelopmentTool = (x: XPort) =>
     new DynamicTool({
         description: 'Get recent development-related posts.',
         func: async () => {
@@ -23,9 +23,9 @@ export const createFetchDevelopmentTweetsTool = (x: XPort) =>
             }
             return JSON.stringify(allPosts);
         },
-        name: 'fetchDevelopmentTweets',
+        name: 'fetchPostsForDevelopment',
     });
 
-export function withFetchDevTweetsTool() {
-    return 'Use the fetchDevTweets tool to get latest information about software development.';
+export function withFetchPostsForDevelopmentTool() {
+    return 'Use the fetchPostsForDevelopment tool to get latest information about software development.';
 }

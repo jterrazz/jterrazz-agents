@@ -38,7 +38,7 @@ Only post about important news, discussions or updates related to financial topi
         tools: [
             tools.fetchChatBotMessages.finance,
             tools.getCurrentDate,
-            tools.fetchFinancialTweets,
+            tools.fetchPostsForFinance,
         ],
     });
 };

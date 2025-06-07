@@ -2,7 +2,7 @@ import { DynamicTool } from 'langchain/tools';
 
 import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
 
-export function createFetchFinancialTweetsTool(x: XPort) {
+export function createFetchPostsForFinanceTool(x: XPort) {
     const financialUsernames = ['KobeissiLetter'];
     return new DynamicTool({
         description: 'Fetches latest financial posts from a predefined list of X users.',
@@ -30,14 +30,14 @@ export function createFetchFinancialTweetsTool(x: XPort) {
                     )
                     .join('\n');
             } catch (error) {
-                console.error('Error in fetchFinancialTweetsTool:', error);
+                console.error('Error in fetchPostsForFinanceTool:', error);
                 throw error; // Re-throw to let the agent handle it
             }
         },
-        name: 'fetchFinancialTweets',
+        name: 'fetchPostsForFinance',
     });
 }
 
-export function withFetchFinancialTweetsTool() {
-    return 'Use the fetchFinancialTweets tool to get latest information about financial news.';
-}
+export function withFetchPostsForFinanceTool() {
+    return 'Use the fetchPostsForFinance tool to get latest information about financial news.';
+} 

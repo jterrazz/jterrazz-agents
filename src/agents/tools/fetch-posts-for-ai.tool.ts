@@ -1,20 +1,33 @@
-import { DynamicTool } from 'langchain/tools';
+import { DynamicTool } from '@langchain/core/tools';
 
 import { type XPort, type XPostPort } from '../../ports/outbound/x.port.js';
 
-export function createFetchCryptoTweetsTool(x: XPort) {
-    const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
+export function createFetchPostsForAITool(x: XPort) {
+    const aiUsernames = [
+        'GoogleAI',
+        'nvidia',
+        'AnthropicAI',
+        'midjourney',
+        'sama',
+        'demishassabis',
+        'AndrewYNg',
+        'Ronald_vanLoon',
+        'alliekmiller',
+        'DeepLearn007',
+        'OpenAI',
+        'cursor_ai',
+    ];
     return new DynamicTool({
-        description: 'Fetches latest crypto posts from a predefined list of X users.',
+        description: 'Fetches latest AI-related posts from a predefined list of X users.',
         func: async () => {
-            const usernames = cryptoUsernames;
+            const usernames = aiUsernames;
             let allPosts: XPostPort[] = [];
             for (const username of usernames) {
                 const posts = await x.fetchLatestMessages({
                     timeAgo: { hours: 24 },
                     username, // Get posts from the last 24 hours
                 });
-                allPosts = allPosts.concat(posts);
+                allPosts = allPosts.concat(posts.map((p) => ({ ...p, username })));
             }
             // Format posts with newlines and clear structure
             return allPosts
@@ -27,10 +40,10 @@ export function createFetchCryptoTweetsTool(x: XPort) {
                 )
                 .join('\n');
         },
-        name: 'fetchCryptoTweets',
+        name: 'fetchPostsForAI',
     });
 }
 
-export function withFetchCryptoTweetsTool() {
-    return 'Use the fetchCryptoTweets tool to get latest information about crypto.';
+export function withFetchPostsForAITool() {
+    return 'Use the fetchPostsForAI tool to get latest information about AI.';
 }

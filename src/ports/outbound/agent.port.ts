@@ -1,12 +1,10 @@
 import { type DynamicTool } from 'langchain/tools';
 
-
 export type AgentPort = {
     run(userQuery: string): Promise<void>;
 };
 
 export type AvailableTools = {
-    fetchAITweets: DynamicTool;
     fetchChatBotMessages: {
         ai: DynamicTool;
         crypto: DynamicTool;
@@ -15,9 +13,10 @@ export type AvailableTools = {
         space: DynamicTool;
         technology: DynamicTool;
     };
-    fetchCryptoTweets: DynamicTool;
-    fetchDevelopmentTweets: DynamicTool;
-    fetchFinancialTweets: DynamicTool;
+    fetchPostsForAI: DynamicTool;
+    fetchPostsForCrypto: DynamicTool;
+    fetchPostsForDevelopment: DynamicTool;
+    fetchPostsForFinance: DynamicTool;
     fetchTechnologyEvents: DynamicTool;
     getCurrentDate: DynamicTool;
 };

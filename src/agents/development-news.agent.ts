@@ -39,7 +39,7 @@ Only post about important news, discussions or updates related to development to
         tools: [
             tools.fetchChatBotMessages.development,
             tools.getCurrentDate,
-            tools.fetchDevelopmentTweets,
+            tools.fetchPostsForDevelopment,
         ],
     });
 };
