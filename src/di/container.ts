@@ -27,11 +27,12 @@ import { createFinanceNewsAgent } from '../agents/finance-news.agent.js';
 import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
 import { createTechnologyEventsAgent } from '../agents/technology-events.agent.js';
 import { createFetchChatBotMessagesTool } from '../agents/tools/fetch-chatbot-messages.tool.js';
+import { createFetchEventsForSpaceTool } from '../agents/tools/fetch-events-for-space.tool.js';
+import { createFetchEventsForTechnologyTool } from '../agents/tools/fetch-events-for-technology.tool.js';
 import { createFetchPostsForAITool } from '../agents/tools/fetch-posts-for-ai.tool.js';
 import { createFetchPostsForCryptoTool } from '../agents/tools/fetch-posts-for-crypto.tool.js';
 import { createFetchPostsForDevelopmentTool } from '../agents/tools/fetch-posts-for-development.tool.js';
 import { createFetchPostsForFinanceTool } from '../agents/tools/fetch-posts-for-finance.tool.js';
-import { createFetchTechnologyEventsTool } from '../agents/tools/fetch-technology-events.tool.js';
 import { createGetCurrentDateTool } from '../agents/tools/get-current-date.tool.js';
 
 /**
@@ -92,11 +93,12 @@ const tools = Injectable(
                     chatBot,
                 }),
             },
+            fetchEventsForSpace: createFetchEventsForSpaceTool(),
+            fetchEventsForTechnology: createFetchEventsForTechnologyTool(),
             fetchPostsForAI: createFetchPostsForAITool(x),
             fetchPostsForCrypto: createFetchPostsForCryptoTool(x),
             fetchPostsForDevelopment: createFetchPostsForDevelopmentTool(x),
             fetchPostsForFinance: createFetchPostsForFinanceTool(x),
-            fetchTechnologyEvents: createFetchTechnologyEventsTool(),
             getCurrentDate: createGetCurrentDateTool(),
         };
     },

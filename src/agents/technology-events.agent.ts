@@ -39,7 +39,7 @@ Only post about important news, discussions or updates related to technology top
         tools: [
             tools.fetchChatBotMessages.technology,
             tools.getCurrentDate,
-            tools.fetchTechnologyEvents,
+            tools.fetchEventsForTechnology,
         ],
     });
 };

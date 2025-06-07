@@ -5,7 +5,7 @@ import {
     getUpcomingRocketLaunches,
 } from '../../adapters/outbound/web/nextspaceflight.adapter.js';
 
-export function createFetchSpaceEventsTool() {
+export function createFetchEventsForSpaceTool() {
     return new DynamicTool({
         description: 'Fetches upcoming space missions and rocket launches within the next 5 days.',
         func: async () => {
@@ -23,10 +23,10 @@ export function createFetchSpaceEventsTool() {
             });
             return JSON.stringify(events);
         },
-        name: 'getUpcomingSpaceEvents',
+        name: 'fetchEventsForSpace',
     });
 }
 
-export function withFetchSpaceEventsTool() {
-    return 'Use the getUpcomingSpaceEvents tool to get latest information about space missions and rocket launches.';
+export function withFetchEventsForSpaceTool() {
+    return 'Use the fetchEventsForSpace tool to get latest information about space missions and rocket launches.';
 }

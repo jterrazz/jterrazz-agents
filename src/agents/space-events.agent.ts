@@ -38,6 +38,7 @@ Only post about important news, discussions or updates related to space topics.
         tools: [
             tools.fetchChatBotMessages.space,
             tools.getCurrentDate,
+            tools.fetchEventsForSpace,
         ],
     });
 };

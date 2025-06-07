@@ -13,10 +13,11 @@ export type AvailableTools = {
         space: DynamicTool;
         technology: DynamicTool;
     };
+    fetchEventsForSpace: DynamicTool;
+    fetchEventsForTechnology: DynamicTool;
     fetchPostsForAI: DynamicTool;
     fetchPostsForCrypto: DynamicTool;
     fetchPostsForDevelopment: DynamicTool;
     fetchPostsForFinance: DynamicTool;
-    fetchTechnologyEvents: DynamicTool;
     getCurrentDate: DynamicTool;
 };
