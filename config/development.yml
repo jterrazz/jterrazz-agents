@@ -1,9 +1,9 @@
 inbound:
   jobs:
     aiNews:
-      enabled: true
-    cryptoNews:
       enabled: false
+    cryptoNews:
+      enabled: true
     developmentNews:
       enabled: false
     financeNews:

@@ -11,12 +11,12 @@ export function createFetchPostsForDevelopmentTool(x: XPort, logger: LoggerPort)
     return new DynamicTool({
         description: 'Fetches latest Development-related posts from a predefined list of X users.',
         func: async () => {
-            logger.info('Fetching development posts', { timeframe: '24h', usernames: USERNAMES });
+            logger.info('Fetching development posts', { timeframe: '72h', usernames: USERNAMES });
 
             const posts = await Promise.all(
                 USERNAMES.map((username) =>
                     x.fetchLatestMessages({
-                        timeAgo: { hours: 24 },
+                        timeAgo: { hours: 72 },
                         username,
                     }),
                 ),

@@ -11,12 +11,12 @@ export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort) {
     return new DynamicTool({
         description: 'Fetches latest Crypto-related posts from a predefined list of X users.',
         func: async () => {
-            logger.info('Fetching crypto posts', { timeframe: '24h', usernames: USERNAMES });
+            logger.info('Fetching crypto posts', { timeframe: '72h', usernames: USERNAMES });
 
             const posts = await Promise.all(
                 USERNAMES.map((username) =>
                     x.fetchLatestMessages({
-                        timeAgo: { hours: 24 },
+                        timeAgo: { hours: 72 },
                         username,
                     }),
                 ),
