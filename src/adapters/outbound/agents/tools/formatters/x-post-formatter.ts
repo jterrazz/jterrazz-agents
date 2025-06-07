@@ -11,4 +11,4 @@ export const formatXPost = (post: XPostPort & { username: string }): string => {
 
 export const formatXPosts = (posts: Array<XPostPort & { username: string }>): string => {
     return posts.map(formatXPost).join('\n\n');
-}; 
+};

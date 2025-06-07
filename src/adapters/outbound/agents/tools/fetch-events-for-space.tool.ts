@@ -21,7 +21,3 @@ export function createFetchEventsForSpaceTool() {
         name: 'fetchEventsForSpace',
     });
 }
-
-export function withFetchEventsForSpaceTool() {
-    return 'Use the fetchEventsForSpace tool to get latest information about space missions and rocket launches.';
-}

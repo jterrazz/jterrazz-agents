@@ -6,7 +6,7 @@ export class AINewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            'Only post about important news, discussions or updates related to AI topics.',
+            'An agent that posts about important news, discussions or updates related to AI topics.',
         );
     }
 

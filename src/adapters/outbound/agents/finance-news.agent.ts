@@ -6,7 +6,7 @@ export class FinanceNewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            'Only post about important news, discussions or updates related to financial markets and economy.',
+            'An agent that posts about important news, discussions or updates related to financial markets and economy.',
         );
     }
 

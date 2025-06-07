@@ -39,7 +39,13 @@ export abstract class ChatAgent {
             chatBot: this.chatBot,
             logger: this.logger,
             promptTemplate: [
-                ['system', buildSystemPrompt(agentSpecific, withDiscordNewsMarkdownFormat())],
+                [
+                    'system',
+                    buildSystemPrompt(
+                        'Agent definition:' + agentSpecific,
+                        withDiscordNewsMarkdownFormat(),
+                    ),
+                ],
                 ['human', '{input}'],
             ],
             tools: this.getTools(),

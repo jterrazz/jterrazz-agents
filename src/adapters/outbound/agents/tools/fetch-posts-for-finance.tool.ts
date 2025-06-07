@@ -23,7 +23,3 @@ export function createFetchPostsForFinanceTool(x: XPort) {
         name: 'fetchPostsForFinance',
     });
 }
-
-export function withFetchPostsForFinanceTool() {
-    return 'Use the fetchPostsForFinance tool to get latest information about financial news.';
-}

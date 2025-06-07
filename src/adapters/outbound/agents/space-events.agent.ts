@@ -6,7 +6,7 @@ export class SpaceEventsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            'Only post about important news, discussions or updates related to space exploration, astronomy, and space technology.',
+            'An agent that posts about upcoming events related to space exploration and space technology.',
         );
     }
 

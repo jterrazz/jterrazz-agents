@@ -6,7 +6,7 @@ export class TechnologyEventsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            'Only post about important news, discussions or updates related to technology conferences, product launches, and industry events.',
+            'An agent that posts about upcoming events related to technology conferences and industry events.',
         );
     }
 

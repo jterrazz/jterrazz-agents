@@ -9,4 +9,4 @@ export function formatDate(date: Date | string): string {
         timeZone: 'UTC',
         year: 'numeric',
     });
-} 
+}

@@ -36,7 +36,3 @@ export function createFetchPostsForAITool(x: XPort) {
         name: 'fetchPostsForAI',
     });
 }
-
-export function withFetchPostsForAITool() {
-    return 'Use the fetchPostsForAI tool to get latest information about AI.';
-}

@@ -10,11 +10,11 @@ type FetchChatBotMessagesToolDependencies = {
     chatBot: ChatBotPort;
 };
 
-export const createFetchChatBotMessagesTool = ({
+export function createFetchChatBotMessagesTool({
     channelName,
     chatBot,
-}: FetchChatBotMessagesToolDependencies) =>
-    new DynamicTool({
+}: FetchChatBotMessagesToolDependencies) {
+    return new DynamicTool({
         description: `Get recent messages from the #${channelName} channel.`,
         func: async () => {
             const messages = await chatBot.getRecentBotMessages(channelName);
@@ -28,7 +28,4 @@ export const createFetchChatBotMessagesTool = ({
         },
         name: 'fetchChatBotMessages',
     });
-
-export function withFetchRecentBotMessagesTool() {
-    return 'Use the fetchRecentBotMessages tool to see what you (the bot) have recently posted.';
 }

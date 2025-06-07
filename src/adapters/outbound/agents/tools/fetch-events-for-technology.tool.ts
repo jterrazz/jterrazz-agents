@@ -6,8 +6,8 @@ import { getUpcomingTechEvents } from '../../web/techmeme.adapter.js';
 
 import { formatEvents } from './formatters/event-formatter.js';
 
-export const createFetchEventsForTechnologyTool = () =>
-    new DynamicTool({
+export function createFetchEventsForTechnologyTool() {
+    return new DynamicTool({
         description: 'Get technology events and conferences within the next 14 days.',
         func: async () => {
             const events = await getUpcomingTechEvents();
@@ -16,7 +16,4 @@ export const createFetchEventsForTechnologyTool = () =>
         },
         name: 'fetchEventsForTechnology',
     });
-
-export function withFetchEventsForTechnologyTool() {
-    return 'Use the fetchEventsForTechnology tool to get latest information about technology events and conferences.';
 }

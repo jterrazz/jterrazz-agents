@@ -6,7 +6,7 @@ export class DevelopmentNewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(
             dependencies,
-            'Only post about important news, discussions or updates related to software development topics.',
+            'An agent that posts about important news, discussions or updates related to software development topics.',
         );
     }
 

@@ -1,4 +1,3 @@
-import { withFetchRecentBotMessagesTool } from '../tools/fetch-chatbot-messages.tool.js';
 
 export const basePromptRules = `
 You are a helpful assistant in a Discord chat. The community is composed of software developers, CTOs, and technical people. With a cool vibe. You should behave like a real person.
@@ -32,5 +31,5 @@ Use the tools as needed to answer the user's question.
 `;
 
 export function buildSystemPrompt(...sections: string[]) {
-    return [basePromptRules, withFetchRecentBotMessagesTool(), ...sections].join('\n');
+    return [basePromptRules, ...sections].join('\n');
 }

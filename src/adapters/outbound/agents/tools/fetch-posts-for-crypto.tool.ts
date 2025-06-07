@@ -23,7 +23,3 @@ export function createFetchPostsForCryptoTool(x: XPort) {
         name: 'fetchPostsForCrypto',
     });
 }
-
-export function withFetchPostsForCryptoTool() {
-    return 'Use the fetchPostsForCrypto tool to get latest information about crypto.';
-}
