@@ -28,8 +28,30 @@ export type ChatAgentDependencies = {
 const AgentResponseSchema = z.object({
     message: z.string().max(2000).optional(),
     reason: z.string().optional(),
-    shouldPost: z.boolean(),
+    shouldTransmitMessage: z.boolean(),
 });
+
+const OUTPUT_FORMAT_PROMPT = `
+<FINAL-ANSWER-OUTPUT-FORMAT>
+\`\`\`json
+Final Answer: ${JSON.stringify(z.toJSONSchema(AgentResponseSchema), null, 2)}
+\`\`\`
+</FINAL-ANSWER-OUTPUT-FORMAT>
+
+<FINAL-ANSWER-OUTPUT-FORMAT-RULES>
+- **Always wrap your final answer in markdown code blocks**
+- When you want to give a final answer (not use a tool), respond with:
+\`\`\`json
+Final Answer: {"shouldTransmitMessage": false, "reason": "<your reason>"}
+\`\`\`
+or
+\`\`\`
+Final Answer: {"shouldTransmitMessage": true, "message": "<the message to give to the user>"}
+\`\`\`
+</FINAL-ANSWER-OUTPUT-FORMAT-RULES>
+`
+    .replaceAll('{', '{{')
+    .replaceAll('}', '}}');
 
 export abstract class ChatAgent {
     protected readonly agent: AgentPort;
@@ -83,28 +105,7 @@ export abstract class ChatAgent {
 
     private buildSystemPrompt(agentPrompt: string, prompts: string[]): string {
         const expectedOutputFormat = `
-EXPECTED OUTPUT FORMAT:
-\u0060\u0060\u0060json
-${JSON.stringify(z.toJSONSchema(AgentResponseSchema), null, 4).replaceAll('{', '{{').replaceAll('}', '}}')}
-\u0060\u0060\u0060
-
-IMPORTANT RESPONSE FORMAT RULES:
-- When you want to use a tool, respond with:
-\u0060\u0060\u0060
-Action: <tool_name>
-Action Input: <tool_input>
-\u0060\u0060\u0060
-- When you want to give a final answer (not use a tool), respond with:
-\u0060\u0060\u0060
-Action: Final Answer
-Action Input: {{"shouldPost": false, "reason": "<your reason>"}}
-\u0060\u0060\u0060
-or
-\u0060\u0060\u0060
-Action: Final Answer
-Action Input: {{"shouldPost": true, "message": "<the message to post>"}}
-\u0060\u0060\u0060
-- **Always wrap actions in markdown code blocks**
+${OUTPUT_FORMAT_PROMPT}
 
 AGENT PROMPT:
 ${agentPrompt}
@@ -131,13 +132,13 @@ ${prompts.join('\n')}`;
         let executor: AgentExecutor | null = null;
 
         const handleResponse = async (response: AgentResponse): Promise<void> => {
-            if (response.shouldPost && response.message) {
+            if (response.shouldTransmitMessage && response.message) {
                 await this.chatBot.sendMessage(this.channelName, response.message);
                 this.logger.info(`Message sent to #${this.channelName}`, { agent: this.name });
                 return;
             }
 
-            if (!response.shouldPost) {
+            if (!response.shouldTransmitMessage) {
                 this.logger.info('Noop action', {
                     agent: this.name,
                     reason: response.reason,
@@ -160,38 +161,48 @@ ${prompts.join('\n')}`;
                 return null;
             }
 
-            let cleanText = text;
+            // First try to extract from markdown code blocks (primary expected format)
+            const codeBlockMatch = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+            if (codeBlockMatch) {
+                const content = codeBlockMatch[1].trim();
 
-            // Handle "Action: Final Answer" format from StructuredChatAgent
-            if (text.includes('Action: Final Answer')) {
-                const actionInputMatch = text.match(/Action Input:\s*([\s\S]*?)$/i);
-                if (actionInputMatch) {
-                    cleanText = actionInputMatch[1].trim();
-                }
-            }
-            // Handle legacy "Final Answer:" format
-            else if (text.includes('Final Answer:')) {
-                const finalAnswerMatch = text.match(/Final Answer:\s*([\s\S]*?)$/i);
-                if (finalAnswerMatch) {
-                    cleanText = finalAnswerMatch[1].trim();
-                }
-            }
-
-            try {
-                // First try to parse the entire string as JSON
-                return JSON.parse(cleanText);
-            } catch {
-                // If that fails, try to extract JSON from code blocks
-                const match = cleanText.match(/```(?:json)?\s*([\s\S]*?)```/i);
-                if (!match) {
-                    return null;
+                // Check if it contains "Final Answer:" pattern
+                if (content.includes('Final Answer:')) {
+                    const finalAnswerMatch = content.match(/Final Answer:\s*([\s\S]*?)$/i);
+                    if (finalAnswerMatch) {
+                        try {
+                            return JSON.parse(finalAnswerMatch[1].trim());
+                        } catch {
+                            // Continue to fallback
+                        }
+                    }
                 }
 
+                // Try parsing the entire code block content as JSON
                 try {
-                    return JSON.parse(match[1].trim());
+                    return JSON.parse(content);
                 } catch {
-                    return null;
+                    // Continue to fallback
                 }
+            }
+
+            // Fallback: Look for plain "Final Answer:" pattern
+            if (text.includes('Final Answer:')) {
+                const actionInputMatch = text.match(/Final Answer:\s*([\s\S]*?)$/i);
+                if (actionInputMatch) {
+                    try {
+                        return JSON.parse(actionInputMatch[1].trim());
+                    } catch {
+                        // Continue to final fallback
+                    }
+                }
+            }
+
+            // Final fallback: try parsing entire text as JSON
+            try {
+                return JSON.parse(text);
+            } catch {
+                return null;
             }
         };
 
