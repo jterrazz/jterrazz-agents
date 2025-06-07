@@ -1,16 +1,21 @@
 import { type LoggerPort } from '@jterrazz/logger';
-import { DynamicTool } from 'langchain/tools';
 
+import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 import { type XPort } from '../../../../ports/outbound/web/x.port.js';
+
+import { createSafeAgentTool } from '../tool.js';
 
 import { formatXPosts } from './formatters/x-post-formatter.js';
 
 const USERNAMES = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
 
-export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort) {
-    return new DynamicTool({
-        description: 'Fetches latest Crypto-related posts from a predefined list of X users.',
-        func: async () => {
+export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort): AgentToolPort {
+    return createSafeAgentTool(
+        {
+            description: 'Fetches latest Crypto-related posts from a predefined list of X users.',
+            name: 'fetchPostsForCrypto',
+        },
+        async () => {
             logger.info('Fetching crypto posts', { timeframe: '72h', usernames: USERNAMES });
 
             const posts = await Promise.all(
@@ -30,6 +35,6 @@ export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort) {
 
             return formatXPosts(allPosts);
         },
-        name: 'fetchPostsForCrypto',
-    });
+        logger,
+    );
 }

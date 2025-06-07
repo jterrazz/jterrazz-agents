@@ -4,22 +4,22 @@ export type AgentPort = {
     run(userQuery: string): Promise<void>;
 };
 
-export type AgentTool = DynamicTool<string>;
+export type AgentToolPort = DynamicTool<string>;
 
 export type AvailableAgentTools = {
     fetchChatBotMessages: {
-        ai: AgentTool;
-        crypto: AgentTool;
-        development: AgentTool;
-        finance: AgentTool;
-        space: AgentTool;
-        technology: AgentTool;
+        ai: AgentToolPort;
+        crypto: AgentToolPort;
+        development: AgentToolPort;
+        finance: AgentToolPort;
+        space: AgentToolPort;
+        technology: AgentToolPort;
     };
-    fetchEventsForSpace: AgentTool;
-    fetchEventsForTechnology: AgentTool;
-    fetchPostsForAI: AgentTool;
-    fetchPostsForCrypto: AgentTool;
-    fetchPostsForDevelopment: AgentTool;
-    fetchPostsForFinance: AgentTool;
-    getCurrentDate: AgentTool;
+    fetchEventsForSpace: AgentToolPort;
+    fetchEventsForTechnology: AgentToolPort;
+    fetchPostsForAI: AgentToolPort;
+    fetchPostsForCrypto: AgentToolPort;
+    fetchPostsForDevelopment: AgentToolPort;
+    fetchPostsForFinance: AgentToolPort;
+    getCurrentDate: AgentToolPort;
 };

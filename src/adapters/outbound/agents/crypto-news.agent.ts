@@ -1,4 +1,4 @@
-import { type AgentTool } from '../../../ports/outbound/agents.port.js';
+import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
 
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
 import { useFormat } from './prompts/agent-format.js';
@@ -16,7 +16,7 @@ export class CryptoNewsAgent extends ChatAgent {
         );
     }
 
-    protected getTools(): AgentTool[] {
+    protected getTools(): AgentToolPort[] {
         return [
             this.tools.fetchChatBotMessages.crypto,
             this.tools.getCurrentDate,

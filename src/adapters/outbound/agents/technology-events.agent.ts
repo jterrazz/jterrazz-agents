@@ -1,4 +1,4 @@
-import { type AgentTool } from '../../../ports/outbound/agents.port.js';
+import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
 
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
 import { useFormat as agentFormat } from './prompts/agent-format.js';
@@ -21,7 +21,7 @@ export class TechnologyEventsAgent extends ChatAgent {
         );
     }
 
-    protected getTools(): AgentTool[] {
+    protected getTools(): AgentToolPort[] {
         return [
             this.tools.fetchChatBotMessages.technology,
             this.tools.getCurrentDate,
