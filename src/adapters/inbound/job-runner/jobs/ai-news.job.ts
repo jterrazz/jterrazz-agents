@@ -13,5 +13,5 @@ export const createAINewsJob = ({ agent }: AINewsJobDependencies): Job => ({
     },
     executeOnStartup: true,
     name: 'ai-news-agent',
-    schedule: '0 17 * * *', // Every day at 5:00 PM
+    schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
 });
