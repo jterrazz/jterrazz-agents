@@ -42,7 +42,7 @@ describe('chatbot-message-formatter', () => {
             const messages: Array<{ content: string; date: Date }> = [];
 
             const formatted = formatChatBotMessages(messages);
-            expect(formatted).toBe('No messages posted by the chatbot.');
+            expect(formatted).toBe('The chatbot did not post any messages.');
         });
 
         it('should format single message array', () => {
