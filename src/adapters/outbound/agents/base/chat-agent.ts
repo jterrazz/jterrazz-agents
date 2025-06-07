@@ -117,6 +117,7 @@ ${prompts.join('\n')}`;
 
     private createAgent({
         ai,
+        logger,
         promptTemplate,
         tools,
     }: {
@@ -223,10 +224,28 @@ ${prompts.join('\n')}`;
                 const result = await withGoogleAIRateLimit(() =>
                     executor!.invoke({ input: userQuery }),
                 );
+
+                logger.debug('Agent execution result', {
+                    hasOutput: 'output' in result,
+                    outputType: typeof result.output,
+                    result: JSON.stringify(result, null, 2),
+                });
+
+                if (!result || typeof result.output === 'undefined') {
+                    throw new Error(
+                        `Agent returned invalid result structure: ${JSON.stringify(result)}`,
+                    );
+                }
+
                 const extractedJson = extractJson(result.output);
                 const parsed = AgentResponseSchema.safeParse(extractedJson);
 
                 if (!parsed.success) {
+                    logger.error('Failed to parse agent response', {
+                        extractedJson,
+                        parseError: parsed.error,
+                        rawOutput: result.output,
+                    });
                     throw new Error(`Invalid agent response: ${JSON.stringify(parsed.error)}`);
                 }
 
