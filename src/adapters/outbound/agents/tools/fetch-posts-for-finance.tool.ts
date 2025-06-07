@@ -12,7 +12,8 @@ const USERNAMES = ['KobeissiLetter'];
 export function createFetchPostsForFinanceTool(x: XPort, logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(
         {
-            description: 'Fetches latest Finance-related posts from a predefined list of X users.',
+            description:
+                'Fetches latest Finance-related posts from a predefined list of X users. No input required.',
             name: 'fetchPostsForFinance',
         },
         async () => {

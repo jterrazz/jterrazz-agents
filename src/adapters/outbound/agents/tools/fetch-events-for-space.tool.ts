@@ -13,7 +13,7 @@ export function createFetchEventsForSpaceTool(logger: LoggerPort): AgentToolPort
     return createSafeAgentTool(
         {
             description:
-                'Fetches upcoming space missions and rocket launches within the next 5 days.',
+                'Fetches upcoming space missions and rocket launches within the next 5 days. No input required.',
             name: 'fetchEventsForSpace',
         },
         async () => {

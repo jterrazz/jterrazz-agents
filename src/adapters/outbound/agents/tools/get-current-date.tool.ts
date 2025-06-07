@@ -1,9 +1,12 @@
+import { type LoggerPort } from '@jterrazz/logger';
+
+import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 
 import { createSafeAgentTool } from '../tool.js';
 
 import { formatDate } from './formatters/date-formatter.js';
 
-export function createGetCurrentDateTool() {
+export function createGetCurrentDateTool(logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(
         {
             description:
@@ -11,7 +14,11 @@ export function createGetCurrentDateTool() {
             name: 'getCurrentDate',
         },
         async () => {
-            return formatDate(new Date());
+            const currentDate = new Date();
+            logger.info('Getting current date', { timestamp: currentDate.toISOString() });
+
+            return formatDate(currentDate);
         },
+        logger,
     );
 }

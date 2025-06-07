@@ -12,7 +12,8 @@ import { formatEvents } from './formatters/event-formatter.js';
 export function createFetchEventsForTechnologyTool(logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(
         {
-            description: 'Get technology events and conferences within the next 14 days.',
+            description:
+                'Get technology events and conferences within the next 14 days. No input required.',
             name: 'fetchEventsForTechnology',
         },
         async () => {

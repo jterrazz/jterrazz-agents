@@ -13,7 +13,7 @@ export function createFetchPostsForDevelopmentTool(x: XPort, logger: LoggerPort)
     return createSafeAgentTool(
         {
             description:
-                'Fetches latest Development-related posts from a predefined list of X users.',
+                'Fetches latest Development-related posts from a predefined list of X users. No input required.',
             name: 'fetchPostsForDevelopment',
         },
         async () => {

@@ -126,7 +126,7 @@ const tools = Injectable(
             fetchPostsForCrypto: createFetchPostsForCryptoTool(x, logger),
             fetchPostsForDevelopment: createFetchPostsForDevelopmentTool(x, logger),
             fetchPostsForFinance: createFetchPostsForFinanceTool(x, logger),
-            getCurrentDate: createGetCurrentDateTool(),
+            getCurrentDate: createGetCurrentDateTool(logger),
         };
     },
 );

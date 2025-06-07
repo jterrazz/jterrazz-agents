@@ -3,7 +3,7 @@ inbound:
     aiNews:
       enabled: false
     cryptoNews:
-      enabled: true
+      enabled: false
     developmentNews:
       enabled: false
     financeNews:

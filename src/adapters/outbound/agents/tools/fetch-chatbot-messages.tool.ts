@@ -17,7 +17,7 @@ export function createFetchChatBotMessagesTool({
     logger,
 }: FetchChatBotMessagesToolDependencies) {
     return new DynamicTool({
-        description: `Get recent chatbot messages.`,
+        description: `Get recent chatbot messages. No input required.`,
         func: async () => {
             logger.info(`Fetching recent bot messages from #${channelName}`, { channelName });
 

@@ -25,7 +25,8 @@ const USERNAMES = [
 export function createFetchPostsForAITool(x: XPort, logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(
         {
-            description: 'Fetches latest AI-related posts from a predefined list of X users.',
+            description:
+                'Fetches latest AI-related posts from a predefined list of X users. No input required.',
             name: 'fetchPostsForAI',
         },
         async () => {

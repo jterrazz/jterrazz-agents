@@ -12,7 +12,8 @@ const USERNAMES = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
 export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(
         {
-            description: 'Fetches latest Crypto-related posts from a predefined list of X users.',
+            description:
+                'Fetches latest Crypto-related posts from a predefined list of X users. No input required.',
             name: 'fetchPostsForCrypto',
         },
         async () => {
