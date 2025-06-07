@@ -1,44 +1,24 @@
-import type { LoggerPort } from '@jterrazz/logger';
+import { type DynamicTool } from 'langchain/tools';
 
-import { type AvailableTools } from '../ports/outbound/agent.port.js';
-import { type AIPort } from '../ports/outbound/ai.port.js';
-import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import { type AgentDependencies, ChatAgent } from './base/chat-agent.js';
 
-import { createChatAgent } from './base/chat-agent-factory.js';
-import { useDiscordEventsMarkdownFormat } from './templates/discord-space-events-markdown.template.js';
-import { buildSystemPrompt } from './templates/system.js';
+export class SpaceEventsAgent extends ChatAgent {
+    constructor(dependencies: AgentDependencies) {
+        super(
+            dependencies.ai,
+            dependencies.channelName,
+            dependencies.chatBot,
+            dependencies.logger,
+            dependencies.tools,
+            'Only post about important news, discussions or updates related to space exploration, astronomy, and space technology.',
+        );
+    }
 
-export type SpaceEventsAgentDependencies = {
-    ai: AIPort;
-    channelName: string;
-    chatBot: ChatBotPort;
-    logger: LoggerPort;
-    tools: AvailableTools;
-};
-
-export const createSpaceEventsAgent = ({
-    ai,
-    channelName,
-    chatBot,
-    logger,
-    tools,
-}: SpaceEventsAgentDependencies) => {
-    const agentSpecific = `
-Only post about important news, discussions or updates related to space topics.
-`;
-    return createChatAgent({
-        ai,
-        channelName,
-        chatBot,
-        logger,
-        promptTemplate: [
-            ['system', buildSystemPrompt(agentSpecific, useDiscordEventsMarkdownFormat())],
-            ['human', '{input}'],
-        ],
-        tools: [
-            tools.fetchChatBotMessages.space,
-            tools.getCurrentDate,
-            tools.fetchEventsForSpace,
-        ],
-    });
-};
+    protected getTools(): DynamicTool[] {
+        return [
+            this.tools.fetchChatBotMessages.space,
+            this.tools.getCurrentDate,
+            this.tools.fetchEventsForSpace,
+        ];
+    }
+}

@@ -20,12 +20,12 @@ import { GoogleAIAdapter } from '../adapters/outbound/ai/google-ai.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 import { createXAdapter } from '../adapters/outbound/web/x.adapter.js';
 
-import { createAINewsAgent } from '../agents/ai-news.agent.js';
-import { createCryptoNewsAgent } from '../agents/crypto-news.agent.js';
-import { createDevelopmentNewsAgent } from '../agents/development-news.agent.js';
-import { createFinanceNewsAgent } from '../agents/finance-news.agent.js';
-import { createSpaceEventsAgent } from '../agents/space-events.agent.js';
-import { createTechnologyEventsAgent } from '../agents/technology-events.agent.js';
+import { AINewsAgent } from '../agents/ai-news.agent.js';
+import { CryptoNewsAgent } from '../agents/crypto-news.agent.js';
+import { DevelopmentNewsAgent } from '../agents/development-news.agent.js';
+import { FinanceNewsAgent } from '../agents/finance-news.agent.js';
+import { SpaceEventsAgent } from '../agents/space-events.agent.js';
+import { TechnologyEventsAgent } from '../agents/technology-events.agent.js';
 import { createFetchChatBotMessagesTool } from '../agents/tools/fetch-chatbot-messages.tool.js';
 import { createFetchEventsForSpaceTool } from '../agents/tools/fetch-events-for-space.tool.js';
 import { createFetchEventsForTechnologyTool } from '../agents/tools/fetch-events-for-technology.tool.js';
@@ -110,78 +110,73 @@ const tools = Injectable(
 const financeNewsAgent = Injectable(
     'FinanceNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) => {
-        return createFinanceNewsAgent({
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+        new FinanceNewsAgent({
             ai,
             channelName: 'invest',
             chatBot,
             logger,
             tools,
-        });
-    },
+        }),
 );
 
 const spaceEventsAgent = Injectable(
     'SpaceEventsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) => {
-        return createSpaceEventsAgent({
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+        new SpaceEventsAgent({
             ai,
             channelName: 'space',
             chatBot,
             logger,
             tools,
-        });
-    },
+        }),
 );
 
 const aiNewsAgent = Injectable(
     'AINewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) => {
-        return createAINewsAgent({
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+        new AINewsAgent({
             ai,
             channelName: 'ai',
             chatBot,
             logger,
             tools,
-        });
-    },
+        }),
 );
 
 const developmentNewsAgent = Injectable(
     'DevelopmentNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) => {
-        return createDevelopmentNewsAgent({
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+        new DevelopmentNewsAgent({
             ai,
             channelName: 'development',
             chatBot,
             logger,
             tools,
-        });
-    },
+        }),
 );
 
 const cryptoNewsAgent = Injectable(
     'CryptoNewsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
-    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) => {
-        return createCryptoNewsAgent({
+    (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
+        new CryptoNewsAgent({
             ai,
             channelName: 'crypto',
             chatBot,
             logger,
             tools,
-        });
-    },
+        }),
 );
 
 const technologyEventsAgent = Injectable(
     'TechnologyEventsAgent',
     ['ChatBot', 'Logger', 'AI', 'Tools'] as const,
     (chatBot: ChatBotPort, logger: LoggerPort, ai: AIPort, tools: AvailableTools) =>
-        createTechnologyEventsAgent({
+        new TechnologyEventsAgent({
             ai,
             channelName: 'tech',
             chatBot,
