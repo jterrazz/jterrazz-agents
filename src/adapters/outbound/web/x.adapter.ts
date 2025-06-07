@@ -4,79 +4,15 @@ import { z } from 'zod';
 import { type XPort, type XPostPort } from '../../../ports/outbound/web/x.port.js';
 
 const authorSchema = z.object({
-    avatar: z.string().nullable(),
-    blue_verified: z.boolean(),
     name: z.string(),
-    rest_id: z.string(),
     screen_name: z.string(),
-});
-
-const videoVariantSchema = z.object({
-    bitrate: z.number().optional(),
-    content_type: z.string(),
-    url: z.string(),
-});
-
-const videoSchema = z.object({
-    aspect_ratio: z.array(z.number()),
-    duration: z.number().nullable(),
-    id: z.string(),
-    media_url_https: z.string(),
-    original_info: z.object({
-        focus_rects: z.array(z.any()),
-        height: z.number(),
-        width: z.number(),
-    }),
-    variants: z.array(videoVariantSchema),
-});
-
-const photoSchema = z.object({
-    id: z.string(),
-    media_url_https: z.string(),
-    sizes: z
-        .object({
-            h: z.number(),
-            w: z.number(),
-        })
-        .optional(),
-});
-
-const mediaSchema = z
-    .union([
-        z.array(z.any()),
-        z.object({
-            photo: z.array(photoSchema).optional(),
-            video: z.array(videoSchema).optional(),
-        }),
-    ])
-    .optional();
-
-const entitiesSchema = z.object({
-    hashtags: z.array(z.any()),
-    symbols: z.array(z.any()),
-    timestamps: z.array(z.any()),
-    urls: z.array(z.any()),
-    user_mentions: z.array(z.any()),
 });
 
 const postSchema = z.object({
     author: authorSchema,
-    bookmarks: z.number(),
-    conversation_id: z.string(),
     created_at: z.string(),
-    entities: entitiesSchema,
-    favorites: z.number(),
-    lang: z.string(),
-    media: mediaSchema,
-    quoted: z.any().optional(),
-    quotes: z.number(),
-    replies: z.number(),
-    reply_to: z.string().optional(),
-    retweets: z.number(),
-    source: z.string().optional(),
     text: z.string(),
     tweet_id: z.string(),
-    views: z.string(),
 });
 
 export interface FetchLatestPostsParams {
