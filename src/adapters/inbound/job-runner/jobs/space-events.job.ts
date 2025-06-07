@@ -1,13 +1,15 @@
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 import { type AgentPort } from '../../../../ports/outbound/agents.port.js';
 
+import { commonJobPrompt } from './common/prompt.js';
+
 export type SpaceEventsJobDependencies = {
     agent: AgentPort;
 };
 
 export const createSpaceEventsJob = ({ agent }: SpaceEventsJobDependencies): Job => ({
     execute: async () => {
-        await agent.run('New task started');
+        await agent.run(commonJobPrompt);
     },
     executeOnStartup: true,
     name: 'space-events-agent',

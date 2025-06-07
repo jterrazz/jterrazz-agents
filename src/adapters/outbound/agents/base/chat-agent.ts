@@ -36,7 +36,16 @@ export abstract class ChatAgent {
             chatBot: this.chatBot,
             logger: this.logger,
             promptTemplate: [
-                ['system', systemPrompt],
+                [
+                    'system',
+                    systemPrompt +
+                        `
+EXPECTED OUTPUT FORMAT:
+- If you decide not to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "action": "Final Answer", "action_input": {{ "action": "noop", "reason": "<your reason>" }} }}\n\u0060\u0060\u0060.
+- If you decide to post, respond with a JSON object: \u0060\u0060\u0060json\n{{ "action": "Final Answer", "action_input": {{ "action": "post", "content": "<the message to post>" }} }}\n\u0060\u0060\u0060.
+- For tool calls, use: \u0060\u0060\u0060json\n{{ "action": <tool_name>, "action_input": <tool_input> }}\n\u0060\u0060\u0060.
+- **Always output ONLY a valid JSON object. Do not include any code block, explanation, or formatting—just the JSON.**`,
+                ],
                 ['human', '{input}'],
             ],
             tools: this.getTools(),

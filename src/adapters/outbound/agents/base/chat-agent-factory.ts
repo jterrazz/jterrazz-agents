@@ -112,6 +112,7 @@ function extractJson(text: unknown): unknown {
         const match = text.match(/```json\s*([\s\S]*?)```/i);
         const jsonString = match ? match[1] : text;
         try {
+            console.log(text);
             return JSON.parse(jsonString);
         } catch (e) {
             console.log(e);

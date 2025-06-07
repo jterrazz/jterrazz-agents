@@ -1,5 +1,5 @@
-import { animatorRole } from './roles/animator.js';
+import { contributorRole } from './roles/contributor.js';
 
 export const useRole = () => ({
-    animator: animatorRole,
+    contributor: contributorRole,
 });
