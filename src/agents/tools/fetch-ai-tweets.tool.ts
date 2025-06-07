@@ -1,14 +1,13 @@
 import { DynamicTool } from '@langchain/core/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
-
-import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
+import { type XPort } from '../../ports/outbound/x.port.js';
 
 interface TweetWithUsername extends SocialFeedMessage {
     username: string;
 }
 
-export function createFetchAITweetsTool(apifyToken: string) {
+export function createFetchAITweetsTool(x: XPort) {
     const aiUsernames = [
         'GoogleAI',
         'nvidia',
@@ -23,7 +22,6 @@ export function createFetchAITweetsTool(apifyToken: string) {
         'OpenAI',
         'cursor_ai',
     ];
-    const x = createXAdapter(apifyToken);
     return new DynamicTool({
         description: 'Fetches latest AI-related tweets from a predefined list of Twitter users.',
         func: async () => {

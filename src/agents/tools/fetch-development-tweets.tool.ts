@@ -1,10 +1,9 @@
 import { DynamicTool } from 'langchain/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
+import { type XPort } from '../../ports/outbound/x.port.js';
 
-import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
-
-export const createFetchDevelopmentTweetsTool = (apifyToken: string) =>
+export const createFetchDevelopmentTweetsTool = (x: XPort) =>
     new DynamicTool({
         description: 'Get recent development-related tweets.',
         func: async () => {
@@ -15,7 +14,6 @@ export const createFetchDevelopmentTweetsTool = (apifyToken: string) =>
                 'bunjavascript',
                 'deno_land',
             ];
-            const x = createXAdapter(apifyToken);
             let allTweets: SocialFeedMessage[] = [];
             for (const username of devUsernames) {
                 const tweets = await x.fetchLatestMessages({

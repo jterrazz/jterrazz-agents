@@ -1,16 +1,14 @@
 import { DynamicTool } from 'langchain/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
-
-import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
+import { type XPort } from '../../ports/outbound/x.port.js';
 
 interface TweetWithUsername extends SocialFeedMessage {
     username: string;
 }
 
-export function createFetchFinancialTweetsTool(apifyToken: string) {
+export function createFetchFinancialTweetsTool(x: XPort) {
     const financialUsernames = ['KobeissiLetter'];
-    const x = createXAdapter(apifyToken);
     return new DynamicTool({
         description: 'Fetches latest financial tweets from a predefined list of Twitter users.',
         func: async () => {

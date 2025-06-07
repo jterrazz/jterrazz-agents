@@ -1,16 +1,14 @@
 import { DynamicTool } from 'langchain/tools';
 
 import { type SocialFeedMessage } from '../../ports/outbound/social-feed.port.js';
-
-import { createXAdapter } from '../../adapters/outbound/web/x.adapter.js';
+import { type XPort } from '../../ports/outbound/x.port.js';
 
 interface TweetWithUsername extends SocialFeedMessage {
     username: string;
 }
 
-export function createFetchCryptoTweetsTool(apifyToken: string) {
+export function createFetchCryptoTweetsTool(x: XPort) {
     const cryptoUsernames = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
-    const x = createXAdapter(apifyToken);
     return new DynamicTool({
         description: 'Fetches latest crypto tweets from a predefined list of Twitter users.',
         func: async () => {

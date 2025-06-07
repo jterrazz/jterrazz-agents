@@ -7,6 +7,7 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 import { type AgentPort, type AvailableTools } from '../ports/outbound/agent.port.js';
 import { type AIPort } from '../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
+import { type XPort } from '../ports/outbound/x.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
@@ -17,6 +18,7 @@ import { createTechnologyEventsJob } from '../adapters/inbound/job-runner/jobs/t
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { GoogleAIAdapter } from '../adapters/outbound/ai/google-ai.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
+import { createXAdapter } from '../adapters/outbound/web/x.adapter.js';
 
 import { createAINewsAgent } from '../agents/ai-news.agent.js';
 import { createCryptoNewsAgent } from '../agents/crypto-news.agent.js';
@@ -63,19 +65,23 @@ const ai = Injectable(
         new GoogleAIAdapter(config.getOutboundConfiguration().googleApiKey),
 );
 
+const x = Injectable('X', ['Configuration'] as const, (config: ConfigurationPort): XPort => {
+    const { apifyToken } = config.getOutboundConfiguration();
+    return createXAdapter(apifyToken);
+});
+
 /**
  * Tools
  */
 const tools = Injectable(
     'Tools',
-    ['ChatBot', 'Configuration'] as const,
-    (chatBot: ChatBotPort, config: ConfigurationPort): AvailableTools => {
-        const { apifyToken } = config.getOutboundConfiguration();
+    ['ChatBot', 'Configuration', 'X'] as const,
+    (chatBot: ChatBotPort, config: ConfigurationPort, x: XPort): AvailableTools => {
         return {
-            fetchAITweets: createFetchAITweetsTool(apifyToken),
-            fetchCryptoTweets: createFetchCryptoTweetsTool(apifyToken),
-            fetchDevelopmentTweets: createFetchDevelopmentTweetsTool(apifyToken),
-            fetchFinancialTweets: createFetchFinancialTweetsTool(apifyToken),
+            fetchAITweets: createFetchAITweetsTool(x),
+            fetchCryptoTweets: createFetchCryptoTweetsTool(x),
+            fetchDevelopmentTweets: createFetchDevelopmentTweetsTool(x),
+            fetchFinancialTweets: createFetchFinancialTweetsTool(x),
             fetchTechnologyEvents: createFetchTechnologyEventsTool(),
             getChatBotMessages: {
                 ai: createGetChatBotMessagesTool({ channelName: 'ai', chatBot }),
@@ -235,6 +241,7 @@ export const createContainer = () =>
         .provides(logger)
         .provides(chatBot)
         .provides(ai)
+        .provides(x)
         // Tools
         .provides(tools)
         // Agents
