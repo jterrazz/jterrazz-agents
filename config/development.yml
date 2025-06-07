@@ -1,0 +1,23 @@
+inbound:
+  jobs:
+    aiNews:
+      enabled: true
+    cryptoNews:
+      enabled: false
+    developmentNews:
+      enabled: false
+    financeNews:
+      enabled: false
+    spaceEvents:
+      enabled: false
+    technologyEvents:
+      enabled: false
+outbound:
+  discord:
+    channels:
+      ai: '__tests__'
+      development: '__tests__'
+      crypto: '__tests__'
+      finance: '__tests__'
+      space: '__tests__'
+      technology: '__tests__'
