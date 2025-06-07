@@ -4,10 +4,23 @@ import { type Channel, Client, GatewayIntentBits, type TextChannel } from 'disco
 import type { ChatBotMessage, ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
 
 const CONNECTION_TIMEOUT_MS = 10000; // 10 seconds timeout
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 2000; // 2 seconds between retries
+
+interface ConnectionState {
+    isConnected: boolean;
+    isConnecting: boolean;
+    retryCount: number;
+}
 
 export class DiscordAdapter implements ChatBotPort {
     private client: Client;
     private logger: LoggerPort;
+    private state: ConnectionState = {
+        isConnected: false,
+        isConnecting: false,
+        retryCount: 0,
+    };
     private token: string;
 
     constructor(token: string, logger: LoggerPort) {
@@ -20,6 +33,8 @@ export class DiscordAdapter implements ChatBotPort {
                 GatewayIntentBits.MessageContent,
             ],
         });
+
+        this.setupEventHandlers();
     }
 
     async connect(): Promise<void> {
@@ -27,36 +42,31 @@ export class DiscordAdapter implements ChatBotPort {
             throw new Error('A Discord bot token is required');
         }
 
-        try {
-            await Promise.race([
-                this.client.login(this.token),
-                new Promise((_, reject) =>
-                    setTimeout(
-                        () => reject(new Error('Discord connection timeout')),
-                        CONNECTION_TIMEOUT_MS,
-                    ),
-                ),
-            ]);
+        if (this.state.isConnected) {
+            this.logger.info('Discord client already connected');
+            return;
+        }
 
-            await Promise.race([
-                new Promise<void>((resolve) => {
-                    this.client.once('ready', () => {
-                        this.logger.info(`Bot connecté en tant que ${this.client.user?.tag}`);
-                        resolve();
-                    });
-                }),
-                new Promise((_, reject) =>
-                    setTimeout(
-                        () => reject(new Error('Discord ready event timeout')),
-                        CONNECTION_TIMEOUT_MS,
-                    ),
-                ),
-            ]);
-        } catch (error) {
-            this.logger.error('Failed to connect to Discord:', {
-                error: error instanceof Error ? error.message : String(error),
-            });
-            throw error;
+        if (this.state.isConnecting) {
+            this.logger.info('Discord connection already in progress');
+            return;
+        }
+
+        this.state.isConnecting = true;
+        this.state.retryCount = 0;
+
+        try {
+            await this.connectWithRetry();
+        } finally {
+            this.state.isConnecting = false;
+        }
+    }
+
+    async disconnect(): Promise<void> {
+        if (this.client) {
+            this.client.destroy();
+            this.state.isConnected = false;
+            this.logger.info('Discord client disconnected');
         }
     }
 
@@ -86,5 +96,99 @@ export class DiscordAdapter implements ChatBotPort {
                 await (channel as TextChannel).send(message);
             }
         }
+    }
+
+    private async attemptConnection(): Promise<void> {
+        const abortController = new AbortController();
+        const timeoutId = setTimeout(() => abortController.abort(), CONNECTION_TIMEOUT_MS);
+
+        try {
+            // Login to Discord
+            await Promise.race([
+                this.client.login(this.token),
+                this.createAbortPromise(abortController, 'Discord login timeout'),
+            ]);
+
+            // Wait for ready event
+            if (!this.state.isConnected) {
+                await Promise.race([
+                    this.waitForReady(),
+                    this.createAbortPromise(abortController, 'Discord ready event timeout'),
+                ]);
+            }
+        } finally {
+            clearTimeout(timeoutId);
+        }
+    }
+
+    private async connectWithRetry(): Promise<void> {
+        while (this.state.retryCount < MAX_RETRY_ATTEMPTS) {
+            try {
+                await this.attemptConnection();
+                return;
+            } catch (error) {
+                this.state.retryCount++;
+                const isLastAttempt = this.state.retryCount >= MAX_RETRY_ATTEMPTS;
+
+                this.logger.error(`Discord connection attempt ${this.state.retryCount} failed:`, {
+                    error: error instanceof Error ? error.message : String(error),
+                    isLastAttempt,
+                });
+
+                if (isLastAttempt) {
+                    throw new Error(
+                        `Failed to connect to Discord after ${MAX_RETRY_ATTEMPTS} attempts: ${error instanceof Error ? error.message : String(error)}`,
+                    );
+                }
+
+                await this.delay(RETRY_DELAY_MS * this.state.retryCount); // Exponential backoff
+            }
+        }
+    }
+
+    private createAbortPromise(controller: AbortController, message: string): Promise<never> {
+        return new Promise((_, reject) => {
+            controller.signal.addEventListener('abort', () => {
+                reject(new Error(message));
+            });
+        });
+    }
+
+    private delay(ms: number): Promise<void> {
+        return new Promise((resolve) => setTimeout(resolve, ms));
+    }
+
+    private setupEventHandlers(): void {
+        this.client.on('ready', () => {
+            this.state.isConnected = true;
+            this.logger.info(`Bot connecté en tant que ${this.client.user?.tag}`);
+        });
+
+        this.client.on('disconnect', () => {
+            this.state.isConnected = false;
+            this.logger.warn('Discord client disconnected');
+        });
+
+        this.client.on('error', (error) => {
+            this.logger.error('Discord client error:', {
+                error: error.message,
+            });
+        });
+    }
+
+    private waitForReady(): Promise<void> {
+        return new Promise<void>((resolve) => {
+            if (this.state.isConnected) {
+                resolve();
+                return;
+            }
+
+            const onReady = () => {
+                this.client.off('ready', onReady);
+                resolve();
+            };
+
+            this.client.once('ready', onReady);
+        });
     }
 }
