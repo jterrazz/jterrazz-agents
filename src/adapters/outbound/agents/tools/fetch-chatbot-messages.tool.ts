@@ -2,6 +2,8 @@ import { DynamicTool } from 'langchain/tools';
 
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
+import { formatDate } from './utils/date-formatter.js';
+
 type FetchChatBotMessagesToolDependencies = {
     channelName: string;
     chatBot: ChatBotPort;
@@ -15,7 +17,13 @@ export const createFetchChatBotMessagesTool = ({
         description: `Get recent messages from the #${channelName} channel.`,
         func: async () => {
             const messages = await chatBot.getRecentBotMessages(channelName);
-            return JSON.stringify(messages);
+            return messages
+                .map(
+                    (message) =>
+                        `Date: ${formatDate(message.date)} (${message.timeAgo})\n` +
+                        `Content: ${message.content}\n`,
+                )
+                .join('\n');
         },
         name: 'fetchChatBotMessages',
     });
