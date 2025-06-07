@@ -1,79 +1,245 @@
 # jterrazz-agents
 
-This repository manages intelligent agents for automating tasks on your Discord server and in your personal life.
+A production-ready AI agent framework for automating Discord server management and content curation using LangChain, TypeScript, and clean architecture principles.
 
 ## Overview
 
-- **Goal:** Provide a modular framework for running AI-powered agents that interact with Discord and automate personal workflows.
-- **Features:**
-  - Discord bot integration (via `discord.js`)
-  - Automated news and event summarization (AI, dev, crypto, finance, tech, and space)
-  - Web scraping and search tools (using Puppeteer and Cheerio)
-  - Extensible agent and tool system
-  - Job scheduling for regular updates
+This project provides a robust, scalable framework for building and deploying intelligent agents that automate Discord interactions and content curation workflows. Built with clean architecture, comprehensive logging, and production-ready patterns.
 
-## Setup
+### Key Features
 
-1. **Install dependencies:**
+- **🤖 Multi-Agent System**: 6 specialized agents for different content domains
+- **📅 Automated Scheduling**: Cron-based job scheduling with configurable intervals
+- **🔄 Robust Architecture**: Clean architecture with ports & adapters pattern
+- **📊 Comprehensive Logging**: Structured logging with Pino for production monitoring
+- **🛡️ Type Safety**: Full TypeScript implementation with strict typing
+- **🔌 Extensible Design**: Modular tools and formatters for easy extension
+- **⚡ Production Ready**: Graceful shutdown, retry logic, and error handling
+- **🧪 Well Tested**: Comprehensive test suite with proper mocking
+
+## Agent Types
+
+### News Agents
+
+- **AI News Agent**: Curates AI and machine learning content
+- **Crypto News Agent**: Tracks cryptocurrency and blockchain updates
+- **Development News Agent**: Aggregates software development and programming content
+- **Finance News Agent**: Monitors financial markets and economic updates
+
+### Event Agents
+
+- **Space Events Agent**: Tracks space exploration and aerospace events
+- **Technology Events Agent**: Curates tech conferences and industry events (Apple, Microsoft, Google, Meta, CES, Amazon)
+
+## Architecture
+
+### Clean Architecture Implementation
+
+```
+src/
+├── ports/                # Domain interfaces
+│   ├── inbound/          # Application entry points
+│   └── outbound/         # External service contracts
+├── adapters/             # Infrastructure implementations
+│   ├── inbound/          # External triggers (jobs, configuration)
+│   └── outbound/         # External services (Discord, AI, web)
+├── di/                   # Dependency injection container
+└── index.ts              # Application entry point
+```
+
+### Core Components
+
+#### Agents (`src/adapters/outbound/agents/`)
+
+- Built on LangChain's StructuredChatAgent
+- JSON-schema based response validation
+- Configurable prompts (role, tone, format, language)
+- Intelligent tool selection and execution
+
+#### Tools (`src/adapters/outbound/agents/tools/`)
+
+- **Data Fetching**: X posts, Discord messages, events
+- **Formatters**: Consistent data presentation with time-ago calculations
+- **Utilities**: Date handling, filtering, and data processing
+
+#### Job Scheduling (`src/adapters/inbound/job-runner/`)
+
+- Cron-based scheduling with node-cron
+- Configurable execution intervals
+- Graceful error handling and logging
+
+### Technology Stack
+
+- **Runtime**: Node.js with ES modules
+- **Language**: TypeScript with strict configuration
+- **AI Framework**: LangChain with Google AI (Gemini)
+- **Discord**: discord.js with robust connection handling
+- **Logging**: Pino with structured JSON output
+- **Testing**: Vitest with comprehensive mocking
+- **Dependency Injection**: @snap/ts-inject
+- **Configuration**: YAML-based with environment overrides
+
+## Setup & Installation
+
+### Prerequisites
+
+- Node.js 22+
+- Discord Bot Token
+- Google AI API Key
+- Apify Token
+
+### Installation
+
+1. **Clone and install dependencies:**
 
    ```bash
+   git clone https://github.com/jterrazz/jterrazz-agents
+   cd jterrazz-agents
    npm install
    ```
 
-2. **Configure your credentials:**
+2. **Configure credentials:**
 
-   - Edit `config/local.yml` to provide your configuration values. Example:
-     ```yaml
-     outbound:
-       google:
-         apiKey: <your-google-api-key>
-       discord:
-         botToken: <your-discord-bot-token>
-     ```
+   Create `config/local.yml`:
 
-3. **Run the bot in development:**
+   ```yaml
+   outbound:
+     google:
+       apiKey: 'your-google-ai-api-key'
+     discord:
+       botToken: 'your-discord-bot-token'
+     apify:
+       token: 'your-apify-token'
+   ```
+
+3. **Run in development:**
 
    ```bash
    npm run dev
    ```
 
-   - For production, use:
-     ```bash
-     npm run build
-     npm start
-     ```
-
-## Usage
-
-- The bot connects to your Discord server and posts updates (e.g., news, events) in the configured channel.
-- Agents are modular and can be extended to automate more aspects of your Discord or personal workflows.
-- Job runners automatically schedule and execute agent tasks (e.g., daily news, event reminders).
-
-## Project Structure
-
-- `src/agents/` — Agent definitions (AI, dev, crypto, finance, tech, space) and their tools
-- `src/ports/` — Domain interfaces (ports) for application boundaries
-- `src/adapters/` — Infrastructure implementations (Discord, web scraping, AI, configuration, job runner)
-- `src/di/` — Dependency injection setup
-- `config/` — Configuration files (use `local.yml` for local secrets/keys)
-
-## Agents & Tools
-
-- **Agents:** Each agent (e.g., AI news, dev news, crypto news, financial news, tech events, space events) is responsible for fetching, filtering, and posting relevant content.
-- **Tools:** Modular tools fetch tweets, events, and perform web searches. Each tool is reusable and can be composed into agents.
-- **Job Runner:** Schedules and triggers agents at defined intervals (e.g., every morning).
+4. **Production deployment:**
+   ```bash
+   npm run build
+   npm start
+   ```
 
 ## Configuration
 
-- All configuration is managed via YAML files in the `config/` directory.
-- The main keys you need to set are:
-  - `outbound.google.apiKey`
-  - `outbound.discord.botToken`
+### Scheduling Configuration
+
+All agents run on a unified schedule:
+
+- **Schedule**: Monday & Thursday at 4:00 PM (UTC)
+- **Cron Expression**: `'0 16 * * 1,4'`
+- **Configurable per job** in `src/adapters/inbound/job-runner/jobs/`
+
+### Agent Configuration
+
+Each agent can be customized with:
+
+- **Role**: Contributor, curator, etc.
+- **Tone**: Fun, professional, casual
+- **Format**: Discord news, Discord events
+- **Language**: French (configurable)
+
+## Usage Examples
+
+### Manual Agent Execution
+
+```typescript
+import { createContainer } from './di/container.js';
+
+const container = createContainer();
+const aiNewsAgent = container.get('AINewsAgent');
+
+// Run agent manually
+await aiNewsAgent.run('Find the most important AI news from the past 24 hours');
+```
+
+### Adding New Tools
+
+```typescript
+export function createCustomTool(dependencies: ToolDependencies) {
+  return new DynamicTool({
+    name: 'customTool',
+    description: 'Description for the AI agent',
+    func: async (input: string) => {
+      // Tool implementation
+      return formatResult(result);
+    },
+  });
+}
+```
+
+### Custom Agent Implementation
+
+```typescript
+export class CustomAgent extends ChatAgent {
+  constructor(dependencies: ChatAgentDependencies) {
+    super(dependencies, 'CustomAgent', 'You are a specialized agent that...', [
+      useRole().contributor,
+      useTone().professional,
+    ]);
+  }
+
+  protected getTools(): AgentTool[] {
+    return [this.tools.customTool, this.tools.getCurrentDate];
+  }
+}
+```
+
+## Development
+
+### Testing
+
+```bash
+# Run all tests
+npm test
+
+# Run specific test file
+npm test filename.test.ts
+```
+
+### Code Quality
+
+```bash
+# Linting
+npm run lint
+```
+
+### Debugging
+
+```bash
+npm run dev
+```
+
+## Production Deployment
+
+### Environment Variables
+
+```bash
+NODE_ENV=production
+DISCORD_BOT_TOKEN=your_token
+GOOGLE_API_KEY=your_key
+APIFY_TOKEN=your_token
+```
 
 ## Contributing
 
-Contributions are welcome! If you have ideas, improvements, or want to help build the next big thing, check out the repository:
+We welcome contributions! Please see our contributing guidelines:
 
-https://github.com/jterrazz/jterrazz-agents
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Follow TypeScript best practices** and existing patterns
+4. **Add tests** for new functionality
+5. **Update documentation** as needed
+6. **Submit a pull request**
 
-Feel free to open issues or submit pull requests.
+## Repository
+
+🔗 **GitHub**: [https://github.com/jterrazz/jterrazz-agents](https://github.com/jterrazz/jterrazz-agents)
+
+---
+
+_Built with ❤️ using TypeScript, LangChain, and clean architecture principles._
