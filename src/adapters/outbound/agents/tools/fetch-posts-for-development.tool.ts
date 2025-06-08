@@ -3,9 +3,9 @@ import { type LoggerPort } from '@jterrazz/logger';
 import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 import { type XPort } from '../../../../ports/outbound/web/x.port.js';
 
-import { createSafeAgentTool } from '../tool.js';
-
 import { formatXPosts } from './formatters/x-post-formatter.js';
+
+import { createSafeAgentTool } from './tool.js';
 
 const USERNAMES = ['sindresorhus', 'leeerob', 'wesbos', 'rauchg', 'elonmusk'];
 

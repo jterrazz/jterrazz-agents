@@ -1,7 +1,7 @@
 import { type LoggerPort } from '@jterrazz/logger';
 import { DynamicTool } from 'langchain/tools';
 
-import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
+import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 
 export type ToolConfig = {
     description: string;

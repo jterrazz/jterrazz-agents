@@ -1,15 +1,13 @@
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 import { type AgentPort } from '../../../../ports/outbound/agents.port.js';
 
-import { commonJobPrompt } from './common/job-prompt.js';
-
 export type DevelopmentNewsJobDependencies = {
     agent: AgentPort;
 };
 
 export const createDevelopmentNewsJob = ({ agent }: DevelopmentNewsJobDependencies): Job => ({
     execute: async () => {
-        await agent.run(commonJobPrompt);
+        await agent.run('');
     },
     executeOnStartup: true,
     name: 'development-news-agent',

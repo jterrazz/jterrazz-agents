@@ -5,14 +5,27 @@ import { agentFormat } from './prompts/agent-format.js';
 import { agentLanguage } from './prompts/agent-language.js';
 import { agentPersonality } from './prompts/agent-personality.js';
 import { agentTone } from './prompts/agent-tone.js';
+import { createAnimatorPrompt } from './prompts/animator.js';
 
 export class SpaceEventsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
-        super(
-            dependencies,
-            'SpaceEventsAgent',
-            "You are a specialized agent that posts about upcoming events related to space exploration, space missions, and aerospace technology, based on the tools you're provided. But only post about Starship.",
-            [agentPersonality().human, agentTone().fun, agentFormat().discordEvents, agentLanguage().french],
+        super(dependencies, 'SpaceEventsAgent', [
+            agentPersonality().human,
+            agentTone().fun,
+            agentFormat().discordEvents,
+            agentLanguage().french,
+        ]);
+    }
+
+    async run(_userQuery: string): Promise<void> {
+        await super.run(
+            createAnimatorPrompt(
+                'Upcoming events related to space exploration, space missions, and aerospace technology.',
+                [
+                    'IMPORTANT: for rocket launches, only post about Starship.',
+                    'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days',
+                ],
+            ),
         );
     }
 

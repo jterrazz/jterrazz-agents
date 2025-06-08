@@ -5,9 +5,10 @@ import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 import { filterEventsByDateRange } from './utils/event-filters.js';
 
 import { getUpcomingEvents, getUpcomingRocketLaunches } from '../../web/nextspaceflight.adapter.js';
-import { createSafeAgentTool } from '../tool.js';
 
 import { formatEvents } from './formatters/event-formatter.js';
+
+import { createSafeAgentTool } from './tool.js';
 
 export function createFetchEventsForSpaceTool(logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(

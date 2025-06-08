@@ -5,14 +5,24 @@ import { agentFormat } from './prompts/agent-format.js';
 import { agentLanguage } from './prompts/agent-language.js';
 import { agentPersonality } from './prompts/agent-personality.js';
 import { agentTone } from './prompts/agent-tone.js';
+import { createAnimatorPrompt } from './prompts/animator.js';
 
 export class DevelopmentNewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
-        super(
-            dependencies,
-            'DevelopmentNewsAgent',
-            'You are a specialized agent that posts about important news, discussions or updates related to software development, programming languages, and development tools, based on the tools you\'re provided.',
-            [agentPersonality().human, agentTone().fun, agentFormat().discordNews, agentLanguage().french],
+        super(dependencies, 'DevelopmentNewsAgent', [
+            agentPersonality().human,
+            agentTone().fun,
+            agentFormat().discordNews,
+            agentLanguage().french,
+        ]);
+    }
+
+    async run(_userQuery: string): Promise<void> {
+        await super.run(
+            createAnimatorPrompt(
+                'Important news, discussions or updates related to software development, programming languages, and development tools.',
+                ['CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days'],
+            ),
         );
     }
 

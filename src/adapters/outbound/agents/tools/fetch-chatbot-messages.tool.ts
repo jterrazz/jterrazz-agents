@@ -1,9 +1,10 @@
 import { type LoggerPort } from '@jterrazz/logger';
-import { DynamicTool } from 'langchain/tools';
 
 import type { ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
 import { formatChatBotMessages } from './formatters/chatbot-message-formatter.js';
+
+import { createSafeAgentTool } from './tool.js';
 
 type FetchChatBotMessagesToolDependencies = {
     channelName: string;
@@ -16,9 +17,12 @@ export function createFetchChatBotMessagesTool({
     chatBot,
     logger,
 }: FetchChatBotMessagesToolDependencies) {
-    return new DynamicTool({
-        description: `Get recent chatbot messages. No input required.`,
-        func: async () => {
+    return createSafeAgentTool(
+        {
+            description: `Get recent chatbot messages. No input required.`,
+            name: 'fetchChatBotMessages',
+        },
+        async () => {
             logger.info(`Fetching recent bot messages from #${channelName}`, { channelName });
 
             const messages = await chatBot.getRecentBotMessages(channelName);
@@ -30,6 +34,6 @@ export function createFetchChatBotMessagesTool({
 
             return formatChatBotMessages(messages);
         },
-        name: 'fetchChatBotMessages',
-    });
+        logger,
+    );
 }

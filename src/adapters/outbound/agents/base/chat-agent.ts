@@ -79,12 +79,7 @@ export abstract class ChatAgent {
     protected readonly name: string;
     protected readonly tools: AvailableAgentTools;
 
-    constructor(
-        dependencies: ChatAgentDependencies,
-        name: string,
-        agentPrompt: string,
-        prompts: string[],
-    ) {
+    constructor(dependencies: ChatAgentDependencies, name: string, prompts: string[]) {
         this.ai = dependencies.ai;
         this.channelName = dependencies.channelName;
         this.chatBot = dependencies.chatBot;
@@ -92,7 +87,7 @@ export abstract class ChatAgent {
         this.tools = dependencies.tools;
         this.name = name;
 
-        const systemPrompt = this.buildSystemPrompt(agentPrompt, prompts);
+        const systemPrompt = this.buildSystemPrompt(prompts);
 
         this.agent = this.createAgent({
             ai: this.ai,
@@ -120,8 +115,8 @@ export abstract class ChatAgent {
 
     protected abstract getTools(): DynamicTool[];
 
-    private buildSystemPrompt(agentPrompt: string, prompts: string[]): string {
-        return [OUTPUT_FORMAT_PROMPT, agentPrompt, ...prompts].join('\n');
+    private buildSystemPrompt(prompts: string[]): string {
+        return [OUTPUT_FORMAT_PROMPT, ...prompts].join('\n');
     }
 
     private createAgent({

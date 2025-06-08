@@ -2,9 +2,9 @@ import { type LoggerPort } from '@jterrazz/logger';
 
 import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 
-import { createSafeAgentTool } from '../tool.js';
-
 import { formatDate } from './formatters/date-formatter.js';
+
+import { createSafeAgentTool } from './tool.js';
 
 export function createGetCurrentDateTool(logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(

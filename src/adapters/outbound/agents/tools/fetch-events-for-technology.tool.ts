@@ -5,9 +5,10 @@ import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 import { filterEventsByDateRange } from './utils/event-filters.js';
 
 import { getUpcomingTechEvents } from '../../web/techmeme.adapter.js';
-import { createSafeAgentTool } from '../tool.js';
 
 import { formatEvents } from './formatters/event-formatter.js';
+
+import { createSafeAgentTool } from './tool.js';
 
 export function createFetchEventsForTechnologyTool(logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(
