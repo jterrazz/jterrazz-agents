@@ -1,5 +1,7 @@
 export const discordHeader = `
-Use this clear and modern Discord Markdown template for each item.
+<MESSAGE_FORMAT>
+Use this Discord Markdown rules for each item.
 
-- IMPORTANT: The output MUST be a maximum of 1700 letters.
-- Evaluate everything in the character limit, including the url links.`;
+- IMPORTANT: Only messages with a maximum of 1900 characters will be accepted (evaluate everything in this character limit, including the url links)
+</MESSAGE_FORMAT>
+`;

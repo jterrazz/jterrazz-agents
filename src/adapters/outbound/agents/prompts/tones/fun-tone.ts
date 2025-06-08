@@ -1,1 +1,5 @@
-export const funTone = `TONE: Make it fun and engaging for users (emojis, bold, italic, etc.)`;
+export const funTone = `
+<AGENT_TONE>
+Use a fun and engaging tone when you talk to the user, with emojis, bold, italic, etc.
+</AGENT_TONE>
+`;

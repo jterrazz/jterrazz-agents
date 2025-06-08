@@ -31,27 +31,45 @@ const AgentResponseSchema = z.object({
     shouldTransmitMessage: z.boolean(),
 });
 
-const OUTPUT_FORMAT_PROMPT = `
-<FINAL-ANSWER-OUTPUT-FORMAT>
+const OUTPUT_FORMAT_PROMPT =
+    `
+You are an agent that can talk in a chat room, the conversation is piloted by the langchain framework.
+
+You have access to the following tools, that you can use based on the information you need: {tools}
+Tool names: {tool_names}
+Agent scratchpad: {agent_scratchpad}
+` +
+    `
+
+The last langchain response content you send (so the answer to the user, not a tool call) MUST be formatted with a JSON object that follows the following format (but WRAP THAT INSIDE THE LANGCHAIN FORMAT RESPONSE):
+ALWAYS wrap this json in markdown code blocks.
+
+<OUTPUT_FORMAT_FOR_USER>
 \`\`\`json
 Final Answer: ${JSON.stringify(z.toJSONSchema(AgentResponseSchema), null, 2)}
 \`\`\`
-</FINAL-ANSWER-OUTPUT-FORMAT>
+</OUTPUT_FORMAT_FOR_USER>
 
-<FINAL-ANSWER-OUTPUT-FORMAT-RULES>
-- **Always wrap your final answer in markdown code blocks**
-- When you want to give a final answer (not use a tool), respond with:
+<OUTPUT_FORMAT_FOR_USER_NOOP>
 \`\`\`json
 Final Answer: {"shouldTransmitMessage": false, "reason": "<your reason>"}
 \`\`\`
-or
+</OUTPUT_FORMAT_FOR_USER_NOOP>
+
+<OUTPUT_FORMAT_FOR_USER_MESSAGE>
 \`\`\`
-Final Answer: {"shouldTransmitMessage": true, "message": "<the message to give to the user>"}
+Final Answer: {"shouldTransmitMessage": true, "message": "<the message to send to the chat room>"}
 \`\`\`
-</FINAL-ANSWER-OUTPUT-FORMAT-RULES>
+</OUTPUT_FORMAT_FOR_USER_MESSAGE>
+
+<INFORMATION_SOURCE>
+Use the tools at your disposal to get information needed from the world.
+- I trust most of the sources i'm providing you, it is mostly reliable.
+- DO NOT hallucinate, DO NOT make up information, DO use the tools to get the current up to date information.
+</INFORMATION_SOURCE>
 `
-    .replaceAll('{', '{{')
-    .replaceAll('}', '}}');
+        .replaceAll('{', '{{')
+        .replaceAll('}', '}}');
 
 export abstract class ChatAgent {
     protected readonly agent: AgentPort;
@@ -104,15 +122,7 @@ export abstract class ChatAgent {
     protected abstract getTools(): DynamicTool[];
 
     private buildSystemPrompt(agentPrompt: string, prompts: string[]): string {
-        const expectedOutputFormat = `
-${OUTPUT_FORMAT_PROMPT}
-
-AGENT PROMPT:
-${agentPrompt}
-
-${prompts.join('\n')}`;
-
-        return expectedOutputFormat;
+        return [OUTPUT_FORMAT_PROMPT, agentPrompt, ...prompts].join('\n');
     }
 
     private createAgent({
@@ -218,6 +228,7 @@ ${prompts.join('\n')}`;
                     executor = AgentExecutor.fromAgentAndTools({
                         agent,
                         tools,
+                        verbose: true,
                     });
                 }
 

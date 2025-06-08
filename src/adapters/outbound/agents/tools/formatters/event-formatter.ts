@@ -3,23 +3,28 @@ import { type Event } from '../../../../../ports/outbound/web/events.port.js';
 import { formatDate } from './date-formatter.js';
 
 export const formatEvent = (event: Event): string => {
-    const parts = [`Date: ${formatDate(event.date)}`, `Title: ${event.title}`];
+    let result = `Date: ${formatDate(event.date)}
+Title: ${event.title}`;
 
     if (event.eventType) {
-        parts.push(`Type: ${event.eventType}`);
+        result += `
+Type: ${event.eventType}`;
     }
 
     if (event.description) {
-        parts.push(`Description: ${event.description}`);
+        result += `
+Description: ${event.description.replace(/\n/g, '\\n')}`;
     }
 
     if (event.location) {
-        parts.push(`Location: ${event.location}`);
+        result += `
+Location: ${event.location}`;
     }
 
-    parts.push(`Source: ${event.sourceUrl}`);
+    result += `
+Source: ${event.sourceUrl}`;
 
-    return parts.join('\n');
+    return result;
 };
 
 export const formatEvents = (events: Event[]): string => {

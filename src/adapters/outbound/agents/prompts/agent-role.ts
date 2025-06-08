@@ -1,5 +1,5 @@
-import { contributorRole } from './roles/contributor.js';
+import { humanPersonality } from './personalities/human.js';
 
 export const agentRole = () => ({
-    contributor: contributorRole,
+    contributor: humanPersonality,
 });

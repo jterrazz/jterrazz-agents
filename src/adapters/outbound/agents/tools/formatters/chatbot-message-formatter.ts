@@ -7,7 +7,9 @@ interface ChatBotMessage {
 }
 
 export const formatChatBotMessage = (message: ChatBotMessage): string => {
-    return `Date: ${formatDate(message.date)} (${formatTimeAgo(message.date)})\nContent: ${message.content}\n`;
+    return `Date: ${formatDate(message.date)} (${formatTimeAgo(message.date)})
+Content: ${message.content.replace(/\n/g, '\\n')}
+`;
 };
 
 export const formatChatBotMessages = (messages: ChatBotMessage[]): string => {
