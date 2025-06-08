@@ -7,7 +7,7 @@ import { formatXPosts } from './formatters/x-post-formatter.js';
 
 import { createSafeAgentTool } from './tool.js';
 
-const USERNAMES = ['sindresorhus', 'leeerob', 'wesbos', 'rauchg', 'elonmusk'];
+const USERNAMES = ['GithubProjects', 'nodejs', 'colinhacks', 'bunjavascript', 'deno_land'];
 
 export function createFetchPostsForDevelopmentTool(x: XPort, logger: LoggerPort): AgentToolPort {
     return createSafeAgentTool(

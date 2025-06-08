@@ -16,8 +16,8 @@ outbound:
   discord:
     channels:
       ai: 'ai'
-      development: 'development'
+      development: 'dev'
       crypto: 'crypto'
-      finance: 'finance'
+      finance: 'invest'
       space: 'space'
-      technology: 'technology'
+      technology: 'tech'
