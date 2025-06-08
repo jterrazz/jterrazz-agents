@@ -3,7 +3,7 @@ import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
 import { agentFormat as agentFormat } from './prompts/agent-format.js';
 import { agentLanguage as agentLanguage } from './prompts/agent-language.js';
-import { agentRole as agentRole } from './prompts/agent-role.js';
+import { agentPersonality as agentPersonality } from './prompts/agent-personality.js';
 import { agentTone as agentTone } from './prompts/agent-tone.js';
 
 const AGENT_PROMPT = `
@@ -27,7 +27,7 @@ This is an automated prompt, triggered by a job runner to "wake up" the agent. T
 export class TechnologyEventsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(dependencies, 'TechnologyEventsAgent', '', [
-            agentRole().contributor,
+            agentPersonality().contributor,
             agentTone().fun,
             agentFormat().discordEvents,
             agentLanguage().french,

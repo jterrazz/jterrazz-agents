@@ -3,7 +3,7 @@ import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
 import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
 import { agentFormat } from './prompts/agent-format.js';
 import { agentLanguage } from './prompts/agent-language.js';
-import { agentRole } from './prompts/agent-role.js';
+import { agentPersonality } from './prompts/agent-personality.js';
 import { agentTone } from './prompts/agent-tone.js';
 
 export class CryptoNewsAgent extends ChatAgent {
@@ -12,7 +12,7 @@ export class CryptoNewsAgent extends ChatAgent {
             dependencies,
             'CryptoNewsAgent',
             'You are a specialized agent that posts about important news, discussions or updates related to cryptocurrency, blockchain technology, and digital assets, based on the tools you\'re provided.',
-            [agentRole().contributor, agentTone().fun, agentFormat().discordNews, agentLanguage().french],
+            [agentPersonality().contributor, agentTone().fun, agentFormat().discordNews, agentLanguage().french],
         );
     }
 
