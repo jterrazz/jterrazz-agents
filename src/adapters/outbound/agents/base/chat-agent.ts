@@ -224,7 +224,6 @@ export abstract class ChatAgent {
                     executor = AgentExecutor.fromAgentAndTools({
                         agent,
                         tools,
-                        verbose: true,
                     });
                 }
 
