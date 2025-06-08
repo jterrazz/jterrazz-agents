@@ -12,7 +12,7 @@ export class SpaceEventsAgent extends ChatAgent {
             dependencies,
             'SpaceEventsAgent',
             "You are a specialized agent that posts about upcoming events related to space exploration, space missions, and aerospace technology, based on the tools you're provided. But only post about Starship.",
-            [agentPersonality().contributor, agentTone().fun, agentFormat().discordEvents, agentLanguage().french],
+            [agentPersonality().human, agentTone().fun, agentFormat().discordEvents, agentLanguage().french],
         );
     }
 

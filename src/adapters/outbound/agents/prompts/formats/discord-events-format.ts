@@ -1,7 +1,7 @@
-import { discordHeader } from './discord.js';
+import { commonDiscordHeader } from './common.js';
 
 export const discordEventsFormat = `
-${discordHeader}
+${commonDiscordHeader}
 
 Use this Discord Markdown template for each event:
 

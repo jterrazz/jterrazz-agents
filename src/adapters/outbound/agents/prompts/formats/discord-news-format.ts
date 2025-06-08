@@ -1,13 +1,14 @@
-import { discordHeader } from './discord.js';
+import { commonDiscordHeader } from './common.js';
 
 export const discordNewsFormat = `
-${discordHeader}
-- Add a blank line between items for readability.
-- If a URL or tweet link is available, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
+${commonDiscordHeader}
 
+Use this Discord Markdown template for each news:
 
-###START OF THE TEMPLATE###
-A genuinely human, casual phrase, based on the last messages you already sent.
+- IMPORTANT: If a URL or link is in your answer, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.
+
+<MESSAGE_TEMPLATE>
+A genuinely casual phrase.
 
 **<title>**
 
@@ -16,12 +17,10 @@ _Short, human-like summary or context sentence about why this matters._
 > <summary or main point>
 > <#if url><https://example.com><#/if>
 
-###CONTINUE WITH AS MANY ITEMS AS YOU NEED###
+... continue with as many news as you need
+</MESSAGE_TEMPLATE>
 
-###END OF THE TEMPLATE###
-
-###START OF THE EXAMPLE###
-
+<MESSAGE_EXAMPLE_WITH_TWO_NEWS>
 Just spotted some cool stuff you might like:
 
 **🚀 Bun 1.0 Released!**
@@ -39,5 +38,5 @@ _Rust continues to improve developer experience and performance with its latest 
 > Rust 1.75 brings new language features and faster compile times. etc etc
 > <https://blog.rust-lang.org/2024/01/18/Rust-1.75.0.html>
 
-###END OF THE EXAMPLE###
+</MESSAGE_EXAMPLE_WITH_TWO_NEWS>
 `;

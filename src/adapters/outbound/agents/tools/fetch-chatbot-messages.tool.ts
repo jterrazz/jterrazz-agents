@@ -28,7 +28,6 @@ export function createFetchChatBotMessagesTool({
                 messageCount: messages.length,
             });
 
-            console.log(formatChatBotMessages(messages));
             return formatChatBotMessages(messages);
         },
         name: 'fetchChatBotMessages',

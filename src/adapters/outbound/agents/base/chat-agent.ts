@@ -31,6 +31,14 @@ const AgentResponseSchema = z.object({
     shouldTransmitMessage: z.boolean(),
 });
 
+const BASE_USER_PROMPT = `<INSTRUCTIONS>
+This is an automated prompt, made to "wake up" the agent. This prompt is made every minutes, so choose to not transmit a message most of the time.
+
+- IMPORTANT: It is expected that you choose to transmit nothing
+- Start by fetching the ChatBot's messages to make this decision
+- Transmit ONLY useful information, do not transmit anything that does not bring value to the server
+</INSTRUCTIONS>`;
+
 const OUTPUT_FORMAT_PROMPT =
     `
 You are an agent that can talk in a chat room, the conversation is piloted by the langchain framework.
@@ -93,7 +101,7 @@ export abstract class ChatAgent {
             logger: this.logger,
             promptTemplate: [
                 ['system', systemPrompt],
-                ['human', '{input}'],
+                ['human', `${BASE_USER_PROMPT} {input}`],
             ],
             tools: this.getTools(),
         });

@@ -12,7 +12,7 @@ export class FinanceNewsAgent extends ChatAgent {
             dependencies,
             'FinanceNewsAgent',
             "You are a specialized agent that posts about important news, discussions or updates related to financial markets and economy, based on the tools you're provided.",
-            [agentPersonality().contributor, agentTone().fun, agentFormat().discordNews, agentLanguage().french],
+            [agentPersonality().human, agentTone().fun, agentFormat().discordNews, agentLanguage().french],
         );
     }
 

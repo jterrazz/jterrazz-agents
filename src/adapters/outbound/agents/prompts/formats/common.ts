@@ -1,4 +1,4 @@
-export const discordHeader = `
+export const commonDiscordHeader = `
 <MESSAGE_FORMAT>
 Use this Discord Markdown rules for each item.
 

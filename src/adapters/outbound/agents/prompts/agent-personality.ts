@@ -1,5 +1,5 @@
-import { humanPersonality } from './personalities/human.js';
+import { humanPersonality } from './personalities/human-personality.js';
 
 export const agentPersonality = () => ({
-    contributor: humanPersonality,
+    human: humanPersonality,
 });
