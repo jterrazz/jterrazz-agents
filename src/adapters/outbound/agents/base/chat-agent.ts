@@ -32,10 +32,10 @@ const AgentResponseSchema = z.object({
 });
 
 const BASE_USER_PROMPT = `<INSTRUCTIONS>
-This is an automated prompt, made to "wake up" the agent. This prompt is made every minutes, so choose to not transmit a message most of the time.
+This is an automated prompt, made to "wake up" the agent.
 
-- IMPORTANT: It is expected that you choose to transmit nothing
-- Start by fetching the ChatBot's messages to make this decision
+- Start by fetching the ChatBot's messages to decide if you need to transmit something or not
+- In later reasoning steps you can still decide to transmit something or not
 - Transmit ONLY useful information, do not transmit anything that does not bring value to the server
 </INSTRUCTIONS>`;
 
