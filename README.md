@@ -153,39 +153,109 @@ import { createContainer } from './di/container.js';
 const container = createContainer();
 const aiNewsAgent = container.get('AINewsAgent');
 
-// Run agent manually
-await aiNewsAgent.run('Find the most important AI news from the past 24 hours');
+await aiNewsAgent.run('');
+```
+
+### Manual Job Execution
+
+```typescript
+import { createContainer } from './di/container.js';
+
+const container = createContainer();
+const jobRunner = container.get('JobRunner');
+
+// Initialize and start all scheduled jobs
+await jobRunner.initialize();
+
+// Stop all jobs
+await jobRunner.stop();
 ```
 
 ### Adding New Tools
 
 ```typescript
-export function createCustomTool(dependencies: ToolDependencies) {
-  return new DynamicTool({
-    name: 'customTool',
-    description: 'Description for the AI agent',
-    func: async (input: string) => {
+import { type LoggerPort } from '@jterrazz/logger';
+import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
+import { createSafeAgentTool } from './tool.js';
+
+export function createCustomTool(logger: LoggerPort): AgentToolPort {
+  return createSafeAgentTool(
+    {
+      name: 'customTool',
+      description: 'Description for the AI agent about what this tool does',
+    },
+    async () => {
       // Tool implementation
+      logger.info('Executing custom tool');
+
+      // Your custom logic here
+      const result = await fetchSomeData();
+
       return formatResult(result);
     },
-  });
+    logger,
+  );
 }
 ```
 
 ### Custom Agent Implementation
 
 ```typescript
-export class CustomAgent extends ChatAgent {
+import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
+import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
+import { agentFormat } from './prompts/agent-format.js';
+import { agentLanguage } from './prompts/agent-language.js';
+import { agentPersonality } from './prompts/agent-personality.js';
+import { agentTone } from './prompts/agent-tone.js';
+import { createAnimatorPrompt } from './prompts/animator.js';
+
+export class CustomNewsAgent extends ChatAgent {
   constructor(dependencies: ChatAgentDependencies) {
-    super(dependencies, 'CustomAgent', 'You are a specialized agent that...', [
-      useRole().contributor,
-      useTone().professional,
+    super(dependencies, 'CustomNewsAgent', [
+      agentPersonality().human,
+      agentTone().fun,
+      agentFormat().discordNews,
+      agentLanguage().french,
     ]);
   }
 
-  protected getTools(): AgentTool[] {
-    return [this.tools.customTool, this.tools.getCurrentDate];
+  async run(_userQuery: string): Promise<void> {
+    await super.run(
+      createAnimatorPrompt('Your custom prompt describing what this agent should look for', [
+        'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days',
+      ]),
+    );
   }
+
+  protected getTools(): AgentToolPort[] {
+    return [
+      this.tools.fetchChatBotMessages.ai, // or appropriate channel
+      this.tools.getCurrentDate,
+      // Add your custom tools here
+    ];
+  }
+}
+```
+
+### Creating a Custom Job
+
+```typescript
+import { type Job } from '../../../../ports/inbound/job-runner.port.js';
+import { type AgentPort } from '../../../../ports/outbound/agents.port.js';
+
+export type CustomJobDependencies = {
+  agent: AgentPort;
+};
+
+export function createCustomJob({ agent }: CustomJobDependencies): Job {
+  return {
+    execute: async () => {
+      await agent.run('');
+    },
+    executeOnStartup: false,
+    name: 'CustomJob',
+    schedule: '0 16 * * 1,4', // Monday & Thursday at 4:00 PM UTC
+  };
 }
 ```
 
