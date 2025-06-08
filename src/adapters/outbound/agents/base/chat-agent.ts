@@ -41,35 +41,26 @@ Agent scratchpad: {agent_scratchpad}
 ` +
     `
 
-The last langchain response content you send (so the answer to the user, not a tool call) MUST be formatted with a JSON object that follows the following format (but WRAP THAT INSIDE THE LANGCHAIN FORMAT RESPONSE):
-ALWAYS wrap this json in markdown code blocks.
+When you want to provide your final response (not use a tool), you MUST format it exactly like this:
 
-<OUTPUT_FORMAT_FOR_USER>
 \`\`\`json
-Final Answer: ${JSON.stringify(z.toJSONSchema(AgentResponseSchema), null, 2)}
+{{"action": "Final Answer", "action_input": {{"shouldTransmitMessage": false, "reason": "<your reason>"}}}}
 \`\`\`
-</OUTPUT_FORMAT_FOR_USER>
 
-<OUTPUT_FORMAT_FOR_USER_NOOP>
+OR 
+
 \`\`\`json
-Final Answer: {"shouldTransmitMessage": false, "reason": "<your reason>"}
+{{"action": "Final Answer", "action_input": {{"shouldTransmitMessage": true, "message": "<the message to send to the chat room>"}}}}
 \`\`\`
-</OUTPUT_FORMAT_FOR_USER_NOOP>
 
-<OUTPUT_FORMAT_FOR_USER_MESSAGE>
-\`\`\`
-Final Answer: {"shouldTransmitMessage": true, "message": "<the message to send to the chat room>"}
-\`\`\`
-</OUTPUT_FORMAT_FOR_USER_MESSAGE>
+ALWAYS use this exact format with markdown code blocks and the action/action_input structure.
 
 <INFORMATION_SOURCE>
 Use the tools at your disposal to get information needed from the world.
 - I trust most of the sources i'm providing you, it is mostly reliable.
 - DO NOT hallucinate, DO NOT make up information, DO use the tools to get the current up to date information.
 </INFORMATION_SOURCE>
-`
-        .replaceAll('{', '{{')
-        .replaceAll('}', '}}');
+`;
 
 export abstract class ChatAgent {
     protected readonly agent: AgentPort;
@@ -177,7 +168,19 @@ export abstract class ChatAgent {
             if (codeBlockMatch) {
                 const content = codeBlockMatch[1].trim();
 
-                // Check if it contains "Final Answer:" pattern
+                try {
+                    const parsed = JSON.parse(content);
+                    // Check if it's the new format with action/action_input
+                    if (parsed.action === 'Final Answer' && parsed.action_input) {
+                        return parsed.action_input;
+                    }
+                    // Fallback to the entire parsed content
+                    return parsed;
+                } catch {
+                    // Continue to other fallbacks
+                }
+
+                // Check if it contains "Final Answer:" pattern (legacy support)
                 if (content.includes('Final Answer:')) {
                     const finalAnswerMatch = content.match(/Final Answer:\s*([\s\S]*?)$/i);
                     if (finalAnswerMatch) {
@@ -187,13 +190,6 @@ export abstract class ChatAgent {
                             // Continue to fallback
                         }
                     }
-                }
-
-                // Try parsing the entire code block content as JSON
-                try {
-                    return JSON.parse(content);
-                } catch {
-                    // Continue to fallback
                 }
             }
 
