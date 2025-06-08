@@ -22,7 +22,7 @@ export class SpaceEventsAgent extends ChatAgent {
             createAnimatorPrompt(
                 'Upcoming events related to space exploration, space missions, and aerospace technology.',
                 [
-                    'IMPORTANT: for rocket launches, only post about Starship.',
+                    'IMPORTANT: for "rocket-launch" events, only post about Starship. For "space-mission" events, post about all events.',
                     'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days',
                 ],
             ),
