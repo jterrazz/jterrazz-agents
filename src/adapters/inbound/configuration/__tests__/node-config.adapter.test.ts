@@ -40,8 +40,8 @@ describe('NodeConfigAdapter', () => {
                     technology: 'test-technology-channel',
                 },
             },
-            google: {
-                apiKey: 'test-google-key',
+            openrouter: {
+                apiKey: 'test-openrouter-key',
             },
         },
     };
@@ -81,7 +81,7 @@ describe('NodeConfigAdapter', () => {
                 space: 'test-space-channel',
                 technology: 'test-technology-channel',
             },
-            googleApiKey: 'test-google-key',
+            openrouterApiKey: 'test-openrouter-key',
         });
     });
 
@@ -121,13 +121,13 @@ describe('NodeConfigAdapter', () => {
         expect(() => new NodeConfigAdapter()).toThrow('A Discord bot token is required');
     });
 
-    test('should throw error when google api key is missing', () => {
+    test('should throw error when openrouter api key is missing', () => {
         vi.mocked(config.get).mockImplementation(
             createMockConfig({
-                'outbound.google.apiKey': '',
+                'outbound.openrouter.apiKey': '',
             }),
         );
 
-        expect(() => new NodeConfigAdapter()).toThrow('A Google API key is required');
+        expect(() => new NodeConfigAdapter()).toThrow('An OpenRouter API key is required');
     });
 });

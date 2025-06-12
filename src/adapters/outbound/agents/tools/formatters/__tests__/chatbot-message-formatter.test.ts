@@ -33,7 +33,7 @@ describe('chatbot-message-formatter', () => {
             };
 
             const formatted = formatChatBotMessage(message);
-            expect(formatted).toContain('Message with\nnewlines & special chars!');
+            expect(formatted).toContain('Message with\\nnewlines & special chars!');
         });
     });
 

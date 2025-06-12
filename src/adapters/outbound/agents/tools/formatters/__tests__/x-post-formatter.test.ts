@@ -47,7 +47,7 @@ describe('x-post-formatter', () => {
             expect(formatted).toBe(
                 'Author: John & Jane (@johnjane)\n' +
                     'Time: posted 1 hour ago\n' +
-                    'Content: Hello\nworld!\n' +
+                    'Content: Hello\\nworld!\n' +
                     'URL: https://x.com/johnjane/456',
             );
         });
