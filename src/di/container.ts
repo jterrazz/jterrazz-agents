@@ -31,7 +31,7 @@ import { createFetchPostsForCryptoTool } from '../adapters/outbound/agents/tools
 import { createFetchPostsForDevelopmentTool } from '../adapters/outbound/agents/tools/fetch-posts-for-development.tool.js';
 import { createFetchPostsForFinanceTool } from '../adapters/outbound/agents/tools/fetch-posts-for-finance.tool.js';
 import { createGetCurrentDateTool } from '../adapters/outbound/agents/tools/get-current-date.tool.js';
-import { GoogleAIAdapter } from '../adapters/outbound/ai/google-ai.adapter.js';
+import { OpenRouterAIAdapter } from '../adapters/outbound/ai/openrouter-ai.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 import { createXAdapter } from '../adapters/outbound/web/x.adapter.js';
 
@@ -66,7 +66,7 @@ const ai = Injectable(
     'AI',
     ['Configuration'] as const,
     (config: ConfigurationPort): AIPort =>
-        new GoogleAIAdapter(config.getOutboundConfiguration().googleApiKey),
+        new OpenRouterAIAdapter(config.getOutboundConfiguration().openrouterApiKey),
 );
 
 const x = Injectable('X', ['Configuration'] as const, (config: ConfigurationPort): XPort => {

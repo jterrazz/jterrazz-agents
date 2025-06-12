@@ -33,5 +33,5 @@ export interface OutboundConfigurationPort {
     apifyToken: string;
     discordBotToken: string;
     discordChannels: DiscordChannelsConfiguration;
-    googleApiKey: string;
+    openrouterApiKey: string;
 }

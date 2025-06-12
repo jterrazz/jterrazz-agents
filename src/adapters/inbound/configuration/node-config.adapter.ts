@@ -37,8 +37,8 @@ const configurationSchema = z.object({
                 technology: z.string().min(1, 'Technology channel name is required'),
             }),
         }),
-        google: z.object({
-            apiKey: z.string().min(1, 'A Google API key is required'),
+        openrouter: z.object({
+            apiKey: z.string().min(1, 'An OpenRouter API key is required'),
         }),
     }),
 });
@@ -68,8 +68,8 @@ export class NodeConfigAdapter implements ConfigurationPort {
                     botToken: config.get('outbound.discord.botToken'),
                     channels: config.get('outbound.discord.channels'),
                 },
-                google: {
-                    apiKey: config.get('outbound.google.apiKey'),
+                openrouter: {
+                    apiKey: config.get('outbound.openrouter.apiKey'),
                 },
             },
         });
@@ -86,7 +86,7 @@ export class NodeConfigAdapter implements ConfigurationPort {
             apifyToken: this.configuration.outbound.apify.token,
             discordBotToken: this.configuration.outbound.discord.botToken,
             discordChannels: this.configuration.outbound.discord.channels,
-            googleApiKey: this.configuration.outbound.google.apiKey,
+            openrouterApiKey: this.configuration.outbound.openrouter.apiKey,
         };
     }
 }

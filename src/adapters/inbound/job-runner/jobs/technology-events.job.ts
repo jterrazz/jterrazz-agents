@@ -9,7 +9,7 @@ export const createTechnologyEventsJob = ({ agent }: TechnologyEventsJobDependen
     execute: async () => {
         await agent.run('');
     },
-    executeOnStartup: false,
+    executeOnStartup: true,
     name: 'technology-events-agent',
     schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
 });

@@ -9,7 +9,7 @@ export const createSpaceEventsJob = ({ agent }: SpaceEventsJobDependencies): Job
     execute: async () => {
         await agent.run('');
     },
-    executeOnStartup: false,
+    executeOnStartup: true,
     name: 'space-events-agent',
     schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
 });

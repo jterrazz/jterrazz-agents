@@ -9,7 +9,7 @@ export const createFinanceNewsJob = ({ agent }: FinanceNewsJobDependencies): Job
     execute: async () => {
         await agent.run('');
     },
-    executeOnStartup: false,
+    executeOnStartup: true,
     name: 'finance-news-agent',
     schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
 });

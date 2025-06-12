@@ -4,15 +4,15 @@ import { z } from 'zod';
 import { type XPort, type XPostPort } from '../../../ports/outbound/web/x.port.js';
 
 const authorSchema = z.object({
-    name: z.string(),
-    screen_name: z.string(),
+    name: z.string().nullable(),
+    screen_name: z.string().nullable(),
 });
 
 const postSchema = z.object({
     author: authorSchema,
-    created_at: z.string(),
-    text: z.string(),
-    tweet_id: z.string(),
+    created_at: z.string().nullable(),
+    text: z.string().nullable(),
+    tweet_id: z.string().nullable(),
 });
 
 export interface FetchLatestPostsParams {
@@ -47,25 +47,35 @@ export const createXAdapter = (apiToken: string): XPort => {
             // Parse and validate the results
             const posts = z.array(postSchema).parse(items);
 
+            // Filter out posts with null essential fields
+            const validPosts = posts.filter(
+                (post) =>
+                    post.author.name !== null &&
+                    post.author.screen_name !== null &&
+                    post.created_at !== null &&
+                    post.text !== null &&
+                    post.tweet_id !== null,
+            );
+
             // Filter posts based on timeAgo if provided
             const now = new Date();
             const filteredPosts = timeAgo
-                ? posts.filter((post) => {
-                      const postDate = new Date(post.created_at);
+                ? validPosts.filter((post) => {
+                      const postDate = new Date(post.created_at!);
                       const hoursAgo = (now.getTime() - postDate.getTime()) / (1000 * 60 * 60);
                       return hoursAgo <= timeAgo.hours;
                   })
-                : posts;
+                : validPosts;
 
             // Apply limit after filtering
             const limitedPosts = limit ? filteredPosts.slice(0, limit) : filteredPosts;
 
             // Transform to SocialFeedMessage format
             return limitedPosts.map((post) => ({
-                author: post.author.name,
-                createdAt: new Date(post.created_at),
-                id: post.tweet_id,
-                text: post.text,
+                author: post.author.name!,
+                createdAt: new Date(post.created_at!),
+                id: post.tweet_id!,
+                text: post.text!,
                 url: `https://x.com/${post.author.screen_name}/status/${post.tweet_id}`,
                 username,
             }));

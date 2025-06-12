@@ -11,8 +11,6 @@ import {
 import { type AIPort } from '../../../../ports/outbound/ai.port.js';
 import { type ChatBotPort } from '../../../../ports/outbound/chatbot.port.js';
 
-import { withGoogleAIRateLimit } from '../../ai/google-ai-rate-limiter.js';
-
 export type AgentResponse = z.infer<typeof AgentResponseSchema>;
 
 // Types
@@ -230,9 +228,7 @@ export abstract class ChatAgent {
                     });
                 }
 
-                const result = await withGoogleAIRateLimit(() =>
-                    executor!.invoke({ input: userQuery }),
-                );
+                const result = await executor!.invoke({ input: userQuery });
 
                 logger.debug('Agent execution result', {
                     hasOutput: 'output' in result,
