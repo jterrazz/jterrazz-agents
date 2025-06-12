@@ -32,8 +32,8 @@ const AgentResponseSchema = z.object({
 const BASE_USER_PROMPT = `<INSTRUCTIONS>
 This is an automated prompt, made to "wake up" the agent.
 
-- Start by fetching the ChatBot's messages to decide if you need to transmit something or not
-- In later reasoning steps you can still decide to transmit something or not
+- CRITICAL REQUIREMENT: Start by fetching the ChatBot's messages to decide if you need to transmit something or not
+- In later reasoning steps you CAN STILL decide to NOT TRANSMIT something
 - Transmit ONLY useful information, do not transmit anything that does not bring value to the server
 </INSTRUCTIONS>`;
 
@@ -93,8 +93,8 @@ export abstract class ChatAgent {
             chatBot: this.chatBot,
             logger: this.logger,
             promptTemplate: [
-                ['system', systemPrompt],
-                ['human', `${BASE_USER_PROMPT} {input}`],
+                // ['system', systemPrompt],
+                ['human', `${systemPrompt} ${BASE_USER_PROMPT} {input}`],
             ],
             tools: this.getTools(),
         });

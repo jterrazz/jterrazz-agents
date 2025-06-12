@@ -8,7 +8,7 @@ export class OpenRouterAIAdapter implements AIPort {
 
     constructor(apiKey: string, options?: Partial<OpenAIChatInput>) {
         this.model = new ChatOpenAI({
-            modelName: 'google/gemini-2.5-flash-preview-05-20',
+            modelName: 'google/gemini-2.5-flash-preview-05-20:thinking',
             ...options,
             configuration: {
                 baseURL: 'https://openrouter.ai/api/v1',
