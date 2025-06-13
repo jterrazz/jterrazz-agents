@@ -10,10 +10,10 @@ import { createAnimatorPrompt } from './prompts/animator.js';
 export class SpaceEventsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(dependencies, 'SpaceEventsAgent', [
-            agentPersonality().human,
-            agentTone().fun,
-            agentFormat().discordEvents,
-            agentLanguage().french,
+            agentPersonality.human,
+            agentTone.fun,
+            agentFormat.discordEvents,
+            agentLanguage.french,
         ]);
     }
 
