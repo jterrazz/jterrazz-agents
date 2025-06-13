@@ -10,10 +10,10 @@ import { createAnimatorPrompt } from './prompts/animator.js';
 export class AINewsAgent extends ChatAgent {
     constructor(dependencies: ChatAgentDependencies) {
         super(dependencies, 'AINewsAgent', [
-            agentPersonality().human,
-            agentTone().fun,
-            agentFormat().discordNews,
-            agentLanguage().french,
+            agentPersonality.human,
+            agentTone.fun,
+            agentFormat.discordNews,
+            agentLanguage.french,
         ]);
     }
 
