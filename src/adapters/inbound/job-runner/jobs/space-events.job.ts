@@ -1,5 +1,6 @@
+import { type AgentPort } from '@jterrazz/intelligence';
+
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
-import { type AgentPort } from '../../../../ports/outbound/agents.port.js';
 
 export type SpaceEventsJobDependencies = {
     agent: AgentPort;
@@ -7,7 +8,7 @@ export type SpaceEventsJobDependencies = {
 
 export const createSpaceEventsJob = ({ agent }: SpaceEventsJobDependencies): Job => ({
     execute: async () => {
-        await agent.run('');
+        await agent.run();
     },
     executeOnStartup: false,
     name: 'space-events-agent',

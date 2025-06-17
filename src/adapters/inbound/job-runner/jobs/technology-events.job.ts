@@ -1,5 +1,6 @@
+import { type AgentPort } from '@jterrazz/intelligence';
+
 import { type Job } from '../../../../ports/inbound/job-runner.port.js';
-import { type AgentPort } from '../../../../ports/outbound/agents.port.js';
 
 export type TechnologyEventsJobDependencies = {
     agent: AgentPort;
@@ -7,7 +8,7 @@ export type TechnologyEventsJobDependencies = {
 
 export const createTechnologyEventsJob = ({ agent }: TechnologyEventsJobDependencies): Job => ({
     execute: async () => {
-        await agent.run('');
+        await agent.run();
     },
     executeOnStartup: false,
     name: 'technology-events-agent',

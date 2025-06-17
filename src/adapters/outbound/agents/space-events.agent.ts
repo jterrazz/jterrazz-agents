@@ -1,39 +1,66 @@
-import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
+import {
+    ChatAgentAdapter,
+    type ModelPort,
+    SystemPromptAdapter,
+    UserPromptAdapter,
+} from '@jterrazz/intelligence';
+import { type LoggerPort } from '@jterrazz/logger';
 
-import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
-import { agentFormat } from './prompts/agent-format.js';
-import { agentLanguage } from './prompts/agent-language.js';
-import { agentPersonality } from './prompts/agent-personality.js';
-import { agentTone } from './prompts/agent-tone.js';
+import { type AvailableAgentTools } from '../../../ports/outbound/agents.port.js';
+import { type ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
+
+import { agentFormat as agentFormat } from './prompts/agent-format.js';
+import { agentLanguage as agentLanguage } from './prompts/agent-language.js';
+import { agentPersonality as agentPersonality } from './prompts/agent-personality.js';
+import { agentTone as agentTone } from './prompts/agent-tone.js';
 import { createAnimatorPrompt } from './prompts/animator.js';
 
-export class SpaceEventsAgent extends ChatAgent {
-    constructor(dependencies: ChatAgentDependencies) {
-        super(dependencies, 'SpaceEventsAgent', [
+export class SpaceEventsAgent extends ChatAgentAdapter {
+    constructor(
+        model: ModelPort,
+        availableTools: AvailableAgentTools,
+        logger: LoggerPort,
+        private readonly chatBot: ChatBotPort,
+        private readonly channelName: string,
+    ) {
+        const tools = [
+            availableTools.fetchChatBotMessages.space,
+            availableTools.getCurrentDate,
+            availableTools.fetchEventsForSpace,
+        ];
+
+        const systemPrompt = new SystemPromptAdapter([
             agentPersonality.human,
             agentTone.fun,
             agentFormat.discordEvents,
             agentLanguage.french,
         ]);
+
+        super('SpaceEventsAgent', {
+            logger,
+            model,
+            systemPrompt,
+            tools,
+        });
     }
 
-    async run(_userQuery: string): Promise<void> {
-        await super.run(
+    async run(): Promise<null | string> {
+        const prompt = new UserPromptAdapter(
             createAnimatorPrompt(
-                'Upcoming events related to space exploration, space missions, and aerospace technology.',
+                'Important news, discussions or updates related to space events',
                 [
-                    'IMPORTANT: for "rocket-launch" events, only post about Starship. For "space-mission" events, post about all events.',
+                    'ONLY post about rocket launches, space missions, and major space industry developments.',
                     'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days',
                 ],
             ),
         );
-    }
 
-    protected getTools(): AgentToolPort[] {
-        return [
-            this.tools.fetchChatBotMessages.space,
-            this.tools.getCurrentDate,
-            this.tools.fetchEventsForSpace,
-        ];
+        const result = await super.run(prompt);
+
+        if (result) {
+            await this.chatBot.sendMessage(this.channelName, result);
+        }
+
+        return result;
     }
 }

@@ -1,25 +1,19 @@
-import { type DynamicTool } from 'langchain/tools';
-
-export type AgentPort = {
-    run(userQuery: string): Promise<void>;
-};
-
-export type AgentToolPort = DynamicTool<string>;
+import { type ToolPort } from '@jterrazz/intelligence';
 
 export type AvailableAgentTools = {
     fetchChatBotMessages: {
-        ai: AgentToolPort;
-        crypto: AgentToolPort;
-        development: AgentToolPort;
-        finance: AgentToolPort;
-        space: AgentToolPort;
-        technology: AgentToolPort;
+        ai: ToolPort;
+        crypto: ToolPort;
+        development: ToolPort;
+        finance: ToolPort;
+        space: ToolPort;
+        technology: ToolPort;
     };
-    fetchEventsForSpace: AgentToolPort;
-    fetchEventsForTechnology: AgentToolPort;
-    fetchPostsForAI: AgentToolPort;
-    fetchPostsForCrypto: AgentToolPort;
-    fetchPostsForDevelopment: AgentToolPort;
-    fetchPostsForFinance: AgentToolPort;
-    getCurrentDate: AgentToolPort;
+    fetchEventsForSpace: ToolPort;
+    fetchEventsForTechnology: ToolPort;
+    fetchPostsForAI: ToolPort;
+    fetchPostsForCrypto: ToolPort;
+    fetchPostsForDevelopment: ToolPort;
+    fetchPostsForFinance: ToolPort;
+    getCurrentDate: ToolPort;
 };

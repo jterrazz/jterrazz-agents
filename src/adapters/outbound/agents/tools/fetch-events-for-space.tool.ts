@@ -1,6 +1,5 @@
+import { SafeToolAdapter, type ToolPort } from '@jterrazz/intelligence';
 import { type LoggerPort } from '@jterrazz/logger';
-
-import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 
 import { filterEventsByDateRange } from './utils/event-filters.js';
 
@@ -8,34 +7,43 @@ import { getUpcomingEvents, getUpcomingRocketLaunches } from '../../web/nextspac
 
 import { formatEvents } from './formatters/event-formatter.js';
 
-import { createSafeAgentTool } from './tool.js';
+const TOOL_NAME = 'fetchEventsForSpace';
 
-export function createFetchEventsForSpaceTool(logger: LoggerPort): AgentToolPort {
-    return createSafeAgentTool(
+const TOOL_DESCRIPTION = `
+Fetches upcoming space missions and rocket launches within the next 5 days. No input required.
+`.trim();
+
+const TIMEFRAME_DAYS = 5;
+
+export function createFetchEventsForSpaceTool(logger: LoggerPort): ToolPort {
+    async function fetchEventsForSpace(): Promise<string> {
+        logger.info('Fetching space events', { timeframe: `${TIMEFRAME_DAYS} days` });
+
+        const [missions, launches] = await Promise.all([
+            getUpcomingEvents(),
+            getUpcomingRocketLaunches(),
+        ]);
+
+        const events = [...missions, ...launches];
+        const filteredEvents = filterEventsByDateRange(events, TIMEFRAME_DAYS);
+
+        logger.info('Retrieved space events', {
+            filteredEvents: filteredEvents.length,
+            timeframeDays: TIMEFRAME_DAYS,
+            totalEvents: events.length,
+        });
+
+        return formatEvents(filteredEvents);
+    }
+
+    return new SafeToolAdapter(
         {
-            description:
-                'Fetches upcoming space missions and rocket launches within the next 5 days. No input required.',
-            name: 'fetchEventsForSpace',
+            description: TOOL_DESCRIPTION,
+            execute: fetchEventsForSpace,
+            name: TOOL_NAME,
         },
-        async () => {
-            logger.info('Fetching space events', { timeframe: '5 days' });
-
-            const [missions, launches] = await Promise.all([
-                getUpcomingEvents(),
-                getUpcomingRocketLaunches(),
-            ]);
-
-            const events = [...missions, ...launches];
-            const filteredEvents = filterEventsByDateRange(events, 5);
-
-            logger.info('Retrieved space events', {
-                filteredEvents: filteredEvents.length,
-                timeframeDays: 5,
-                totalEvents: events.length,
-            });
-
-            return formatEvents(filteredEvents);
+        {
+            logger,
         },
-        logger,
     );
 }

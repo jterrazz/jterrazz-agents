@@ -1,24 +1,51 @@
-import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
+import {
+    ChatAgentAdapter,
+    type ModelPort,
+    SystemPromptAdapter,
+    UserPromptAdapter,
+} from '@jterrazz/intelligence';
+import { type LoggerPort } from '@jterrazz/logger';
 
-import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
+import { type AvailableAgentTools } from '../../../ports/outbound/agents.port.js';
+import { type ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
+
 import { agentFormat as agentFormat } from './prompts/agent-format.js';
 import { agentLanguage as agentLanguage } from './prompts/agent-language.js';
 import { agentPersonality as agentPersonality } from './prompts/agent-personality.js';
 import { agentTone as agentTone } from './prompts/agent-tone.js';
 import { createAnimatorPrompt } from './prompts/animator.js';
 
-export class TechnologyEventsAgent extends ChatAgent {
-    constructor(dependencies: ChatAgentDependencies) {
-        super(dependencies, 'TechnologyEventsAgent', [
+export class TechnologyEventsAgent extends ChatAgentAdapter {
+    constructor(
+        model: ModelPort,
+        availableTools: AvailableAgentTools,
+        logger: LoggerPort,
+        private readonly chatBot: ChatBotPort,
+        private readonly channelName: string,
+    ) {
+        const tools = [
+            availableTools.fetchChatBotMessages.technology,
+            availableTools.getCurrentDate,
+            availableTools.fetchEventsForTechnology,
+        ];
+
+        const systemPrompt = new SystemPromptAdapter([
             agentPersonality.human,
             agentTone.fun,
             agentFormat.discordEvents,
             agentLanguage.french,
         ]);
+
+        super('TechnologyEventsAgent', {
+            logger,
+            model,
+            systemPrompt,
+            tools,
+        });
     }
 
-    async run(_userQuery: string): Promise<void> {
-        await super.run(
+    async run(): Promise<null | string> {
+        const prompt = new UserPromptAdapter(
             createAnimatorPrompt(
                 'Important news, discussions or updates related to technology events',
                 [
@@ -27,13 +54,13 @@ export class TechnologyEventsAgent extends ChatAgent {
                 ],
             ),
         );
-    }
 
-    protected getTools(): AgentToolPort[] {
-        return [
-            this.tools.fetchChatBotMessages.technology,
-            this.tools.getCurrentDate,
-            this.tools.fetchEventsForTechnology,
-        ];
+        const result = await super.run(prompt);
+
+        if (result) {
+            await this.chatBot.sendMessage(this.channelName, result);
+        }
+
+        return result;
     }
 }

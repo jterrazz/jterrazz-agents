@@ -1,3 +1,4 @@
+import { type AgentPort, type ModelPort, OpenRouterAdapter } from '@jterrazz/intelligence';
 import { type LoggerPort, PinoLoggerAdapter } from '@jterrazz/logger';
 import { Container, Injectable } from '@snap/ts-inject';
 
@@ -5,8 +6,7 @@ import { NodeConfigAdapter } from '../adapters/inbound/configuration/node-config
 import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
 import { type JobRunnerPort } from '../ports/inbound/job-runner.port.js';
-import { type AgentPort, type AvailableAgentTools } from '../ports/outbound/agents.port.js';
-import { type AIPort } from '../ports/outbound/ai.port.js';
+import { type AvailableAgentTools } from '../ports/outbound/agents.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { type XPort } from '../ports/outbound/web/x.port.js';
 
@@ -31,7 +31,6 @@ import { createFetchPostsForCryptoTool } from '../adapters/outbound/agents/tools
 import { createFetchPostsForDevelopmentTool } from '../adapters/outbound/agents/tools/fetch-posts-for-development.tool.js';
 import { createFetchPostsForFinanceTool } from '../adapters/outbound/agents/tools/fetch-posts-for-finance.tool.js';
 import { createGetCurrentDateTool } from '../adapters/outbound/agents/tools/get-current-date.tool.js';
-import { OpenRouterAIAdapter } from '../adapters/outbound/ai/openrouter-ai.adapter.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
 import { createXAdapter } from '../adapters/outbound/web/x.adapter.js';
 
@@ -62,11 +61,18 @@ const chatBot = Injectable(
         new DiscordAdapter(config.getOutboundConfiguration().discordBotToken, logger),
 );
 
-const ai = Injectable(
-    'AI',
+const model = Injectable(
+    'Model',
     ['Configuration'] as const,
-    (config: ConfigurationPort): AIPort =>
-        new OpenRouterAIAdapter(config.getOutboundConfiguration().openrouterApiKey),
+    (config: ConfigurationPort): ModelPort =>
+        new OpenRouterAdapter({
+            apiKey: config.getOutboundConfiguration().openrouterApiKey,
+            metadata: {
+                application: 'jterrazz-agents',
+                website: 'https://jterrazz.com',
+            },
+            modelName: 'google/gemini-2.5-flash-preview-05-20:thinking',
+        }),
 );
 
 const x = Injectable('X', ['Configuration'] as const, (config: ConfigurationPort): XPort => {
@@ -136,116 +142,116 @@ const tools = Injectable(
  */
 const aiNewsAgent = Injectable(
     'AINewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools', 'Configuration'] as const,
+    ['ChatBot', 'Logger', 'Model', 'Tools', 'Configuration'] as const,
     (
         chatBot: ChatBotPort,
         logger: LoggerPort,
-        ai: AIPort,
+        model: ModelPort,
         tools: AvailableAgentTools,
         config: ConfigurationPort,
     ): AgentPort =>
-        new AINewsAgent({
-            ai,
-            channelName: config.getOutboundConfiguration().discordChannels.ai,
-            chatBot,
-            logger,
+        new AINewsAgent(
+            model,
             tools,
-        }),
+            logger,
+            chatBot,
+            config.getOutboundConfiguration().discordChannels.ai,
+        ),
 );
 
 const cryptoNewsAgent = Injectable(
     'CryptoNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools', 'Configuration'] as const,
+    ['ChatBot', 'Logger', 'Model', 'Tools', 'Configuration'] as const,
     (
         chatBot: ChatBotPort,
         logger: LoggerPort,
-        ai: AIPort,
+        model: ModelPort,
         tools: AvailableAgentTools,
         config: ConfigurationPort,
     ): AgentPort =>
-        new CryptoNewsAgent({
-            ai,
-            channelName: config.getOutboundConfiguration().discordChannels.crypto,
-            chatBot,
-            logger,
+        new CryptoNewsAgent(
+            model,
             tools,
-        }),
+            logger,
+            chatBot,
+            config.getOutboundConfiguration().discordChannels.crypto,
+        ),
 );
 
 const developmentNewsAgent = Injectable(
     'DevelopmentNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools', 'Configuration'] as const,
+    ['ChatBot', 'Logger', 'Model', 'Tools', 'Configuration'] as const,
     (
         chatBot: ChatBotPort,
         logger: LoggerPort,
-        ai: AIPort,
+        model: ModelPort,
         tools: AvailableAgentTools,
         config: ConfigurationPort,
     ): AgentPort =>
-        new DevelopmentNewsAgent({
-            ai,
-            channelName: config.getOutboundConfiguration().discordChannels.development,
-            chatBot,
-            logger,
+        new DevelopmentNewsAgent(
+            model,
             tools,
-        }),
+            logger,
+            chatBot,
+            config.getOutboundConfiguration().discordChannels.development,
+        ),
 );
 
 const financeNewsAgent = Injectable(
     'FinanceNewsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools', 'Configuration'] as const,
+    ['ChatBot', 'Logger', 'Model', 'Tools', 'Configuration'] as const,
     (
         chatBot: ChatBotPort,
         logger: LoggerPort,
-        ai: AIPort,
+        model: ModelPort,
         tools: AvailableAgentTools,
         config: ConfigurationPort,
     ): AgentPort =>
-        new FinanceNewsAgent({
-            ai,
-            channelName: config.getOutboundConfiguration().discordChannels.finance,
-            chatBot,
-            logger,
+        new FinanceNewsAgent(
+            model,
             tools,
-        }),
+            logger,
+            chatBot,
+            config.getOutboundConfiguration().discordChannels.finance,
+        ),
 );
 
 const spaceEventsAgent = Injectable(
     'SpaceEventsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools', 'Configuration'] as const,
+    ['ChatBot', 'Logger', 'Model', 'Tools', 'Configuration'] as const,
     (
         chatBot: ChatBotPort,
         logger: LoggerPort,
-        ai: AIPort,
+        model: ModelPort,
         tools: AvailableAgentTools,
         config: ConfigurationPort,
     ): AgentPort =>
-        new SpaceEventsAgent({
-            ai,
-            channelName: config.getOutboundConfiguration().discordChannels.space,
-            chatBot,
-            logger,
+        new SpaceEventsAgent(
+            model,
             tools,
-        }),
+            logger,
+            chatBot,
+            config.getOutboundConfiguration().discordChannels.space,
+        ),
 );
 
 const technologyEventsAgent = Injectable(
     'TechnologyEventsAgent',
-    ['ChatBot', 'Logger', 'AI', 'Tools', 'Configuration'] as const,
+    ['ChatBot', 'Logger', 'Model', 'Tools', 'Configuration'] as const,
     (
         chatBot: ChatBotPort,
         logger: LoggerPort,
-        ai: AIPort,
+        model: ModelPort,
         tools: AvailableAgentTools,
         config: ConfigurationPort,
     ): AgentPort =>
-        new TechnologyEventsAgent({
-            ai,
-            channelName: config.getOutboundConfiguration().discordChannels.technology,
-            chatBot,
-            logger,
+        new TechnologyEventsAgent(
+            model,
             tools,
-        }),
+            logger,
+            chatBot,
+            config.getOutboundConfiguration().discordChannels.technology,
+        ),
 );
 
 /**
@@ -316,7 +322,7 @@ export const createContainer = () =>
         // Outbound adapters
         .provides(logger)
         .provides(chatBot)
-        .provides(ai)
+        .provides(model)
         .provides(x)
         // Tools
         .provides(tools)

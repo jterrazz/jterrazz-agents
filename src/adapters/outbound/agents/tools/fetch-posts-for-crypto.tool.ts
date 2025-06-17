@@ -1,41 +1,48 @@
+import { SafeToolAdapter, type ToolPort } from '@jterrazz/intelligence';
 import { type LoggerPort } from '@jterrazz/logger';
 
-import { type AgentToolPort } from '../../../../ports/outbound/agents.port.js';
 import { type XPort } from '../../../../ports/outbound/web/x.port.js';
 
 import { formatXPosts } from './formatters/x-post-formatter.js';
 
-import { createSafeAgentTool } from './tool.js';
+const TOOL_NAME = 'fetchPostsForCrypto';
 
-const USERNAMES = ['pete_rizzo_', 'cz_binance', 'VitalikButerin'];
+const TOOL_DESCRIPTION = `
+Fetches latest cryptocurrency-related posts from a predefined list of X users. No input required.
+`.trim();
 
-export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort): AgentToolPort {
-    return createSafeAgentTool(
+const USERNAMES = ['VitalikButerin', 'balajis', 'elonmusk', 'garyvee', 'aantonop', 'naval'];
+
+export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort): ToolPort {
+    async function fetchPostsForCrypto(): Promise<string> {
+        logger.info('Fetching crypto posts', { timeframe: '72h', usernames: USERNAMES });
+
+        const posts = await Promise.all(
+            USERNAMES.map((username) =>
+                x.fetchLatestMessages({
+                    timeAgo: { hours: 72 },
+                    username,
+                }),
+            ),
+        );
+
+        const allPosts = posts.flat();
+        logger.info('Retrieved crypto posts', {
+            totalPosts: allPosts.length,
+            userCount: USERNAMES.length,
+        });
+
+        return formatXPosts(allPosts);
+    }
+
+    return new SafeToolAdapter(
         {
-            description:
-                'Fetches latest Crypto-related posts from a predefined list of X users. No input required.',
-            name: 'fetchPostsForCrypto',
+            description: TOOL_DESCRIPTION,
+            execute: fetchPostsForCrypto,
+            name: TOOL_NAME,
         },
-        async () => {
-            logger.info('Fetching crypto posts', { timeframe: '72h', usernames: USERNAMES });
-
-            const posts = await Promise.all(
-                USERNAMES.map((username) =>
-                    x.fetchLatestMessages({
-                        timeAgo: { hours: 72 },
-                        username,
-                    }),
-                ),
-            );
-
-            const allPosts = posts.flat();
-            logger.info('Retrieved crypto posts', {
-                totalPosts: allPosts.length,
-                userCount: USERNAMES.length,
-            });
-
-            return formatXPosts(allPosts);
+        {
+            logger,
         },
-        logger,
     );
 }

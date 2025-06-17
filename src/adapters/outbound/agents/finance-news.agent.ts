@@ -1,36 +1,66 @@
-import { type AgentToolPort } from '../../../ports/outbound/agents.port.js';
+import {
+    ChatAgentAdapter,
+    type ModelPort,
+    SystemPromptAdapter,
+    UserPromptAdapter,
+} from '@jterrazz/intelligence';
+import { type LoggerPort } from '@jterrazz/logger';
 
-import { ChatAgent, type ChatAgentDependencies } from './base/chat-agent.js';
-import { agentFormat } from './prompts/agent-format.js';
-import { agentLanguage } from './prompts/agent-language.js';
-import { agentPersonality } from './prompts/agent-personality.js';
-import { agentTone } from './prompts/agent-tone.js';
+import { type AvailableAgentTools } from '../../../ports/outbound/agents.port.js';
+import { type ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
+
+import { agentFormat as agentFormat } from './prompts/agent-format.js';
+import { agentLanguage as agentLanguage } from './prompts/agent-language.js';
+import { agentPersonality as agentPersonality } from './prompts/agent-personality.js';
+import { agentTone as agentTone } from './prompts/agent-tone.js';
 import { createAnimatorPrompt } from './prompts/animator.js';
 
-export class FinanceNewsAgent extends ChatAgent {
-    constructor(dependencies: ChatAgentDependencies) {
-        super(dependencies, 'FinanceNewsAgent', [
+export class FinanceNewsAgent extends ChatAgentAdapter {
+    constructor(
+        model: ModelPort,
+        availableTools: AvailableAgentTools,
+        logger: LoggerPort,
+        private readonly chatBot: ChatBotPort,
+        private readonly channelName: string,
+    ) {
+        const tools = [
+            availableTools.fetchChatBotMessages.finance,
+            availableTools.getCurrentDate,
+            availableTools.fetchPostsForFinance,
+        ];
+
+        const systemPrompt = new SystemPromptAdapter([
             agentPersonality.human,
-            agentTone.fun,
+            agentTone.professional,
             agentFormat.discordNews,
             agentLanguage.french,
         ]);
+
+        super('FinanceNewsAgent', {
+            logger,
+            model,
+            systemPrompt,
+            tools,
+        });
     }
 
-    async run(_userQuery: string): Promise<void> {
-        await super.run(
+    async run(): Promise<null | string> {
+        const prompt = new UserPromptAdapter(
             createAnimatorPrompt(
-                'Important news, discussions or updates related to financial markets and economy.',
-                ['CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days'],
+                'Important news, discussions or updates related to finance and markets',
+                [
+                    'ONLY post about major market movements, economic indicators, or significant financial news.',
+                    'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days',
+                ],
             ),
         );
-    }
 
-    protected getTools(): AgentToolPort[] {
-        return [
-            this.tools.fetchChatBotMessages.finance,
-            this.tools.getCurrentDate,
-            this.tools.fetchPostsForFinance,
-        ];
+        const result = await super.run(prompt);
+
+        if (result) {
+            await this.chatBot.sendMessage(this.channelName, result);
+        }
+
+        return result;
     }
 }
