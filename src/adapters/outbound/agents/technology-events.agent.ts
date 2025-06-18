@@ -1,7 +1,7 @@
 import {
     ChatAgentAdapter,
     type ModelPort,
-    PROMPTS,
+    PROMPT_LIBRARY,
     SystemPromptAdapter,
     UserPromptAdapter,
 } from '@jterrazz/intelligence';
@@ -10,10 +10,27 @@ import { type LoggerPort } from '@jterrazz/logger';
 import { type AvailableAgentTools } from '../../../ports/outbound/agents.port.js';
 import { type ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
 
-import { agentFormat as agentFormat } from './prompts/agent-format.js';
-import { createAnimatorPrompt } from './prompts/animator.js';
+import { PROMPTS } from './prompts/prompts.js';
 
 export class TechnologyEventsAgent extends ChatAgentAdapter {
+    static readonly NAME = 'TechnologyEventsAgent';
+    static readonly SYSTEM_PROMPT = new SystemPromptAdapter([
+        PROMPT_LIBRARY.RESPONSES.SELECTIVE_ENGAGEMENT,
+        PROMPT_LIBRARY.PERSONAS.HUMAN_LIKE_CONTRIBUTOR,
+        PROMPT_LIBRARY.TONES.HUMOROUS,
+        PROMPT_LIBRARY.FORMATS.DISCORD_MARKDOWN,
+        PROMPT_LIBRARY.LANGUAGES.FRENCH_SIMPLE,
+        PROMPT_LIBRARY.RESPONSES.SELECTIVE_ENGAGEMENT,
+        PROMPTS.FORMATS.DISCORD_EVENTS,
+    ]);
+    static readonly USER_PROMPT = new UserPromptAdapter(
+        PROMPTS.MISSIONS.ANIMATE_CHATROOM(
+            'Important news, discussions or updates related to technology and gadgets',
+        ),
+        'CRITICAL: Post about major product releases, tech industry trends, or significant software updates.',
+        'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
+    );
+
     constructor(
         model: ModelPort,
         availableTools: AvailableAgentTools,
@@ -27,36 +44,16 @@ export class TechnologyEventsAgent extends ChatAgentAdapter {
             availableTools.fetchEventsForTechnology,
         ];
 
-        const systemPrompt = new SystemPromptAdapter([
-            PROMPTS.RESPONSES.SELECTIVE_ENGAGEMENT,
-            PROMPTS.PERSONAS.HUMAN_LIKE_CONTRIBUTOR,
-            PROMPTS.TONES.HUMOROUS,
-            PROMPTS.FORMATS.DISCORD_MARKDOWN,
-            PROMPTS.LANGUAGES.FRENCH_SIMPLE,
-            agentFormat.discordEvents,
-        ]);
-
-        super('TechnologyEventsAgent', {
+        super(TechnologyEventsAgent.NAME, {
             logger,
             model,
-            systemPrompt,
+            systemPrompt: TechnologyEventsAgent.SYSTEM_PROMPT,
             tools,
-            // verbose: true,
         });
     }
 
     async run(): Promise<null | string> {
-        const prompt = new UserPromptAdapter(
-            createAnimatorPrompt(
-                'Important news, discussions or updates related to technology events',
-            ),
-            'CRITICAL: Post about events related to Apple, Microsoft, Google, Meta, CES, and Amazon.',
-            'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
-        );
-
-        console.log(prompt.generate());
-
-        const result = await super.run(prompt);
+        const result = await super.run(TechnologyEventsAgent.USER_PROMPT);
 
         if (result) {
             await this.chatBot.sendMessage(this.channelName, result);

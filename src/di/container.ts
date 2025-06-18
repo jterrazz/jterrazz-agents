@@ -8,7 +8,7 @@ import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 import { type JobRunnerPort } from '../ports/inbound/job-runner.port.js';
 import { type AvailableAgentTools } from '../ports/outbound/agents.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
-import { type XPort } from '../ports/outbound/web/x.port.js';
+import { type XPort } from '../ports/outbound/providers/x.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
@@ -32,7 +32,7 @@ import { createFetchPostsForDevelopmentTool } from '../adapters/outbound/agents/
 import { createFetchPostsForFinanceTool } from '../adapters/outbound/agents/tools/fetch-posts-for-finance.tool.js';
 import { createGetCurrentDateTool } from '../adapters/outbound/agents/tools/get-current-date.tool.js';
 import { DiscordAdapter } from '../adapters/outbound/chatbot/discord.adapter.js';
-import { createXAdapter } from '../adapters/outbound/web/x.adapter.js';
+import { createXAdapter } from '../adapters/outbound/providers/x.adapter.js';
 
 /**
  * Inbound adapters
@@ -305,8 +305,6 @@ const jobRunner = Injectable(
         if (jobs.technologyEvents.enabled) {
             enabledJobs.push(createTechnologyEventsJob({ agent: technologyEventsAgent }));
         }
-
-        logger.info(`Enabled jobs: ${enabledJobs.map((job) => job.name).join(', ')}`);
 
         return new NodeCronAdapter(logger, enabledJobs);
     },

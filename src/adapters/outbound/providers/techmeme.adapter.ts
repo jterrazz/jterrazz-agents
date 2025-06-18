@@ -1,7 +1,7 @@
 import axios from 'axios';
 import * as cheerio from 'cheerio';
 
-import { type Event, EventTypeEnum } from '../../../ports/outbound/web/events.port.js';
+import { type Event, EventTypeEnum } from '../../../ports/outbound/providers/events.port.js';
 
 const TECHMEME_EVENTS_URL = 'https://www.techmeme.com/events';
 const TECHMEME_BASE_URL = 'https://www.techmeme.com';

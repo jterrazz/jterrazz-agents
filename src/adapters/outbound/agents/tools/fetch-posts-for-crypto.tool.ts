@@ -1,7 +1,7 @@
 import { SafeToolAdapter, type ToolPort } from '@jterrazz/intelligence';
 import { type LoggerPort } from '@jterrazz/logger';
 
-import { type XPort } from '../../../../ports/outbound/web/x.port.js';
+import { type XPort } from '../../../../ports/outbound/providers/x.port.js';
 
 import { formatXPosts } from './formatters/x-post-formatter.js';
 
@@ -15,7 +15,7 @@ const USERNAMES = ['VitalikButerin', 'balajis', 'elonmusk', 'garyvee', 'aantonop
 
 export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort): ToolPort {
     async function fetchPostsForCrypto(): Promise<string> {
-        logger.info('Fetching crypto posts', { timeframe: '72h', usernames: USERNAMES });
+        logger.info('Executing fetchPostsForCrypto tool...');
 
         const posts = await Promise.all(
             USERNAMES.map((username) =>
@@ -27,10 +27,12 @@ export function createFetchPostsForCryptoTool(x: XPort, logger: LoggerPort): Too
         );
 
         const allPosts = posts.flat();
-        logger.info('Retrieved crypto posts', {
-            totalPosts: allPosts.length,
-            userCount: USERNAMES.length,
-        });
+
+        if (allPosts.length === 0) {
+            logger.info('No crypto posts found in the last 72 hours.');
+        } else {
+            logger.info(`Found ${allPosts.length} crypto posts.`, { count: allPosts.length });
+        }
 
         return formatXPosts(allPosts);
     }

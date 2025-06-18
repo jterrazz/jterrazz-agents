@@ -1,4 +1,4 @@
-import { type Event } from '../../../../../ports/outbound/web/events.port.js';
+import { type Event } from '../../../../../ports/outbound/providers/events.port.js';
 
 export const filterEventsByDateRange = (events: Event[], daysFromNow: number): Event[] => {
     const now = new Date();

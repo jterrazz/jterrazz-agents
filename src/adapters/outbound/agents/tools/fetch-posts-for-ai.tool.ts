@@ -1,7 +1,7 @@
 import { SafeToolAdapter, type ToolPort } from '@jterrazz/intelligence';
 import { type LoggerPort } from '@jterrazz/logger';
 
-import { type XPort } from '../../../../ports/outbound/web/x.port.js';
+import { type XPort } from '../../../../ports/outbound/providers/x.port.js';
 
 import { formatXPosts } from './formatters/x-post-formatter.js';
 
@@ -28,7 +28,7 @@ const USERNAMES = [
 
 export function createFetchPostsForAITool(x: XPort, logger: LoggerPort): ToolPort {
     async function fetchPostsForAI(): Promise<string> {
-        logger.info('Fetching AI posts', { timeframe: '72h', usernames: USERNAMES });
+        logger.info('Executing fetchPostsForAI tool...');
 
         const posts = await Promise.all(
             USERNAMES.map((username) =>
@@ -40,10 +40,12 @@ export function createFetchPostsForAITool(x: XPort, logger: LoggerPort): ToolPor
         );
 
         const allPosts = posts.flat();
-        logger.info('Retrieved AI posts', {
-            totalPosts: allPosts.length,
-            userCount: USERNAMES.length,
-        });
+
+        if (allPosts.length === 0) {
+            logger.info('No AI posts found in the last 72 hours.');
+        } else {
+            logger.info(`Found ${allPosts.length} AI posts.`, { count: allPosts.length });
+        }
 
         return formatXPosts(allPosts);
     }

@@ -1,7 +1,7 @@
 import { ApifyClient } from 'apify-client';
 import { z } from 'zod';
 
-import { type XPort, type XPostPort } from '../../../ports/outbound/web/x.port.js';
+import { type XPort, type XPostPort } from '../../../ports/outbound/providers/x.port.js';
 
 const authorSchema = z.object({
     name: z.string().nullable(),

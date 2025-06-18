@@ -12,11 +12,9 @@ import { createContainer } from './di/container.js';
 
         try {
             // Stop job runner first to prevent new jobs from starting
-            logger.info('Stopping job runner...');
             await jobRunner.stop();
 
             // Disconnect from Discord
-            logger.info('Disconnecting from Discord...');
             await chatBot.disconnect();
 
             logger.info('Graceful shutdown completed');
@@ -45,14 +43,10 @@ import { createContainer } from './di/container.js';
 
     try {
         // Connect to Discord
-        logger.info('Connecting to Discord...');
         await chatBot.connect();
-        logger.info('Discord connected successfully');
 
         // Initialize job runner for scheduled jobs
-        logger.info('Initializing job runner...');
         await jobRunner.initialize();
-        logger.info('Job runner initialized successfully');
 
         logger.info('Application started successfully.');
     } catch (error) {

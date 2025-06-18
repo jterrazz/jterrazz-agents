@@ -23,14 +23,18 @@ export function createFetchChatBotMessagesTool(
     const { channelName, chatBot, logger } = dependencies;
 
     async function fetchChatBotMessages(): Promise<string> {
-        logger.info(`Fetching recent bot messages from #${channelName}`, { channelName });
+        logger.info('Executing fetchChatBotMessages tool...', { channelName });
 
         const messages = await chatBot.getRecentBotMessages(channelName);
 
-        logger.info('Retrieved bot messages', {
-            channelName,
-            messageCount: messages.length,
-        });
+        if (messages.length === 0) {
+            logger.info('No bot messages found.', { channelName });
+        } else {
+            logger.info(`Found ${messages.length} bot messages.`, {
+                channelName,
+                count: messages.length,
+            });
+        }
 
         return formatChatBotMessages(messages);
     }

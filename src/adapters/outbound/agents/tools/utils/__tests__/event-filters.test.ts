@@ -1,6 +1,6 @@
 import { afterEach, beforeEach, describe, expect, it, mockOfDate } from '@jterrazz/test';
 
-import { EventTypeEnum } from '../../../../../../ports/outbound/web/events.port.js';
+import { EventTypeEnum } from '../../../../../../ports/outbound/providers/events.port.js';
 
 import { filterEventsByDateRange } from '../event-filters.js';
 

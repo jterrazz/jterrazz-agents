@@ -3,7 +3,7 @@ import { type LoggerPort } from '@jterrazz/logger';
 
 import { filterEventsByDateRange } from './utils/event-filters.js';
 
-import { getUpcomingEvents, getUpcomingRocketLaunches } from '../../web/nextspaceflight.adapter.js';
+import { getUpcomingEvents, getUpcomingRocketLaunches } from '../../providers/nextspaceflight.adapter.js';
 
 import { formatEvents } from './formatters/event-formatter.js';
 
@@ -17,7 +17,7 @@ const TIMEFRAME_DAYS = 5;
 
 export function createFetchEventsForSpaceTool(logger: LoggerPort): ToolPort {
     async function fetchEventsForSpace(): Promise<string> {
-        logger.info('Fetching space events', { timeframe: `${TIMEFRAME_DAYS} days` });
+        logger.info('Executing fetchEventsForSpace tool...');
 
         const [missions, launches] = await Promise.all([
             getUpcomingEvents(),
@@ -27,11 +27,14 @@ export function createFetchEventsForSpaceTool(logger: LoggerPort): ToolPort {
         const events = [...missions, ...launches];
         const filteredEvents = filterEventsByDateRange(events, TIMEFRAME_DAYS);
 
-        logger.info('Retrieved space events', {
-            filteredEvents: filteredEvents.length,
-            timeframeDays: TIMEFRAME_DAYS,
-            totalEvents: events.length,
-        });
+        if (filteredEvents.length === 0) {
+            logger.info('No upcoming space events found.', { timeframeDays: TIMEFRAME_DAYS });
+        } else {
+            logger.info(`Found ${filteredEvents.length} upcoming space events.`, {
+                count: filteredEvents.length,
+                timeframeDays: TIMEFRAME_DAYS,
+            });
+        }
 
         return formatEvents(filteredEvents);
     }

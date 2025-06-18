@@ -1,4 +1,4 @@
-import { type XPostPort } from '../../../../../ports/outbound/web/x.port.js';
+import { type XPostPort } from '../../../../../ports/outbound/providers/x.port.js';
 
 import { formatTimeAgo } from './time-ago-formatter.js';
 

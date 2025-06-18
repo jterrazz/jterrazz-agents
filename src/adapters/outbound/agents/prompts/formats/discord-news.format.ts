@@ -1,8 +1,4 @@
-import { commonDiscordHeader } from './common.js';
-
-export const discordNewsFormat = `
-${commonDiscordHeader}
-
+export const DISCORD_NEWS = `
 Use this Discord Markdown template for each news:
 
 - IMPORTANT: If a URL or link is in your answer, show it as a clickable link below the details, wrapped in < > (e.g. <https://example.com>) to suppress Discord embeds and previews.

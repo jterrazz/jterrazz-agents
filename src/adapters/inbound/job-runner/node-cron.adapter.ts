@@ -12,13 +12,22 @@ export class NodeCronAdapter implements JobRunnerPort {
     ) {}
 
     public async initialize(): Promise<void> {
+        this.logger.info('Initializing job runner...');
+
+        if (this.jobs.length > 0) {
+            this.logger.info(`Scheduling jobs: ${this.jobs.map((job) => job.name).join(', ')}`);
+        } else {
+            this.logger.info('No jobs to schedule.');
+        }
+
         try {
             for (const job of this.jobs) {
                 // Execute immediately if configured to run on startup
                 // Run in background to not block initialization
                 if (job.executeOnStartup) {
+                    this.logger.debug(`Executing job on startup: ${job.name}`);
                     job.execute().catch((error) => {
-                        this.logger.error('Failed to execute startup job', {
+                        this.logger.error(`Startup job execution failed: ${job.name}`, {
                             error,
                             job: job.name,
                         });
@@ -28,7 +37,7 @@ export class NodeCronAdapter implements JobRunnerPort {
                 // Schedule the job
                 const task = cron.schedule(job.schedule, () => {
                     job.execute().catch((error) => {
-                        this.logger.error('Failed to execute job', {
+                        this.logger.error(`Scheduled job execution failed: ${job.name}`, {
                             error,
                             job: job.name,
                         });
@@ -36,21 +45,27 @@ export class NodeCronAdapter implements JobRunnerPort {
                 });
 
                 this.tasks.push(task);
-                this.logger.info(`A new job has been scheduled: ${job.name}`, {
+                this.logger.debug(`Job scheduled: ${job.name}`, {
                     job: job.name,
                     schedule: job.schedule,
                 });
             }
+
+            this.logger.info('Job runner initialized successfully');
         } catch (error) {
-            this.logger.error('Failed to initialize job runner', { error });
+            this.logger.error('Job runner initialization failed', { error });
             throw error;
         }
     }
 
     public async stop(): Promise<void> {
+        this.logger.info('Stopping all scheduled jobs...');
+
         for (const task of this.tasks) {
             task.stop();
         }
         this.tasks = [];
+
+        this.logger.info('All scheduled jobs stopped');
     }
 }

@@ -12,13 +12,14 @@ No input required. Always call this tool to get the current date.
 
 export function createGetCurrentDateTool(logger: LoggerPort): ToolPort {
     async function getCurrentDate(): Promise<string> {
+        logger.info('Executing getCurrentDate tool...');
+
         const currentDate = new Date();
+        const formattedDate = formatDate(currentDate);
 
-        logger.info('Getting current date', {
-            timestamp: currentDate.toISOString(),
-        });
+        logger.info('Returning current date.', { date: formattedDate });
 
-        return formatDate(currentDate);
+        return formattedDate;
     }
 
     return new SafeToolAdapter(

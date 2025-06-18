@@ -43,20 +43,25 @@ export class DiscordAdapter implements ChatBotPort {
         }
 
         if (this.state.isConnected) {
-            this.logger.info('Discord client already connected');
+            this.logger.debug('Discord client is already connected.');
             return;
         }
 
         if (this.state.isConnecting) {
-            this.logger.info('Discord connection already in progress');
+            this.logger.debug('Discord connection is already in progress.');
             return;
         }
 
+        this.logger.info('Connecting to Discord...');
         this.state.isConnecting = true;
         this.state.retryCount = 0;
 
         try {
             await this.connectWithRetry();
+            this.logger.info('Discord connected successfully.');
+        } catch (error) {
+            this.logger.error('Failed to connect to Discord.', { error });
+            throw error;
         } finally {
             this.state.isConnecting = false;
         }
@@ -64,9 +69,10 @@ export class DiscordAdapter implements ChatBotPort {
 
     async disconnect(): Promise<void> {
         if (this.client) {
+            this.logger.info('Disconnecting from Discord...');
             this.client.destroy();
             this.state.isConnected = false;
-            this.logger.info('Discord client disconnected');
+            this.logger.info('Discord client disconnected successfully.');
         }
     }
 
@@ -129,16 +135,19 @@ export class DiscordAdapter implements ChatBotPort {
             } catch (error) {
                 this.state.retryCount++;
                 const isLastAttempt = this.state.retryCount >= MAX_RETRY_ATTEMPTS;
-
-                this.logger.error(`Discord connection attempt ${this.state.retryCount} failed:`, {
+                const errorMessage = `Discord connection attempt ${this.state.retryCount} failed:`;
+                const errorContext = {
                     error: error instanceof Error ? error.message : String(error),
                     isLastAttempt,
-                });
+                };
 
                 if (isLastAttempt) {
+                    this.logger.error(errorMessage, errorContext);
                     throw new Error(
                         `Failed to connect to Discord after ${MAX_RETRY_ATTEMPTS} attempts: ${error instanceof Error ? error.message : String(error)}`,
                     );
+                } else {
+                    this.logger.warn(errorMessage, errorContext);
                 }
 
                 await this.delay(RETRY_DELAY_MS * this.state.retryCount); // Exponential backoff
@@ -161,7 +170,7 @@ export class DiscordAdapter implements ChatBotPort {
     private setupEventHandlers(): void {
         this.client.on('ready', () => {
             this.state.isConnected = true;
-            this.logger.info(`Bot connecté en tant que ${this.client.user?.tag}`);
+            this.logger.info(`Logged in as <@${this.client.user?.tag}>`);
         });
 
         this.client.on('disconnect', () => {

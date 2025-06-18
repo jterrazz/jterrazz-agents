@@ -1,6 +1,6 @@
 import { describe, expect, it } from '@jterrazz/test';
 
-import { EventTypeEnum } from '../../../../../../ports/outbound/web/events.port.js';
+import { EventTypeEnum } from '../../../../../../ports/outbound/providers/events.port.js';
 
 import { formatEvent, formatEvents } from '../event-formatter.js';
 

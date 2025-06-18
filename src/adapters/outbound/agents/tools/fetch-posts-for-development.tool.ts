@@ -1,7 +1,7 @@
 import { SafeToolAdapter, type ToolPort } from '@jterrazz/intelligence';
 import { type LoggerPort } from '@jterrazz/logger';
 
-import { type XPort } from '../../../../ports/outbound/web/x.port.js';
+import { type XPort } from '../../../../ports/outbound/providers/x.port.js';
 
 import { formatXPosts } from './formatters/x-post-formatter.js';
 
@@ -29,7 +29,7 @@ const USERNAMES = [
 
 export function createFetchPostsForDevelopmentTool(x: XPort, logger: LoggerPort): ToolPort {
     async function fetchPostsForDevelopment(): Promise<string> {
-        logger.info('Fetching development posts', { timeframe: '72h', usernames: USERNAMES });
+        logger.debug('Fetching development posts', { timeframe: '72h', usernames: USERNAMES });
 
         const posts = await Promise.all(
             USERNAMES.map((username) =>
@@ -41,10 +41,14 @@ export function createFetchPostsForDevelopmentTool(x: XPort, logger: LoggerPort)
         );
 
         const allPosts = posts.flat();
-        logger.info('Retrieved development posts', {
-            totalPosts: allPosts.length,
-            userCount: USERNAMES.length,
-        });
+
+        if (allPosts.length === 0) {
+            logger.info('No development posts found in the last 72 hours.');
+        } else {
+            logger.info(`Found ${allPosts.length} development posts.`, {
+                count: allPosts.length,
+            });
+        }
 
         return formatXPosts(allPosts);
     }
