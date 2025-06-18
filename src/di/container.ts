@@ -71,7 +71,7 @@ const model = Injectable(
                 application: 'jterrazz-agents',
                 website: 'https://jterrazz.com',
             },
-            modelName: 'google/gemini-2.5-flash-preview-05-20:thinking',
+            modelName: 'google/gemini-2.5-flash',
         }),
 );
 

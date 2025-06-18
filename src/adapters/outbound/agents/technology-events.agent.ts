@@ -1,6 +1,7 @@
 import {
     ChatAgentAdapter,
     type ModelPort,
+    PROMPTS,
     SystemPromptAdapter,
     UserPromptAdapter,
 } from '@jterrazz/intelligence';
@@ -10,9 +11,6 @@ import { type AvailableAgentTools } from '../../../ports/outbound/agents.port.js
 import { type ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
 
 import { agentFormat as agentFormat } from './prompts/agent-format.js';
-import { agentLanguage as agentLanguage } from './prompts/agent-language.js';
-import { agentPersonality as agentPersonality } from './prompts/agent-personality.js';
-import { agentTone as agentTone } from './prompts/agent-tone.js';
 import { createAnimatorPrompt } from './prompts/animator.js';
 
 export class TechnologyEventsAgent extends ChatAgentAdapter {
@@ -30,10 +28,12 @@ export class TechnologyEventsAgent extends ChatAgentAdapter {
         ];
 
         const systemPrompt = new SystemPromptAdapter([
-            agentPersonality.human,
-            agentTone.fun,
+            PROMPTS.RESPONSES.SELECTIVE_ENGAGEMENT,
+            PROMPTS.PERSONAS.HUMAN_LIKE_CONTRIBUTOR,
+            PROMPTS.TONES.HUMOROUS,
+            PROMPTS.FORMATS.DISCORD_MARKDOWN,
+            PROMPTS.LANGUAGES.FRENCH_SIMPLE,
             agentFormat.discordEvents,
-            agentLanguage.french,
         ]);
 
         super('TechnologyEventsAgent', {
@@ -41,6 +41,7 @@ export class TechnologyEventsAgent extends ChatAgentAdapter {
             model,
             systemPrompt,
             tools,
+            // verbose: true,
         });
     }
 
@@ -48,12 +49,12 @@ export class TechnologyEventsAgent extends ChatAgentAdapter {
         const prompt = new UserPromptAdapter(
             createAnimatorPrompt(
                 'Important news, discussions or updates related to technology events',
-                [
-                    'ONLY post about events related to Apple, Microsoft, Google, Meta, CES, and Amazon.',
-                    'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days',
-                ],
             ),
+            'CRITICAL: Post about events related to Apple, Microsoft, Google, Meta, CES, and Amazon.',
+            'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
         );
+
+        console.log(prompt.generate());
 
         const result = await super.run(prompt);
 
