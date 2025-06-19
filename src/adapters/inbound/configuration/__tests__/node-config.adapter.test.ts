@@ -17,12 +17,12 @@ describe('NodeConfigAdapter', () => {
     const mockConfig: Configuration = {
         inbound: {
             jobs: {
-                aiNews: { enabled: true },
-                cryptoNews: { enabled: true },
-                developmentNews: { enabled: true },
-                financeNews: { enabled: true },
-                spaceEvents: { enabled: true },
-                technologyEvents: { enabled: true },
+                aiNews: { enabled: true, executeOnStartup: false },
+                cryptoNews: { enabled: true, executeOnStartup: false },
+                developmentNews: { enabled: true, executeOnStartup: false },
+                financeNews: { enabled: true, executeOnStartup: false },
+                spaceEvents: { enabled: true, executeOnStartup: false },
+                technologyEvents: { enabled: true, executeOnStartup: false },
             },
         },
         outbound: {
@@ -91,12 +91,12 @@ describe('NodeConfigAdapter', () => {
 
         expect(config).toEqual({
             jobs: {
-                aiNews: { enabled: true },
-                cryptoNews: { enabled: true },
-                developmentNews: { enabled: true },
-                financeNews: { enabled: true },
-                spaceEvents: { enabled: true },
-                technologyEvents: { enabled: true },
+                aiNews: { enabled: true, executeOnStartup: false },
+                cryptoNews: { enabled: true, executeOnStartup: false },
+                developmentNews: { enabled: true, executeOnStartup: false },
+                financeNews: { enabled: true, executeOnStartup: false },
+                spaceEvents: { enabled: true, executeOnStartup: false },
+                technologyEvents: { enabled: true, executeOnStartup: false },
             },
         });
     });

@@ -4,13 +4,17 @@ import { type Job } from '../../../../ports/inbound/job-runner.port.js';
 
 export type CryptoNewsJobDependencies = {
     agent: AgentPort;
+    executeOnStartup: boolean;
 };
 
-export const createCryptoNewsJob = ({ agent }: CryptoNewsJobDependencies): Job => ({
+export const createCryptoNewsJob = ({
+    agent,
+    executeOnStartup,
+}: CryptoNewsJobDependencies): Job => ({
     execute: async () => {
         await agent.run();
     },
-    executeOnStartup: true,
+    executeOnStartup,
     name: 'crypto-news-agent',
     schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
 });

@@ -18,6 +18,7 @@ export interface InboundConfigurationPort {
 
 export interface JobConfiguration {
     enabled: boolean;
+    executeOnStartup: boolean;
 }
 
 export interface JobsConfiguration {

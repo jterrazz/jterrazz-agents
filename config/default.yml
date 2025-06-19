@@ -2,16 +2,22 @@ inbound:
   jobs:
     aiNews:
       enabled: true
+      executeOnStartup: false
     cryptoNews:
       enabled: true
+      executeOnStartup: false
     developmentNews:
       enabled: true
+      executeOnStartup: false
     financeNews:
       enabled: true
+      executeOnStartup: false
     spaceEvents:
       enabled: true
+      executeOnStartup: false
     technologyEvents:
       enabled: true
+      executeOnStartup: false
 outbound:
   discord:
     channels:

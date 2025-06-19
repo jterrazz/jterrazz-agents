@@ -9,6 +9,7 @@ import {
 
 const jobConfigurationSchema = z.object({
     enabled: z.boolean(),
+    executeOnStartup: z.boolean(),
 });
 
 const configurationSchema = z.object({

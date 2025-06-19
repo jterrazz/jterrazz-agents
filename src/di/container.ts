@@ -283,27 +283,57 @@ const jobRunner = Injectable(
         const enabledJobs = [];
 
         if (jobs.aiNews.enabled) {
-            enabledJobs.push(createAINewsJob({ agent: aiNewsAgent }));
+            enabledJobs.push(
+                createAINewsJob({
+                    agent: aiNewsAgent,
+                    executeOnStartup: jobs.aiNews.executeOnStartup,
+                }),
+            );
         }
 
         if (jobs.cryptoNews.enabled) {
-            enabledJobs.push(createCryptoNewsJob({ agent: cryptoNewsAgent }));
+            enabledJobs.push(
+                createCryptoNewsJob({
+                    agent: cryptoNewsAgent,
+                    executeOnStartup: jobs.cryptoNews.executeOnStartup,
+                }),
+            );
         }
 
         if (jobs.developmentNews.enabled) {
-            enabledJobs.push(createDevelopmentNewsJob({ agent: developmentNewsAgent }));
+            enabledJobs.push(
+                createDevelopmentNewsJob({
+                    agent: developmentNewsAgent,
+                    executeOnStartup: jobs.developmentNews.executeOnStartup,
+                }),
+            );
         }
 
         if (jobs.financeNews.enabled) {
-            enabledJobs.push(createFinanceNewsJob({ agent: financeNewsAgent }));
+            enabledJobs.push(
+                createFinanceNewsJob({
+                    agent: financeNewsAgent,
+                    executeOnStartup: jobs.financeNews.executeOnStartup,
+                }),
+            );
         }
 
         if (jobs.spaceEvents.enabled) {
-            enabledJobs.push(createSpaceEventsJob({ agent: spaceEventsAgent }));
+            enabledJobs.push(
+                createSpaceEventsJob({
+                    agent: spaceEventsAgent,
+                    executeOnStartup: jobs.spaceEvents.executeOnStartup,
+                }),
+            );
         }
 
         if (jobs.technologyEvents.enabled) {
-            enabledJobs.push(createTechnologyEventsJob({ agent: technologyEventsAgent }));
+            enabledJobs.push(
+                createTechnologyEventsJob({
+                    agent: technologyEventsAgent,
+                    executeOnStartup: jobs.technologyEvents.executeOnStartup,
+                }),
+            );
         }
 
         return new NodeCronAdapter(logger, enabledJobs);
