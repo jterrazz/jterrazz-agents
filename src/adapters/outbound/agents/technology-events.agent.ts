@@ -25,9 +25,9 @@ export class TechnologyEventsAgent extends ChatAgentAdapter {
     ]);
     static readonly USER_PROMPT = new UserPromptAdapter(
         PROMPTS.MISSIONS.ANIMATE_CHATROOM(
-            'Important news, discussions or updates related to technology and gadgets',
+            'Important news, discussions or updates related to technology events',
         ),
-        'CRITICAL: Post about major product releases, tech industry trends, or significant software updates.',
+        'CRITICAL: ONLY post about events related to Apple, Microsoft, Google, Meta, CES, and Amazon.',
         'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
     );
 

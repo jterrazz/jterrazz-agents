@@ -3,7 +3,10 @@ import { type LoggerPort } from '@jterrazz/logger';
 
 import { filterEventsByDateRange } from './utils/event-filters.js';
 
-import { getUpcomingEvents, getUpcomingRocketLaunches } from '../../providers/nextspaceflight.adapter.js';
+import {
+    getUpcomingEvents,
+    getUpcomingRocketLaunches,
+} from '../../providers/nextspaceflight.adapter.js';
 
 import { formatEvents } from './formatters/event-formatter.js';
 

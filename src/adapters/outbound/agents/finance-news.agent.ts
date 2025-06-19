@@ -21,7 +21,7 @@ export class FinanceNewsAgent extends ChatAgentAdapter {
         PROMPT_LIBRARY.FORMATS.DISCORD_MARKDOWN,
         PROMPT_LIBRARY.LANGUAGES.FRENCH_SIMPLE,
         PROMPT_LIBRARY.RESPONSES.SELECTIVE_ENGAGEMENT,
-        PROMPTS.FORMATS.DISCORD_EVENTS,
+        PROMPTS.FORMATS.DISCORD_NEWS,
     ]);
     static readonly USER_PROMPT = new UserPromptAdapter(
         PROMPTS.MISSIONS.ANIMATE_CHATROOM(
@@ -29,6 +29,7 @@ export class FinanceNewsAgent extends ChatAgentAdapter {
         ),
         'CRITICAL: Post about major market movements, economic indicators, or significant financial news.',
         'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
+        'ALWAYS START by checking the chatbot messages history to see if there is something relevant to share.',
     );
 
     constructor(

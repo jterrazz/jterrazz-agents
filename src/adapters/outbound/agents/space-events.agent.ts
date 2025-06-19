@@ -25,9 +25,9 @@ export class SpaceEventsAgent extends ChatAgentAdapter {
     ]);
     static readonly USER_PROMPT = new UserPromptAdapter(
         PROMPTS.MISSIONS.ANIMATE_CHATROOM(
-            'Important news, discussions or updates related to space exploration and missions',
+            'Upcoming events related to space exploration, space missions, and aerospace technology',
         ),
-        'CRITICAL: Post about major space mission updates, rocket launches, or significant astronomical discoveries.',
+        'CRITICAL: for "rocket-launch" events, only post about Starship. For "space-mission" events, post about all events',
         'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
     );
 
