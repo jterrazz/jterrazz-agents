@@ -5,19 +5,19 @@ import { Container, Injectable } from '@snap/ts-inject';
 import { NodeConfigAdapter } from '../adapters/inbound/configuration/node-config.adapter.js';
 import { type ConfigurationPort } from '../ports/inbound/configuration.port.js';
 
-import { type JobRunnerPort } from '../ports/inbound/job-runner.port.js';
+import { type ExecutorPort } from '../ports/inbound/executor.port.js';
 import { type AvailableAgentTools } from '../ports/outbound/agents.port.js';
 import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { type XPort } from '../ports/outbound/providers/x.port.js';
 
-import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
-import { createArchitectureTipsJob } from '../adapters/inbound/job-runner/jobs/architecture-tips.job.js';
-import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
-import { createDevelopmentNewsJob } from '../adapters/inbound/job-runner/jobs/development-news.job.js';
-import { createFinanceNewsJob } from '../adapters/inbound/job-runner/jobs/finance-news.job.js';
-import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-events.job.js';
-import { createTechnologyEventsJob } from '../adapters/inbound/job-runner/jobs/technology-events.job.js';
-import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
+import { NodeCronAdapter } from '../adapters/inbound/executor/node-cron.adapter.js';
+import { createAINewsTask } from '../adapters/inbound/executor/tasks/ai-news.task.js';
+import { createArchitectureTipsTask } from '../adapters/inbound/executor/tasks/architecture-tips.task.js';
+import { createCryptoNewsTask } from '../adapters/inbound/executor/tasks/crypto-news.task.js';
+import { createDevelopmentNewsTask } from '../adapters/inbound/executor/tasks/development-news.task.js';
+import { createFinanceNewsTask } from '../adapters/inbound/executor/tasks/finance-news.task.js';
+import { createSpaceEventsTask } from '../adapters/inbound/executor/tasks/space-events.task.js';
+import { createTechnologyEventsTask } from '../adapters/inbound/executor/tasks/technology-events.task.js';
 import { AINewsAgent } from '../adapters/outbound/agents/ai-news.agent.js';
 import { ArchitectureTipsAgent } from '../adapters/outbound/agents/architecture-tips.agent.js';
 import { CryptoNewsAgent } from '../adapters/outbound/agents/crypto-news.agent.js';
@@ -274,10 +274,10 @@ const technologyEventsAgent = Injectable(
 );
 
 /**
- * JobRunner
+ * Executor
  */
-const jobRunner = Injectable(
-    'JobRunner',
+const executor = Injectable(
+    'Executor',
     [
         'Logger',
         'Configuration',
@@ -299,73 +299,73 @@ const jobRunner = Injectable(
         financeNewsAgent: AgentPort,
         spaceEventsAgent: AgentPort,
         technologyEventsAgent: AgentPort,
-    ): JobRunnerPort => {
-        const { jobs } = config.getInboundConfiguration();
-        const enabledJobs = [];
+    ): ExecutorPort => {
+        const { tasks } = config.getInboundConfiguration();
+        const enabledTasks = [];
 
-        if (jobs.aiNews.enabled) {
-            enabledJobs.push(
-                createAINewsJob({
+        if (tasks.aiNews.enabled) {
+            enabledTasks.push(
+                createAINewsTask({
                     agent: aiNewsAgent,
-                    executeOnStartup: jobs.aiNews.executeOnStartup,
+                    executeOnStartup: tasks.aiNews.executeOnStartup,
                 }),
             );
         }
 
-        if (jobs.architectureTips.enabled) {
-            enabledJobs.push(
-                createArchitectureTipsJob({
+        if (tasks.architectureTips.enabled) {
+            enabledTasks.push(
+                createArchitectureTipsTask({
                     agent: architectureTipsAgent,
-                    executeOnStartup: jobs.architectureTips.executeOnStartup,
+                    executeOnStartup: tasks.architectureTips.executeOnStartup,
                 }),
             );
         }
-        if (jobs.cryptoNews.enabled) {
-            enabledJobs.push(
-                createCryptoNewsJob({
+        if (tasks.cryptoNews.enabled) {
+            enabledTasks.push(
+                createCryptoNewsTask({
                     agent: cryptoNewsAgent,
-                    executeOnStartup: jobs.cryptoNews.executeOnStartup,
+                    executeOnStartup: tasks.cryptoNews.executeOnStartup,
                 }),
             );
         }
 
-        if (jobs.developmentNews.enabled) {
-            enabledJobs.push(
-                createDevelopmentNewsJob({
+        if (tasks.developmentNews.enabled) {
+            enabledTasks.push(
+                createDevelopmentNewsTask({
                     agent: developmentNewsAgent,
-                    executeOnStartup: jobs.developmentNews.executeOnStartup,
+                    executeOnStartup: tasks.developmentNews.executeOnStartup,
                 }),
             );
         }
 
-        if (jobs.financeNews.enabled) {
-            enabledJobs.push(
-                createFinanceNewsJob({
+        if (tasks.financeNews.enabled) {
+            enabledTasks.push(
+                createFinanceNewsTask({
                     agent: financeNewsAgent,
-                    executeOnStartup: jobs.financeNews.executeOnStartup,
+                    executeOnStartup: tasks.financeNews.executeOnStartup,
                 }),
             );
         }
 
-        if (jobs.spaceEvents.enabled) {
-            enabledJobs.push(
-                createSpaceEventsJob({
+        if (tasks.spaceEvents.enabled) {
+            enabledTasks.push(
+                createSpaceEventsTask({
                     agent: spaceEventsAgent,
-                    executeOnStartup: jobs.spaceEvents.executeOnStartup,
+                    executeOnStartup: tasks.spaceEvents.executeOnStartup,
                 }),
             );
         }
 
-        if (jobs.technologyEvents.enabled) {
-            enabledJobs.push(
-                createTechnologyEventsJob({
+        if (tasks.technologyEvents.enabled) {
+            enabledTasks.push(
+                createTechnologyEventsTask({
                     agent: technologyEventsAgent,
-                    executeOnStartup: jobs.technologyEvents.executeOnStartup,
+                    executeOnStartup: tasks.technologyEvents.executeOnStartup,
                 }),
             );
         }
 
-        return new NodeCronAdapter(logger, enabledJobs);
+        return new NodeCronAdapter(logger, enabledTasks);
     },
 );
 
@@ -391,5 +391,5 @@ export const createContainer = () =>
         .provides(developmentNewsAgent)
         .provides(cryptoNewsAgent)
         .provides(financeNewsAgent)
-        // JobRunner
-        .provides(jobRunner);
+        // Executor
+        .provides(executor);

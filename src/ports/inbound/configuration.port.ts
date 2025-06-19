@@ -1,40 +1,48 @@
+/**
+ * Main configuration port that provides access to all configuration values
+ */
 export interface ConfigurationPort {
-    getInboundConfiguration(): InboundConfigurationPort;
-    getOutboundConfiguration(): OutboundConfigurationPort;
+    getInboundConfiguration(): InboundConfiguration;
+    getOutboundConfiguration(): OutboundConfiguration;
 }
 
-export interface DiscordChannelsConfiguration {
-    ai: string;
-    architecture: string;
-    crypto: string;
-    development: string;
-    finance: string;
-    space: string;
-    technology: string;
+/**
+ * Represents configuration for inbound scheduling and execution
+ */
+export interface InboundConfiguration {
+    tasks: {
+        aiNews: TaskConfiguration;
+        architectureTips: TaskConfiguration;
+        cryptoNews: TaskConfiguration;
+        developmentNews: TaskConfiguration;
+        financeNews: TaskConfiguration;
+        spaceEvents: TaskConfiguration;
+        technologyEvents: TaskConfiguration;
+    };
 }
 
-export interface InboundConfigurationPort {
-    jobs: JobsConfiguration;
-}
-
-export interface JobConfiguration {
-    enabled: boolean;
-    executeOnStartup: boolean;
-}
-
-export interface JobsConfiguration {
-    aiNews: JobConfiguration;
-    architectureTips: JobConfiguration;
-    cryptoNews: JobConfiguration;
-    developmentNews: JobConfiguration;
-    financeNews: JobConfiguration;
-    spaceEvents: JobConfiguration;
-    technologyEvents: JobConfiguration;
-}
-
-export interface OutboundConfigurationPort {
+/**
+ * Represents configuration for outbound services like Discord
+ */
+export interface OutboundConfiguration {
     apifyToken: string;
     discordBotToken: string;
-    discordChannels: DiscordChannelsConfiguration;
+    discordChannels: {
+        ai: string;
+        architecture: string;
+        crypto: string;
+        development: string;
+        finance: string;
+        space: string;
+        technology: string;
+    };
     openrouterApiKey: string;
+}
+
+/**
+ * Configuration for individual task execution
+ */
+export interface TaskConfiguration {
+    enabled: boolean;
+    executeOnStartup: boolean;
 }

@@ -3,25 +3,25 @@ import { z } from 'zod';
 
 import {
     type ConfigurationPort,
-    type InboundConfigurationPort,
-    type OutboundConfigurationPort,
+    type InboundConfiguration,
+    type OutboundConfiguration,
 } from '../../../ports/inbound/configuration.port.js';
 
-const jobConfigurationSchema = z.object({
+const taskConfigurationSchema = z.object({
     enabled: z.boolean(),
     executeOnStartup: z.boolean(),
 });
 
 const configurationSchema = z.object({
     inbound: z.object({
-        jobs: z.object({
-            aiNews: jobConfigurationSchema,
-            architectureTips: jobConfigurationSchema,
-            cryptoNews: jobConfigurationSchema,
-            developmentNews: jobConfigurationSchema,
-            financeNews: jobConfigurationSchema,
-            spaceEvents: jobConfigurationSchema,
-            technologyEvents: jobConfigurationSchema,
+        tasks: z.object({
+            aiNews: taskConfigurationSchema,
+            architectureTips: taskConfigurationSchema,
+            cryptoNews: taskConfigurationSchema,
+            developmentNews: taskConfigurationSchema,
+            financeNews: taskConfigurationSchema,
+            spaceEvents: taskConfigurationSchema,
+            technologyEvents: taskConfigurationSchema,
         }),
     }),
     outbound: z.object({
@@ -54,14 +54,14 @@ export class NodeConfigAdapter implements ConfigurationPort {
     constructor() {
         this.configuration = configurationSchema.parse({
             inbound: {
-                jobs: {
-                    aiNews: config.get('inbound.jobs.aiNews'),
-                    architectureTips: config.get('inbound.jobs.architectureTips'),
-                    cryptoNews: config.get('inbound.jobs.cryptoNews'),
-                    developmentNews: config.get('inbound.jobs.developmentNews'),
-                    financeNews: config.get('inbound.jobs.financeNews'),
-                    spaceEvents: config.get('inbound.jobs.spaceEvents'),
-                    technologyEvents: config.get('inbound.jobs.technologyEvents'),
+                tasks: {
+                    aiNews: config.get('inbound.tasks.aiNews'),
+                    architectureTips: config.get('inbound.tasks.architectureTips'),
+                    cryptoNews: config.get('inbound.tasks.cryptoNews'),
+                    developmentNews: config.get('inbound.tasks.developmentNews'),
+                    financeNews: config.get('inbound.tasks.financeNews'),
+                    spaceEvents: config.get('inbound.tasks.spaceEvents'),
+                    technologyEvents: config.get('inbound.tasks.technologyEvents'),
                 },
             },
             outbound: {
@@ -79,13 +79,13 @@ export class NodeConfigAdapter implements ConfigurationPort {
         });
     }
 
-    getInboundConfiguration(): InboundConfigurationPort {
+    getInboundConfiguration(): InboundConfiguration {
         return {
-            jobs: this.configuration.inbound.jobs,
+            tasks: this.configuration.inbound.tasks,
         };
     }
 
-    getOutboundConfiguration(): OutboundConfigurationPort {
+    getOutboundConfiguration(): OutboundConfiguration {
         return {
             apifyToken: this.configuration.outbound.apify.token,
             discordBotToken: this.configuration.outbound.discord.botToken,

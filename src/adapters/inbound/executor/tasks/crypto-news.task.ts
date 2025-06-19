@@ -1,20 +1,20 @@
 import { type AgentPort } from '@jterrazz/intelligence';
 
-import { type Job } from '../../../../ports/inbound/job-runner.port.js';
+import { type TaskPort } from '../../../../ports/inbound/executor.port.js';
 
-export type SpaceEventsJobDependencies = {
+export type CryptoNewsTaskDependencies = {
     agent: AgentPort;
     executeOnStartup: boolean;
 };
 
-export const createSpaceEventsJob = ({
+export const createCryptoNewsTask = ({
     agent,
     executeOnStartup,
-}: SpaceEventsJobDependencies): Job => ({
+}: CryptoNewsTaskDependencies): TaskPort => ({
     execute: async () => {
         await agent.run();
     },
     executeOnStartup,
-    name: 'space-events-agent',
+    name: 'crypto-news-agent',
     schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
 });

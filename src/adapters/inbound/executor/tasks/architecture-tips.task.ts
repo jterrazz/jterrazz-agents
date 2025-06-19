@@ -1,16 +1,16 @@
 import { type AgentPort } from '@jterrazz/intelligence';
 
-import { type Job } from '../../../../ports/inbound/job-runner.port.js';
+import { type TaskPort } from '../../../../ports/inbound/executor.port.js';
 
-export type ArchitectureTipsJobDependencies = {
+export type ArchitectureTipsTaskDependencies = {
     agent: AgentPort;
     executeOnStartup: boolean;
 };
 
-export const createArchitectureTipsJob = ({
+export const createArchitectureTipsTask = ({
     agent,
     executeOnStartup,
-}: ArchitectureTipsJobDependencies): Job => ({
+}: ArchitectureTipsTaskDependencies): TaskPort => ({
     execute: async () => {
         await agent.run();
     },

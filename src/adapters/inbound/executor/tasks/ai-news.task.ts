@@ -1,13 +1,16 @@
 import { type AgentPort } from '@jterrazz/intelligence';
 
-import { type Job } from '../../../../ports/inbound/job-runner.port.js';
+import { type TaskPort } from '../../../../ports/inbound/executor.port.js';
 
-export type AINewsJobDependencies = {
+export type AINewsTaskDependencies = {
     agent: AgentPort;
     executeOnStartup: boolean;
 };
 
-export const createAINewsJob = ({ agent, executeOnStartup }: AINewsJobDependencies): Job => ({
+export const createAINewsTask = ({
+    agent,
+    executeOnStartup,
+}: AINewsTaskDependencies): TaskPort => ({
     execute: async () => {
         await agent.run();
     },

@@ -1,20 +1,20 @@
 import { type AgentPort } from '@jterrazz/intelligence';
 
-import { type Job } from '../../../../ports/inbound/job-runner.port.js';
+import { type TaskPort } from '../../../../ports/inbound/executor.port.js';
 
-export type FinanceNewsJobDependencies = {
+export type TechnologyEventsTaskDependencies = {
     agent: AgentPort;
     executeOnStartup: boolean;
 };
 
-export const createFinanceNewsJob = ({
+export const createTechnologyEventsTask = ({
     agent,
     executeOnStartup,
-}: FinanceNewsJobDependencies): Job => ({
+}: TechnologyEventsTaskDependencies): TaskPort => ({
     execute: async () => {
         await agent.run();
     },
     executeOnStartup,
-    name: 'finance-news-agent',
+    name: 'technology-events-agent',
     schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
 });

@@ -3,7 +3,7 @@ import { createContainer } from './di/container.js';
 (async () => {
     const container = createContainer();
     const chatBot = container.get('ChatBot');
-    const jobRunner = container.get('JobRunner');
+    const executor = container.get('Executor');
     const logger = container.get('Logger');
 
     // Graceful shutdown handler
@@ -11,8 +11,8 @@ import { createContainer } from './di/container.js';
         logger.info(`Received ${signal}. Starting graceful shutdown...`);
 
         try {
-            // Stop job runner first to prevent new jobs from starting
-            await jobRunner.stop();
+            // Stop executor first to prevent new jobs from starting
+            await executor.stop();
 
             // Disconnect from Discord
             await chatBot.disconnect();
@@ -45,8 +45,8 @@ import { createContainer } from './di/container.js';
         // Connect to Discord
         await chatBot.connect();
 
-        // Initialize job runner for scheduled jobs
-        await jobRunner.initialize();
+        // Initialize executor for scheduled jobs
+        await executor.initialize();
 
         logger.info('Application started successfully.');
     } catch (error) {

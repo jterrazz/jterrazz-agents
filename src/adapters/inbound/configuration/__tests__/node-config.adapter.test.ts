@@ -16,7 +16,7 @@ import { type Configuration, NodeConfigAdapter } from '../node-config.adapter.js
 describe('NodeConfigAdapter', () => {
     const mockConfig: Configuration = {
         inbound: {
-            jobs: {
+            tasks: {
                 aiNews: { enabled: true, executeOnStartup: false },
                 architectureTips: { enabled: true, executeOnStartup: false },
                 cryptoNews: { enabled: true, executeOnStartup: false },
@@ -93,7 +93,7 @@ describe('NodeConfigAdapter', () => {
         const config = adapter.getInboundConfiguration();
 
         expect(config).toEqual({
-            jobs: {
+            tasks: {
                 aiNews: { enabled: true, executeOnStartup: false },
                 architectureTips: { enabled: true, executeOnStartup: false },
                 cryptoNews: { enabled: true, executeOnStartup: false },
