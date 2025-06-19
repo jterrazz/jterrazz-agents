@@ -5,7 +5,7 @@ inbound:
       executeOnStartup: false
     architectureTips:
       enabled: true
-      executeOnStartup: true
+      executeOnStartup: false
     cryptoNews:
       enabled: true
       executeOnStartup: false
