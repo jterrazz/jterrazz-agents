@@ -1,5 +1,5 @@
 import {
-    ChatAgentAdapter,
+    AutonomousAgentAdapter,
     type ModelPort,
     PROMPT_LIBRARY,
     SystemPromptAdapter,
@@ -12,7 +12,7 @@ import { type ChatBotPort } from '../../../ports/outbound/chatbot.port.js';
 
 import { PROMPTS } from './prompts/prompts.js';
 
-export class DevelopmentNewsAgent extends ChatAgentAdapter {
+export class DevelopmentNewsAgent extends AutonomousAgentAdapter {
     static readonly NAME = 'DevelopmentNewsAgent';
     static readonly SYSTEM_PROMPT = new SystemPromptAdapter([
         PROMPT_LIBRARY.RESPONSES.SELECTIVE_ENGAGEMENT,
@@ -20,7 +20,6 @@ export class DevelopmentNewsAgent extends ChatAgentAdapter {
         PROMPT_LIBRARY.TONES.HUMOROUS,
         PROMPT_LIBRARY.FORMATS.DISCORD_MARKDOWN,
         PROMPT_LIBRARY.LANGUAGES.FRENCH_SIMPLE,
-        PROMPT_LIBRARY.RESPONSES.SELECTIVE_ENGAGEMENT,
         PROMPTS.FORMATS.DISCORD_NEWS,
     ]);
     static readonly USER_PROMPT = new UserPromptAdapter(

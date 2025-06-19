@@ -25,7 +25,7 @@ export function createFetchChatBotMessagesTool(
     async function fetchChatBotMessages(): Promise<string> {
         logger.info('Executing fetchChatBotMessages tool...', { channelName });
 
-        const messages = await chatBot.getRecentBotMessages(channelName);
+        const messages = await chatBot.getBotMessages(channelName);
 
         if (messages.length === 0) {
             logger.info('No bot messages found.', { channelName });

@@ -16,6 +16,7 @@ const configurationSchema = z.object({
     inbound: z.object({
         jobs: z.object({
             aiNews: jobConfigurationSchema,
+            architectureTips: jobConfigurationSchema,
             cryptoNews: jobConfigurationSchema,
             developmentNews: jobConfigurationSchema,
             financeNews: jobConfigurationSchema,
@@ -31,6 +32,7 @@ const configurationSchema = z.object({
             botToken: z.string().min(1, 'A Discord bot token is required'),
             channels: z.object({
                 ai: z.string().min(1, 'AI channel name is required'),
+                architecture: z.string().min(1, 'Architecture channel name is required'),
                 crypto: z.string().min(1, 'Crypto channel name is required'),
                 development: z.string().min(1, 'Development channel name is required'),
                 finance: z.string().min(1, 'Finance channel name is required'),
@@ -54,6 +56,7 @@ export class NodeConfigAdapter implements ConfigurationPort {
             inbound: {
                 jobs: {
                     aiNews: config.get('inbound.jobs.aiNews'),
+                    architectureTips: config.get('inbound.jobs.architectureTips'),
                     cryptoNews: config.get('inbound.jobs.cryptoNews'),
                     developmentNews: config.get('inbound.jobs.developmentNews'),
                     financeNews: config.get('inbound.jobs.financeNews'),

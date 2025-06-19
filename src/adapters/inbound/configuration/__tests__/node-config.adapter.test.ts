@@ -18,6 +18,7 @@ describe('NodeConfigAdapter', () => {
         inbound: {
             jobs: {
                 aiNews: { enabled: true, executeOnStartup: false },
+                architectureTips: { enabled: true, executeOnStartup: false },
                 cryptoNews: { enabled: true, executeOnStartup: false },
                 developmentNews: { enabled: true, executeOnStartup: false },
                 financeNews: { enabled: true, executeOnStartup: false },
@@ -33,6 +34,7 @@ describe('NodeConfigAdapter', () => {
                 botToken: 'test-discord-token',
                 channels: {
                     ai: 'test-ai-channel',
+                    architecture: 'test-architecture-channel',
                     crypto: 'test-crypto-channel',
                     development: 'test-development-channel',
                     finance: 'test-finance-channel',
@@ -75,6 +77,7 @@ describe('NodeConfigAdapter', () => {
             discordBotToken: 'test-discord-token',
             discordChannels: {
                 ai: 'test-ai-channel',
+                architecture: 'test-architecture-channel',
                 crypto: 'test-crypto-channel',
                 development: 'test-development-channel',
                 finance: 'test-finance-channel',
@@ -92,6 +95,7 @@ describe('NodeConfigAdapter', () => {
         expect(config).toEqual({
             jobs: {
                 aiNews: { enabled: true, executeOnStartup: false },
+                architectureTips: { enabled: true, executeOnStartup: false },
                 cryptoNews: { enabled: true, executeOnStartup: false },
                 developmentNews: { enabled: true, executeOnStartup: false },
                 financeNews: { enabled: true, executeOnStartup: false },

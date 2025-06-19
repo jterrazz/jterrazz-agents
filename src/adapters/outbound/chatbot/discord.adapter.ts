@@ -76,7 +76,7 @@ export class DiscordAdapter implements ChatBotPort {
         }
     }
 
-    async getRecentBotMessages(channelName: string, limit = 20): Promise<ChatBotMessage[]> {
+    async getBotMessages(channelName: string, limit = 20): Promise<ChatBotMessage[]> {
         const guild = this.client.guilds.cache.first();
         if (!guild) return [];
         const channel = guild.channels.cache.find(

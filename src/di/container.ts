@@ -11,6 +11,7 @@ import { type ChatBotPort } from '../ports/outbound/chatbot.port.js';
 import { type XPort } from '../ports/outbound/providers/x.port.js';
 
 import { createAINewsJob } from '../adapters/inbound/job-runner/jobs/ai-news.job.js';
+import { createArchitectureTipsJob } from '../adapters/inbound/job-runner/jobs/architecture-tips.job.js';
 import { createCryptoNewsJob } from '../adapters/inbound/job-runner/jobs/crypto-news.job.js';
 import { createDevelopmentNewsJob } from '../adapters/inbound/job-runner/jobs/development-news.job.js';
 import { createFinanceNewsJob } from '../adapters/inbound/job-runner/jobs/finance-news.job.js';
@@ -18,6 +19,7 @@ import { createSpaceEventsJob } from '../adapters/inbound/job-runner/jobs/space-
 import { createTechnologyEventsJob } from '../adapters/inbound/job-runner/jobs/technology-events.job.js';
 import { NodeCronAdapter } from '../adapters/inbound/job-runner/node-cron.adapter.js';
 import { AINewsAgent } from '../adapters/outbound/agents/ai-news.agent.js';
+import { ArchitectureTipsAgent } from '../adapters/outbound/agents/architecture-tips.agent.js';
 import { CryptoNewsAgent } from '../adapters/outbound/agents/crypto-news.agent.js';
 import { DevelopmentNewsAgent } from '../adapters/outbound/agents/development-news.agent.js';
 import { FinanceNewsAgent } from '../adapters/outbound/agents/finance-news.agent.js';
@@ -159,6 +161,23 @@ const aiNewsAgent = Injectable(
         ),
 );
 
+const architectureTipsAgent = Injectable(
+    'ArchitectureTipsAgent',
+    ['ChatBot', 'Logger', 'Model', 'Configuration'] as const,
+    (
+        chatBot: ChatBotPort,
+        logger: LoggerPort,
+        model: ModelPort,
+        config: ConfigurationPort,
+    ): AgentPort =>
+        new ArchitectureTipsAgent(
+            model,
+            logger,
+            chatBot,
+            config.getOutboundConfiguration().discordChannels.architecture,
+        ),
+);
+
 const cryptoNewsAgent = Injectable(
     'CryptoNewsAgent',
     ['ChatBot', 'Logger', 'Model', 'Tools', 'Configuration'] as const,
@@ -263,6 +282,7 @@ const jobRunner = Injectable(
         'Logger',
         'Configuration',
         'AINewsAgent',
+        'ArchitectureTipsAgent',
         'CryptoNewsAgent',
         'DevelopmentNewsAgent',
         'FinanceNewsAgent',
@@ -273,6 +293,7 @@ const jobRunner = Injectable(
         logger: LoggerPort,
         config: ConfigurationPort,
         aiNewsAgent: AgentPort,
+        architectureTipsAgent: AgentPort,
         cryptoNewsAgent: AgentPort,
         developmentNewsAgent: AgentPort,
         financeNewsAgent: AgentPort,
@@ -291,6 +312,14 @@ const jobRunner = Injectable(
             );
         }
 
+        if (jobs.architectureTips.enabled) {
+            enabledJobs.push(
+                createArchitectureTipsJob({
+                    agent: architectureTipsAgent,
+                    executeOnStartup: jobs.architectureTips.executeOnStartup,
+                }),
+            );
+        }
         if (jobs.cryptoNews.enabled) {
             enabledJobs.push(
                 createCryptoNewsJob({
@@ -355,6 +384,7 @@ export const createContainer = () =>
         // Tools
         .provides(tools)
         // Agents
+        .provides(architectureTipsAgent)
         .provides(spaceEventsAgent)
         .provides(technologyEventsAgent)
         .provides(aiNewsAgent)

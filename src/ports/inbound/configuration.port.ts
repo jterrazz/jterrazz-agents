@@ -5,6 +5,7 @@ export interface ConfigurationPort {
 
 export interface DiscordChannelsConfiguration {
     ai: string;
+    architecture: string;
     crypto: string;
     development: string;
     finance: string;
@@ -23,6 +24,7 @@ export interface JobConfiguration {
 
 export interface JobsConfiguration {
     aiNews: JobConfiguration;
+    architectureTips: JobConfiguration;
     cryptoNews: JobConfiguration;
     developmentNews: JobConfiguration;
     financeNews: JobConfiguration;

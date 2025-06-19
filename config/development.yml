@@ -3,6 +3,9 @@ inbound:
     aiNews:
       enabled: false
       executeOnStartup: true
+    architectureTips:
+      enabled: true
+      executeOnStartup: true
     cryptoNews:
       enabled: false
       executeOnStartup: true
@@ -22,6 +25,7 @@ outbound:
   discord:
     channels:
       ai: '__tests__'
+      architecture: '__tests__'
       development: '__tests__'
       crypto: '__tests__'
       finance: '__tests__'
