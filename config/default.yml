@@ -1,5 +1,5 @@
 inbound:
-  jobs:
+  tasks:
     aiNews:
       enabled: true
       executeOnStartup: false

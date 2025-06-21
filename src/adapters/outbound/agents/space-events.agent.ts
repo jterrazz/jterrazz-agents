@@ -28,6 +28,7 @@ export class SpaceEventsAgent extends AutonomousAgentAdapter {
         ),
         'CRITICAL: for "rocket-launch" events, only post about Starship. For "space-mission" events, post about all events',
         'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
+        'ALWAYS START by checking the chatbot messages history to see if there is something relevant to share.',
     );
 
     constructor(

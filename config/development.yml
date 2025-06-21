@@ -1,10 +1,10 @@
 inbound:
-  jobs:
+  tasks:
     aiNews:
       enabled: false
       executeOnStartup: true
     architectureTips:
-      enabled: true
+      enabled: false
       executeOnStartup: true
     cryptoNews:
       enabled: false

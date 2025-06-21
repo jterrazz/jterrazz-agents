@@ -28,6 +28,7 @@ export class TechnologyEventsAgent extends AutonomousAgentAdapter {
         ),
         'CRITICAL: ONLY post about events related to Apple, Microsoft, Google, Meta, CES, and Amazon.',
         'CRITICAL: Post a MAXIMUM of 1 message every 2 to 3 days, only post if there is something relevant to share.',
+        'ALWAYS START by checking the chatbot messages history to see if there is something relevant to share.',
     );
 
     constructor(
