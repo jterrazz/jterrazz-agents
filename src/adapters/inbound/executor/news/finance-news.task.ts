@@ -16,5 +16,5 @@ export const createFinanceNewsTask = ({
     },
     executeOnStartup,
     name: 'finance-news-agent',
-    schedule: '0 16 * * 1,4', // Every Monday and Thursday at 4:00 PM
+    schedule: '0 16 * * 4', // Every Thursday at 4:00 PM
 });
